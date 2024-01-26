@@ -21,7 +21,7 @@ SETTING UP A DJANGO PROJECT IN DOCKER ON WSL2 FOR DEVELOPMENT.
  7. If they aren't up to date, run `pip3 install --upgrade pip` to upgrade pip to the latest version and visit [here](https://docs.python-guide.org/starting/install3/linux/) for a comprehensive guide of how to install python on your machine.
  8. If all is set, activate your virtual environment by running the command: `source <name_for_virtual_environment>/bin/activate`
  9. Lastly, run; `code .` to open Vs code text editor. Note the `.` at the end. The basic setup is now done. It's time to create relevant files within our project.
- 10. Within Vs code, press ~Ctrl+Shift+`~ to open your terminal.
+ 10. Within Vs code, press Ctrl+Shift+` to open your terminal.
  11. Run: `source <name_for_virtual_environment>/bin/activate` to activate your virtual environment.
  12. Install Django by running: `pip install Django`.
  13. Within your root directory, create a file named `Dockerfile`. Note that this file has got no extension.
@@ -33,8 +33,8 @@ SETTING UP A DJANGO PROJECT IN DOCKER ON WSL2 FOR DEVELOPMENT.
      # of your application (e.g., Django logs) in real-time.
      ENV PYTHONUNBUFFERED 1
      # Make a directory in your Docker image, which you can use to store your source code
-     RUN mkdir /hms
-     # Set the /hms directory as the working directory
+     RUN mkdir /pms
+     # Set the /pms directory as the working directory
      WORKDIR /hms
      # Copies from your local machine's current directory to the HMS folder 
      # in the Docker image
@@ -65,7 +65,7 @@ SETTING UP A DJANGO PROJECT IN DOCKER ON WSL2 FOR DEVELOPMENT.
       
     volumes: 
     # Copy changes made to the project to your image in real-time.
-      - .:/hms
+      - .:/pms
     # Handles the command used to run the project in the Docker container.
     command: sh -c "python manage.py runserver 0.0.0.0:8000" 
     ```
