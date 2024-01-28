@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
+from .customs import Departments
 
 # model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
@@ -121,15 +122,15 @@ class EmploymentInformation(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name='department_head_positions',
-        limit_choices_to={'leading_groups__isnull': False},
+        limit_choices_to={'department_leader__isnull': False},
         help_text="Choose Department Head"
     )
 
 
 # model to customize the group model
 class CustomGroup(models.Model):
-    group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)
-    leader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='leading_groups')
+    group = models.OneToOneField(Departments, on_delete=models.CASCADE, primary_key=True)
+    leader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='department_leader')
 
     def __str__(self):
         return self.group.name

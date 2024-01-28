@@ -11,6 +11,7 @@ from .forms import (
     CustomUserCreationForm, 
     CustomUserChangeForm,
     )
+from .customs import Departments
 
 # adding profile form to admin
 class BaseUserProfileInline(admin.StackedInline):
@@ -70,8 +71,9 @@ class UserAdmin(BaseUserAdmin):
 class CustomGroupInline(admin.StackedInline):
     model = CustomGroup
     can_delete = False
-    verbose_name = 'Group Leader'
-    verbose_name_plural = 'Group Leaders'
+    verbose_name = 'Department Head'
+    verbose_name_plural = 'Department Heads'
+    
 
 class CustomGroupAdmin(GroupAdmin):
     inlines = (CustomGroupInline,)
@@ -81,7 +83,7 @@ admin.site.register(User, UserAdmin)
 
 #unregister default and register custom group
 admin.site.unregister(Group)
-admin.site.register(Group, CustomGroupAdmin)
+admin.site.register(Departments, CustomGroupAdmin)
 
 admin.site.site_header = 'HM HOTEL'
 admin.site.site_title = 'HM Hotel Administration'
