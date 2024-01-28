@@ -80,6 +80,52 @@ class BaseUserProfile(models.Model):
     def __str__(self):
         return f"{self.surname} {self.given_name}"
 
+# User employment information
+class EmploymentInformation(models.Model):
+    DEPARTMENT = [
+        ('AD', 'administration'),
+        ('bk', 'booking'),
+        ('act', 'accounts'),
+        ('ctn', 'canteen'),
+        ('cng', 'cleaning'),
+    ]
+    EMPLOY = [
+        ('ft', 'full-time'),
+        ('pt', 'part-time'),
+        ('ct', 'contract'),
+    ]
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='employment_info',
+        )
+    employment_status = models.CharField(
+        max_length=15,
+        choices=EMPLOY,
+        null=False, 
+        blank=False,
+        default='-----',
+        help_text="Choose Status"
+        )
+    department = models.CharField(
+        max_length=15,
+        choices=DEPARTMENT,
+        null=False, 
+        blank=False,
+        default='-----',
+        help_text="Choose Department"
+        )
+    employment_start_date = models.DateField()
+    head_of_department = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='department_head_positions',
+        limit_choices_to={'leading_groups__isnull': False},
+        help_text="Choose Department Head"
+    )
+
+
 # model to customize the group model
 class CustomGroup(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)

@@ -5,13 +5,14 @@ from .models import (
     User, 
     BaseUserProfile,
     CustomGroup,
+    EmploymentInformation,
     )
 from .forms import (
     CustomUserCreationForm, 
     CustomUserChangeForm,
     )
 
-
+# adding profile form to admin
 class BaseUserProfileInline(admin.StackedInline):
     model = BaseUserProfile
     can_delete = False
@@ -24,8 +25,25 @@ class BaseUserProfileInline(admin.StackedInline):
               )
     classes = ('collapse',)
 
+# adding employment form to admin
+class EmploymentInformationInline(admin.StackedInline):
+    model = EmploymentInformation
+    fk_name = 'user'
+    can_delete = False
+    verbose_name = 'Employment Information'
+    verbose_name_plural = 'Employment Information'
+    fields = (
+        'head_of_department',
+        'employment_status',
+        'employment_start_date',
+    )
+    classes = ('collapse',)
+
 class UserAdmin(BaseUserAdmin):
-    inlines = (BaseUserProfileInline,)
+    inlines = (
+        BaseUserProfileInline,
+        EmploymentInformationInline,
+        )
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = User
