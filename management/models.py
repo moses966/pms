@@ -1,11 +1,11 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
 
-
+# model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
 
     Positions = [
@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 User = get_user_model()
 
+# Personal Information model
 class BaseUserProfile(models.Model):
     gender_s = [
         ('male', 'Male'),
@@ -79,4 +80,10 @@ class BaseUserProfile(models.Model):
     def __str__(self):
         return f"{self.surname} {self.given_name}"
 
+# model to customize the group model
+class CustomGroup(models.Model):
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)
+    leader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='leading_groups')
 
+    def __str__(self):
+        return self.group.name

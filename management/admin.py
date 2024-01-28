@@ -1,8 +1,15 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, BaseUserProfile
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
+from .models import (
+    User, 
+    BaseUserProfile,
+    CustomGroup,
+    )
+from .forms import (
+    CustomUserCreationForm, 
+    CustomUserChangeForm,
+    )
 
 
 class BaseUserProfileInline(admin.StackedInline):
@@ -40,7 +47,23 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ("email",)
     ordering = ("email",)
 
+
+# customized group
+class CustomGroupInline(admin.StackedInline):
+    model = CustomGroup
+    can_delete = False
+    verbose_name = 'Group Leader'
+    verbose_name_plural = 'Group Leaders'
+
+class CustomGroupAdmin(GroupAdmin):
+    inlines = (CustomGroupInline,)
+
+#register custom User in the admin
 admin.site.register(User, UserAdmin)
+
+#unregister default and register custom group
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
 
 admin.site.site_header = 'HM HOTEL'
 admin.site.site_title = 'HM Hotel Administration'
