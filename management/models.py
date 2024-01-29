@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
 from .customs import Departments, Equipment
-from .custom_validators import validate_nin
+from .custom_validators import validate_nin, validate_contact
 
 # model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
@@ -23,7 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         _("email address"),
         unique=True,
         validators=[EmailValidator(message="Invalid email address")],
-        )
+    )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -34,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=False,
         blank=False,
         help_text="Choose User Position in the hotel management",
-        )
+    )
    
     
 
@@ -59,7 +59,7 @@ class BaseUserProfile(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='profile',
-        )
+    )
     surname = models.CharField(max_length=17)
     given_name = models.CharField(max_length=15)
     gender = models.CharField(
@@ -69,15 +69,19 @@ class BaseUserProfile(models.Model):
         blank=False,
         default='-----',
         help_text="Choose Gender"
-        )
+    )
 
-    contact = models.CharField(max_length=15)
+    contact = models.CharField(
+        max_length=10,
+        validators=[validate_contact],
+    )
     location = models.TextField(max_length=120)
     next_of_kin = models.CharField(max_length=30)
     emergency_contact = models.CharField(
-        max_length=15,
+        max_length=10,
+        validators=[validate_contact],
         help_text='Contact to your next of kin',
-        )
+    )
     date_of_birth = models.DateField()
     photo = models.ImageField(upload_to='images/', null=True, blank=True)
     place_of_birth = models.CharField(max_length=20)
@@ -112,7 +116,7 @@ class EmploymentInformation(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='employment_info',
-        )
+    )
     employment_status = models.CharField(
         max_length=15,
         choices=EMPLOY,
@@ -120,7 +124,7 @@ class EmploymentInformation(models.Model):
         blank=False,
         default='-----',
         help_text="Choose Status"
-        )
+    )
     department = models.CharField(
         max_length=15,
         choices=DEPARTMENT,
@@ -128,7 +132,7 @@ class EmploymentInformation(models.Model):
         blank=False,
         default='-----',
         help_text="Choose Department"
-        )
+    )
     employment_start_date = models.DateField()
     head_of_department = models.ForeignKey(
         User,
@@ -146,33 +150,33 @@ class Miscellaneous(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='miscella',
-        )
+    )
     salary = models.FloatField(
         max_length=17,
         null=True,
         blank=True,
         help_text='Input only the UGX amount e.g: 50000',
-        )
+    )
     payment = models.CharField(
         max_length=15,
         null=True,
         blank=True,
         help_text='If applicable, provide bank account/airtel pay code/MOMO pay code.',
         verbose_name='Payment Details'
-        )
+    )
     userid = models.CharField(
         max_length=2,
         null=False, 
         blank=False,
         help_text="Enter user ID number(01-99).",
         verbose_name='Personal ID',
-        )
+    )
 
     ackno = models.BooleanField(
         default=False,
         verbose_name='Acknowledgement of company rules and procedures.',
         help_text='Ask user if they consent to company policies and procedures.'
-        )
+    )
 
 # class to allocate equipments
 class EquipmentAllocation(models.Model):
@@ -180,12 +184,12 @@ class EquipmentAllocation(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='equipment_allocations',
-        )
+    )
     equipment = models.ForeignKey(
         Equipment,
         on_delete=models.CASCADE,
         related_name='allocations',
-        )
+    )
     quantity_allocated = models.IntegerField(default=0)
 
     def __str__(self):
@@ -197,13 +201,13 @@ class CustomGroup(models.Model):
         Departments,
         on_delete=models.CASCADE,
         primary_key=True,
-        )
+    )
     leader = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         related_name='department_leader',
-        )
+    )
 
     def __str__(self):
         return self.group.name

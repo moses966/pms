@@ -21,3 +21,17 @@ def validate_nin(nin):
     # No further checks for the rest of the characters
 
     return "Valid NIN."
+
+def validate_contact(value):
+    """
+    Validator for ensuring that a contact starts with 0,
+    has a total of ten characters, and all characters are digits (0-9).
+    """
+    if not value.startswith('0'):
+        raise ValidationError('Contact must start with 0.')
+    
+    if len(value) != 10:
+        raise ValidationError('Contact must have a total of ten characters.')
+    
+    if not value.isdigit():
+        raise ValidationError('Contact must contain only digits (0-9).')

@@ -10,8 +10,12 @@ class Departments(Group):
 
 # model for handling 
 class Equipment(models.Model):
-    name = models.CharField(max_length=40)
-    total_number = models.IntegerField(default=0)
+    name = models.CharField(
+        max_length=40,
+    )
+    total_number = models.IntegerField(
+        default=0,
+    )
 
     def __str__(self):
         return self.name

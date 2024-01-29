@@ -9,11 +9,11 @@ from .models import (
     EmploymentInformation,
     Miscellaneous,
     EquipmentAllocation,
-    )
+)
 from .forms import (
     CustomUserCreationForm, 
     CustomUserChangeForm,
-    )
+)
 from .customs import Departments
 
 # adding profile form to admin
@@ -26,7 +26,7 @@ class BaseUserProfileInline(admin.StackedInline):
               'gender', 'contact', 'next_of_kin',
               'emergency_contact',
               'date_of_birth', 'place_of_birth', 'nin', 'age', 'location', 'photo',
-              )
+    )
     classes = ('collapse',)
 
 # adding employment form to admin
@@ -72,7 +72,7 @@ class UserAdmin(BaseUserAdmin):
         EmploymentInformationInline,
         MiscellaneousInline,
         EquipmentAllocationInline,
-        )
+    )
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = User
@@ -112,7 +112,7 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'total_number',
-        ]
+    ]
 
 #register custom User in the admin
 admin.site.register(User, UserAdmin)
