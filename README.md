@@ -1,4 +1,4 @@
-**How to customize django admin groups by subclassing the built-in Group model.**
+**How to customize django admin groups by subclassing the built-in Group model.**  
 We are going to customize the django admin such that, we can rename the Groups model and replace it  
 with our own custom model.  
 1. First, create a file and name it `customs.py`
