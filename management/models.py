@@ -1,11 +1,11 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.core.validators import EmailValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
-from .customs import Departments
+from .customs import Departments, Equipment
 from .custom_validators import validate_nin
 
 # model for creation of user
@@ -174,6 +174,22 @@ class Miscellaneous(models.Model):
         help_text='Ask user if they consent to company policies and procedures.'
         )
 
+# class to allocate equipments
+class EquipmentAllocation(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='equipment_allocations',
+        )
+    equipment = models.ForeignKey(
+        Equipment,
+        on_delete=models.CASCADE,
+        related_name='allocations',
+        )
+    quantity_allocated = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.quantity_allocated} {self.equipment.name} allocated to {self.user.given_name}"
 
 # model to customize the group model
 class CustomGroup(models.Model):
