@@ -22,7 +22,7 @@ class BaseUserProfileInline(admin.StackedInline):
     fields = ('surname', 'given_name',
               'gender', 'contact', 'next_of_kin',
               'emergency_contact',
-              'date_of_birth', 'place_of_birth', 'nin', 'age', 'location',
+              'date_of_birth', 'place_of_birth', 'nin', 'age', 'location', 'photo',
               )
     classes = ('collapse',)
 
@@ -74,7 +74,7 @@ class CustomGroupInline(admin.StackedInline):
     verbose_name = 'Department Head'
     verbose_name_plural = 'Department Heads'
     
-
+# add the CustomGroup wiget to the admin interface
 class CustomGroupAdmin(GroupAdmin):
     inlines = (CustomGroupInline,)
 

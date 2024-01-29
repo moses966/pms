@@ -1,10 +1,12 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models
+from django.core.validators import EmailValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
 from .customs import Departments
+from .custom_validators import validate_nin
 
 # model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
@@ -17,13 +19,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('rom', 'Room attendant'),
     ]
     
-    email = models.EmailField(_("email address"), unique=True)
+    email = models.EmailField(
+        _("email address"),
+        unique=True,
+        validators=[EmailValidator(message="Invalid email address")],
+        )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
     position = models.CharField(
-        max_length=30, choices=Positions, default="-----", 
-        null=True, blank=True, help_text="Choose User Position in the hotel management")
+        max_length=30,
+        choices=Positions,
+        default="-----",
+        null=False,
+        blank=False,
+        help_text="Choose User Position in the hotel management",
+        )
    
     
 
@@ -54,8 +65,8 @@ class BaseUserProfile(models.Model):
     gender = models.CharField(
         max_length=10,
         choices=gender_s,
-        null=True, 
-        blank=True,
+        null=False, 
+        blank=False,
         default='-----',
         help_text="Choose Gender"
         )
@@ -68,14 +79,16 @@ class BaseUserProfile(models.Model):
         help_text='Contact to your next of kin',
         )
     date_of_birth = models.DateField()
+    photo = models.ImageField(upload_to='images/', null=True, blank=True)
     place_of_birth = models.CharField(max_length=20)
     age = models.IntegerField()
     nin = models.CharField(
         max_length=24,
         verbose_name='NIN',
         help_text='National Identification number',
-        null=True,
-        blank=True,
+        validators=[validate_nin],
+        null=False,
+        blank=False,
     )
 
     def __str__(self):
@@ -121,6 +134,7 @@ class EmploymentInformation(models.Model):
         User,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name='department_head_positions',
         limit_choices_to={'department_leader__isnull': False},
         help_text="Choose Department Head"
@@ -129,8 +143,17 @@ class EmploymentInformation(models.Model):
 
 # model to customize the group model
 class CustomGroup(models.Model):
-    group = models.OneToOneField(Departments, on_delete=models.CASCADE, primary_key=True)
-    leader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='department_leader')
+    group = models.OneToOneField(
+        Departments,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        )
+    leader = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='department_leader',
+        )
 
     def __str__(self):
         return self.group.name
