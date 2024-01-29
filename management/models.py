@@ -143,6 +143,8 @@ class EmploymentInformation(models.Model):
         limit_choices_to={'department_leader__isnull': False},
         help_text="Choose Department Head"
     )
+    def __str__(self):
+        return f"{self.employment_status} employment in {self.department} department"
 
 # miscellaneous model
 class Miscellaneous(models.Model):
@@ -177,6 +179,8 @@ class Miscellaneous(models.Model):
         verbose_name='Acknowledgement of company rules and procedures.',
         help_text='Ask user if they consent to company policies and procedures.'
     )
+    def __str__(self):
+        return f"Miscellaneous info for {self.user.email}"
 
 # class to allocate equipments
 class EquipmentAllocation(models.Model):
@@ -193,7 +197,7 @@ class EquipmentAllocation(models.Model):
     quantity_allocated = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.quantity_allocated} {self.equipment.name} allocated to {self.user.given_name}"
+        return f"{self.quantity_allocated} {self.equipment.name} allocated to {self.user.email}"
 
 # model to customize the group model
 class CustomGroup(models.Model):
