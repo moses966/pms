@@ -140,6 +140,40 @@ class EmploymentInformation(models.Model):
         help_text="Choose Department Head"
     )
 
+# miscellaneous model
+class Miscellaneous(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='miscella',
+        )
+    salary = models.FloatField(
+        max_length=17,
+        null=True,
+        blank=True,
+        help_text='Input only the UGX amount e.g: 50000',
+        )
+    payment = models.CharField(
+        max_length=15,
+        null=True,
+        blank=True,
+        help_text='If applicable, provide bank account/airtel pay code/MOMO pay code.',
+        verbose_name='Payment Details'
+        )
+    userid = models.CharField(
+        max_length=2,
+        null=False, 
+        blank=False,
+        help_text="Enter user ID number(01-99).",
+        verbose_name='Personal ID',
+        )
+
+    ackno = models.BooleanField(
+        default=False,
+        verbose_name='Acknowledgement of company rules and procedures.',
+        help_text='Ask user if they consent to company policies and procedures.'
+        )
+
 
 # model to customize the group model
 class CustomGroup(models.Model):

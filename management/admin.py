@@ -6,6 +6,7 @@ from .models import (
     BaseUserProfile,
     CustomGroup,
     EmploymentInformation,
+    Miscellaneous,
     )
 from .forms import (
     CustomUserCreationForm, 
@@ -40,10 +41,23 @@ class EmploymentInformationInline(admin.StackedInline):
     )
     classes = ('collapse',)
 
+
+# adding profile form to admin
+class MiscellaneousInline(admin.StackedInline):
+    model = Miscellaneous
+    can_delete = False
+    verbose_name = 'Other Requirements'
+    verbose_name_plural = 'Other Requirements'
+    fields = ('userid', 'payment',
+              'salary', 'ackno',
+              )
+    classes = ('collapse',)
+
 class UserAdmin(BaseUserAdmin):
     inlines = (
         BaseUserProfileInline,
         EmploymentInformationInline,
+        MiscellaneousInline,
         )
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
