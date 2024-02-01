@@ -1,5 +1,45 @@
 from django.db import models
+from management.custom_validators import validate_contact, validate_nin
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
+
+# Guest model
+class Guest(models.Model):
+    full_name = models.CharField(
+        max_length=25,
+    )
+    GENDER = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+    ]
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER,
+        default='male',
+    )
+    email_adress = models.EmailField(
+        null=True,
+        blank=True,
+    )
+    phone_number = models.CharField(
+        max_length = 10,
+        validators=[validate_contact],
+    )
+    nin = models.CharField(
+        max_length=14,
+        validators=[validate_nin],
+        blank=True,
+        null=True,
+    )
+    address = models.CharField(
+        max_length=60,
+        null=True,
+        blank=True,
+    )
+    def __str__(self):
+        return self.full_name
+    
 # Room category class
 class Category(models.Model):
     name = models.CharField(
@@ -70,3 +110,102 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.name} - Room No. {self.room_number}"
+
+# Booking model
+class Booking(models.Model):
+    guest_profile = models.OneToOneField(
+        Guest,
+        on_delete=models.CASCADE,
+        related_name='guest_profile',
+    )
+    children = models.BooleanField(
+        default=False,
+        verbose_name='Children.',
+        help_text='Tick if there are children among guests.'
+    )
+    number_of_guests = models.PositiveBigIntegerField()
+    room_or_rooms = models.ManyToManyField(
+        Room,
+        related_name='bookings',
+    )
+    check_in_date = models.DateTimeField(default=timezone.now)
+    check_out_date = models.DateTimeField(default=timezone.now)
+    booking_date = models.DateTimeField(default=timezone.now)
+    STATUS_CHOICES = (
+        ('confirmed', 'Confirmed'),
+        ('pending', 'Pending'),
+        ('cancelled', 'Cancelled'),
+    )
+
+    PAYMENT_CHOICES = (
+        ('paid', 'Paid'),
+        ('pending', 'Pending'),
+        ('due', 'Due'),
+    )
+    PAYMENT_METHOD = (
+        ('cash', 'Cash'),
+        ('mtn', 'Mtn MOMO'),
+        ('airtel', 'Airtel Money'),
+        ('bank', 'Bank transfer'),
+    )
+    BOOKING_SOURCE = (
+        ('online', 'Online'),
+        ('walk_in', 'Walk-in'),
+        ('phone', 'Phone Reservation'),
+    )
+    booking_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+    )
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_CHOICES,
+        default='pending',
+    )
+    payment_method = models.CharField(
+        max_length=15,
+        choices=PAYMENT_METHOD,
+        default='cash'
+    )
+    booking_source = models.CharField(
+        null=True,
+        blank=True,
+        max_length=15,
+        choices=BOOKING_SOURCE,
+        default='walk_in',
+    )
+    special_requests = models.TextField(blank=True, null=True)
+    special_instructions = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Special considerations or instructions to hotel staff.'
+    )
+    RATE_PLAN_CHOICES = [
+        ('standard', 'Standard Rate'),
+        ('promotional', 'Promotional Rate'),
+        ('corporate', 'Corporate Rate'),
+    ]
+    standard_rate = models.BooleanField('Standard Rate', default=False)
+    promotional_rate = models.BooleanField('Promotional Rate', default=False)
+    corporate_rate = models.BooleanField('Corporate Rate', default=False)
+
+    def clean(self):
+        # Ensure only one rate plan is selected
+        rate_plan_count = sum([self.standard_rate, self.promotional_rate, self.corporate_rate])
+        if rate_plan_count != 1:
+            raise ValidationError("Select exactly one rate plan.")
+    
+    booking_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Generate booking number based on guest's primary key and current timestamp
+            guest_pk = self.guest_profile.pk
+            timestamp = timezone.now().strftime('%Y%m%d%H%M%S')
+            self.booking_number = f'BK-{guest_pk}-{timestamp}'
+        super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
+        return f"Room: {room_numbers} - {self.guest_profile} - {self.booking_date}"
