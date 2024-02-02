@@ -123,7 +123,8 @@ class Booking(models.Model):
         verbose_name='Children.',
         help_text='Tick if there are children among guests.'
     )
-    number_of_guests = models.PositiveBigIntegerField()
+    number_of_children = models.PositiveIntegerField(default=0)
+    number_of_adults = models.PositiveIntegerField(default=1)
     room_or_rooms = models.ManyToManyField(
         Room,
         related_name='bookings',
@@ -209,3 +210,29 @@ class Booking(models.Model):
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
         return f"Room: {room_numbers} - {self.guest_profile} - {self.booking_date}"
+    
+# Reservation model
+class Reservation(models.Model):
+    guest_name = models.CharField(max_length=100)
+    guest_email = models.EmailField(null=True, blank=True)
+    guest_contact = models.CharField(max_length=15)
+    check_in_date = models.DateField()
+    check_out_date = models.DateField()
+    room_or_rooms = models.ManyToManyField(
+        Room,
+        related_name='reservations',
+    )
+    number_of_adults = models.PositiveIntegerField(default=1)
+    number_of_children = models.PositiveIntegerField(default=0)
+    special_requests = models.TextField(blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    deposit = models.BooleanField(
+        default=False,
+        verbose_name='Deposit Paid',
+        help_text='Tick if there is any deposit payment'
+    )
+    deposit_amount = models.FloatField(default=0)
+
+    def __str__(self):
+        return f"Reservation for {self.guest_name} - Room: {self.room_number}"
