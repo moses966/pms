@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
+from datetime import date
 from .models import(
     Departments,
     Equipment,
@@ -13,9 +15,11 @@ from .models import(
 
 class UsersManagersTests(TestCase):
 
+    def setUp(self):
+        self.User = get_user_model()
+
     def test_create_user(self):
-        User = get_user_model()
-        user = User.objects.create_user(email="normal@user.com", password="foo")
+        user = self.User.objects.create_user(email="normal@user.com", password="foo")
         self.assertEqual(user.email, "normal@user.com")
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
@@ -27,15 +31,14 @@ class UsersManagersTests(TestCase):
         except AttributeError:
             pass
         with self.assertRaises(TypeError):
-            User.objects.create_user()
+            self.User.objects.create_user()
         with self.assertRaises(TypeError):
-            User.objects.create_user(email="")
+            self.User.objects.create_user(email="")
         with self.assertRaises(ValueError):
-            User.objects.create_user(email="", password="foo")
+            self.User.objects.create_user(email="", password="foo")
 
     def test_create_superuser(self):
-        User = get_user_model()
-        admin_user = User.objects.create_superuser(email="super@user.com", password="foo")
+        admin_user = self.User.objects.create_superuser(email="super@user.com", password="foo")
         self.assertEqual(admin_user.email, "super@user.com")
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
@@ -47,8 +50,13 @@ class UsersManagersTests(TestCase):
         except AttributeError:
             pass
         with self.assertRaises(ValueError):
-            User.objects.create_superuser(
+            self.User.objects.create_superuser(
                 email="super@user.com", password="foo", is_superuser=False)
+
+    def test_position_default(self):
+        # Test default position value
+        user = self.User.objects.create_user(email="test@user.com", password="foo")
+        self.assertEqual(user.position, 'man')
 
 
 # Define a test class for Departments model
@@ -95,14 +103,10 @@ class EquipmentModelTest(TestCase):
         # Test if the equipment can be represented as a string
         self.assertEqual(repr(self.equipment), '<Equipment: Test Equipment>')
 
-# Define a test class for BaseUserProfile model
-class BaseUserProfileModelTest(TestCase):
-    # Define a setup method to initialize test data
+class BaseUserProfileModelTestCase(TestCase):
     def setUp(self):
-        # Create a user object for testing
         self.user = User.objects.create(email='test@example.com')
-        # Create a base user profile object for testing
-        self.profile = BaseUserProfile.objects.create(
+        self.base_user_profile = BaseUserProfile.objects.create(
             user=self.user,
             surname='Doe',
             given_name='John',
@@ -111,45 +115,48 @@ class BaseUserProfileModelTest(TestCase):
             location='Test Location',
             next_of_kin='Jane Doe',
             emergency_contact='9876543210',
-            date_of_birth='2000-01-01',
+            date_of_birth=date(1990, 1, 1),
             place_of_birth='Test Place',
-            age=24,
-            nin='ABC123456789XYZ',
-            photo='test.jpg'
+            age=30,
+            nin='ABC123456789',
         )
 
-    # Define test methods to test model functionality
     def test_base_user_profile_creation(self):
-        # Test if the base user profile object was created successfully
-        self.assertTrue(isinstance(self.profile, BaseUserProfile))
-        
-    def test_base_user_profile_representation(self):
-        # Test if the base user profile can be represented as a string
-        self.assertEqual(str(self.profile), 'Doe John')
+        self.assertTrue(isinstance(self.base_user_profile, BaseUserProfile))
+        self.assertEqual(self.base_user_profile.__str__(), 'Doe John')
+        self.assertEqual(self.base_user_profile.surname, 'Doe')
+        self.assertEqual(self.base_user_profile.given_name, 'John')
+        self.assertEqual(self.base_user_profile.gender, 'male')
+        self.assertEqual(self.base_user_profile.contact, '0123456789')
+        self.assertEqual(self.base_user_profile.location, 'Test Location')
+        self.assertEqual(self.base_user_profile.next_of_kin, 'Jane Doe')
+        self.assertEqual(self.base_user_profile.emergency_contact, '9876543210')
+        self.assertEqual(self.base_user_profile.date_of_birth, date(1990, 1, 1))
+        self.assertEqual(self.base_user_profile.place_of_birth, 'Test Place')
+        self.assertEqual(self.base_user_profile.age, 30)
+        self.assertEqual(self.base_user_profile.nin, 'ABC123456789')
 
 # Define a test class for EmploymentInformation model
-class EmploymentInformationModelTest(TestCase):
-    # Define a setup method to initialize test data
+class EmploymentInformationModelTestCase(TestCase):
     def setUp(self):
-        # Create a user object for testing
         self.user = User.objects.create(email='test@example.com')
-        # Create an employment information object for testing
+        self.department = Departments.objects.create(name='Test Department')
         self.employment_info = EmploymentInformation.objects.create(
             user=self.user,
-            employment_status='full-time',
-            department='administration',
-            employment_start_date='2022-01-01'
+            employment_status='ft',
+            department=self.department,
+            employment_start_date=date(2023, 1, 1),
+            head_of_department=self.user,
         )
 
-    # Define test methods to test model functionality
     def test_employment_information_creation(self):
-        # Test if the employment information object was created successfully
         self.assertTrue(isinstance(self.employment_info, EmploymentInformation))
-        
-    def test_employment_information_representation(self):
-        # Test if the employment information can be represented as a string
-        expected_representation = "full-time employment in administration department"
-        self.assertEqual(str(self.employment_info), expected_representation)
+        self.assertEqual(self.employment_info.__str__(), 'ft employment in Test Department department')
+        self.assertEqual(self.employment_info.user, self.user)
+        self.assertEqual(self.employment_info.employment_status, 'ft')
+        self.assertEqual(self.employment_info.department, self.department)
+        self.assertEqual(self.employment_info.employment_start_date, date(2023, 1, 1))
+        self.assertEqual(self.employment_info.head_of_department, self.user)
 
 # Define a test class for Miscellaneous model
 class MiscellaneousModelTest(TestCase):
@@ -206,6 +213,7 @@ class EquipmentAllocationModelTest(TestCase):
 class ModelRelationshipTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(email='test@example.com')
+        self.department = Departments.objects.create(name='Test Department')
 
     def test_user_profile_relationship(self):
         profile = BaseUserProfile.objects.create(
@@ -227,11 +235,10 @@ class ModelRelationshipTest(TestCase):
         employment_info = EmploymentInformation.objects.create(
             user=self.user,
             employment_status='ft',
-            department='AD',
-            employment_start_date='2022-01-01',
+            department=self.department,  # Pass the Departments instance here
+            employment_start_date=timezone.now().date(),  # You can use timezone.now() for the current date
         )
         self.assertEqual(self.user.employment_info, employment_info)
-
     def test_user_miscellaneous_relationship(self):
         misc = Miscellaneous.objects.create(
             user=self.user,

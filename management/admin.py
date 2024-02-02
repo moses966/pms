@@ -37,6 +37,7 @@ class EmploymentInformationInline(admin.StackedInline):
     verbose_name = 'Employment Information'
     verbose_name_plural = 'Employment Information'
     fields = (
+        'department',
         'head_of_department',
         'employment_status',
         'employment_start_date',
@@ -80,14 +81,14 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
         (None, {"fields": ("email", "password",)}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions", "date_joined")}),
     )
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
             "fields": (
                 "email", "password1", "password2", "is_staff",
-                "is_active", "groups", "user_permissions"
+                "is_active", "groups", "user_permissions", "date_joined"
             )}
         ),
     )

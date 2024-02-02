@@ -30,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     position = models.CharField(
         max_length=30,
         choices=Positions,
-        default="-----",
+        default="man",
         null=False,
         blank=False,
         help_text="Choose User Position in the hotel management",
@@ -67,7 +67,7 @@ class BaseUserProfile(models.Model):
         choices=gender_s,
         null=False, 
         blank=False,
-        default='-----',
+        default='male',
         help_text="Choose Gender"
     )
 
@@ -98,53 +98,7 @@ class BaseUserProfile(models.Model):
     def __str__(self):
         return f"{self.surname} {self.given_name}"
 
-# User employment information
-class EmploymentInformation(models.Model):
-    DEPARTMENT = [
-        ('AD', 'administration'),
-        ('bk', 'booking'),
-        ('act', 'accounts'),
-        ('ctn', 'canteen'),
-        ('cng', 'cleaning'),
-    ]
-    EMPLOY = [
-        ('ft', 'full-time'),
-        ('pt', 'part-time'),
-        ('ct', 'contract'),
-    ]
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='employment_info',
-    )
-    employment_status = models.CharField(
-        max_length=15,
-        choices=EMPLOY,
-        null=False, 
-        blank=False,
-        default='-----',
-        help_text="Choose Status"
-    )
-    department = models.CharField(
-        max_length=15,
-        choices=DEPARTMENT,
-        null=False, 
-        blank=False,
-        default='-----',
-        help_text="Choose Department"
-    )
-    employment_start_date = models.DateField()
-    head_of_department = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='department_head_positions',
-        limit_choices_to={'department_leader__isnull': False},
-        help_text="Choose Department Head"
-    )
-    def __str__(self):
-        return f"{self.employment_status} employment in {self.department} department"
+
 
 # miscellaneous model
 class Miscellaneous(models.Model):
@@ -215,3 +169,40 @@ class CustomGroup(models.Model):
 
     def __str__(self):
         return self.group.name
+    
+# User employment information
+class EmploymentInformation(models.Model):
+    EMPLOY = [
+        ('ft', 'full-time'),
+        ('pt', 'part-time'),
+        ('ct', 'contract'),
+    ]
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='employment_info',
+    )
+    employment_status = models.CharField(
+        max_length=15,
+        choices=EMPLOY,
+        null=False, 
+        blank=False,
+        default='ft',
+        help_text="Choose Status"
+    )
+    department = models.ForeignKey(
+        Departments,
+        on_delete=models.CASCADE,
+    )
+    employment_start_date = models.DateField()
+    head_of_department = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='department_head_positions',
+        limit_choices_to={'department_leader__isnull': False},
+        help_text="Choose Department Head"
+    )
+    def __str__(self):
+        return f"{self.employment_status} employment in {self.department} department"
