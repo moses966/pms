@@ -48,7 +48,7 @@ class GuestAdmin(admin.ModelAdmin):
     )
     fields = ('full_name', 'gender', 'email_adress', 'phone_number', 'nin', 'address')
     list_display = ['full_name', 'phone_number', 'room_number',]
-    search_fields = ['full_name', 'room_number']
+    search_fields = ['full_name',]
     def room_number(self, obj):
         # Retrieve the associated booking and then fetch the room number
         booking = obj.guest_profile  #  'guest_profile' is the OneToOneField name

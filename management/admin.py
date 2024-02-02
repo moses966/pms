@@ -114,6 +114,7 @@ class EquipmentAdmin(admin.ModelAdmin):
         'name',
         'total_number',
     ]
+    search_fields = ['name']
 
 #register custom User in the admin
 admin.site.register(User, UserAdmin)
