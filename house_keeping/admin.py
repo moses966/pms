@@ -5,8 +5,7 @@ from .forms import HousekeepingTaskForm
 class MaintenanceRequestInline(admin.StackedInline):
     model = MaintenanceRequest
     extra = 0
-    readonly_fields = ('room',)
-    fields = ('description', 'assigned_to', 'resolved', 'resolved_at')
+    fields = ('description', 'assigned_to', 'in_progress','resolved', 'resolved_at')
 
 @admin.register(HousekeepingTask)
 class HousekeepingTaskAdmin(admin.ModelAdmin):

@@ -28,11 +28,6 @@ class HousekeepingTask(models.Model):
         return f"Task for Room {self.room_number} - {self.get_task_status_display()}"
 
 class MaintenanceRequest(models.Model):
-    room = models.ForeignKey(
-        Room,
-        on_delete=models.CASCADE,
-        related_name='room_maintenance_requests', 
-    )
     description = models.TextField(
         blank=True,
         null=True,
@@ -45,6 +40,7 @@ class MaintenanceRequest(models.Model):
         blank=True,  # Allow the field to be left empty
     )
     resolved = models.BooleanField(default=False)
+    in_progress = models.BooleanField(default=False)
     resolved_at = models.DateTimeField(blank=True, null=True)
     housekeeping_task = models.OneToOneField(
         HousekeepingTask,
@@ -58,7 +54,7 @@ class MaintenanceRequest(models.Model):
         # Update HousekeepingTask status based on MaintenanceRequest status
         if self.resolved:
             self.housekeeping_task.task_status = 'completed'
-        elif self.resolved_at:
+        elif self.in_progress:
             self.housekeeping_task.task_status = 'in_progress'
         else:
             self.housekeeping_task.task_status = 'pending'
@@ -66,7 +62,7 @@ class MaintenanceRequest(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Maintenance Request for Room {self.room.room_number}"
+        return f"Maintenance Request for Room {self.housekeeping_task.room_number}"
 
 class CleanRoom(models.Model):
     room = models.OneToOneField(
