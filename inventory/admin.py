@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Supplier, InventoryItem, PurchaseOrder, PurchaseOrderItem, InventoryTransaction
+from .models import (
+    Supplier, InventoryItem,
+    PurchaseOrder, PurchaseOrderItem,
+    InventoryTransaction,
+)
 
 class PurchaseOrderItemInline(admin.TabularInline):
     model = PurchaseOrderItem

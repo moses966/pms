@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'management',
     'hotel',
     'inventory',
+    'house_keeping',
 ]
 
 MIDDLEWARE = [
