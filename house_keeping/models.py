@@ -1,8 +1,9 @@
 from django.db import models
 from django.utils import timezone
-from management.models import CustomGroup, BaseUserProfile
 from hotel.models import Room
-from django.contrib.auth import get_user_model
+from management.models import BaseUserProfile
+
+
 
 class HousekeepingTask(models.Model):
     STATUS_CHOICES = (
@@ -36,7 +37,7 @@ class MaintenanceRequest(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     assigned_to = models.ManyToManyField(
         BaseUserProfile,
-        related_name='housekeeping_tasks',
+        related_name='maintenance_tasks',
         blank=True,  # Allow the field to be left empty
     )
     resolved = models.BooleanField(default=False)

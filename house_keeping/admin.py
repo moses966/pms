@@ -1,22 +1,24 @@
 from django.contrib import admin
 from .models import HousekeepingTask, MaintenanceRequest, CleanRoom
-from .forms import HousekeepingTaskForm
 
 class MaintenanceRequestInline(admin.StackedInline):
     model = MaintenanceRequest
     extra = 0
-    fields = ('description', 'assigned_to', 'in_progress','resolved', 'resolved_at')
+    fields = ('assigned_to', 'description', 'in_progress', 'resolved', 'resolved_at')
 
 @admin.register(HousekeepingTask)
 class HousekeepingTaskAdmin(admin.ModelAdmin):
-    form = HousekeepingTaskForm
-    list_display = ('room_number', 'task_status', 'created_at', 'updated_at')
+    list_display = ('room_number', 'task_status', 'created_at', 'updated_at', 'person_responsible')
     list_filter = ('task_status',)
     search_fields = ('room_number__room_number',)
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     readonly_fields = ('task_status',)
     inlines = [MaintenanceRequestInline]
+
+    def person_responsible(self, obj):
+        assigned_users = obj.maintenance_request.assigned_to.all()
+        return ", ".join([f"{user.surname} {user.given_name}" for user in assigned_users])
 
 @admin.register(CleanRoom)
 class CleanRoomAdmin(admin.ModelAdmin):
