@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.db.models import Sum
 
 class Supplier(models.Model):
     name = models.CharField(max_length=60)
@@ -18,7 +17,8 @@ class InventoryItem(models.Model):
     quantity_on_hand = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        help_text='Total number of this Item Received.'
+        help_text='Total number of this Item Received.',
+        default=0,
     )
     units = models.CharField(max_length=10, blank=True, null=True, help_text="E.g Kgs, meters, pieces")
     balance = models.DecimalField(
@@ -28,12 +28,7 @@ class InventoryItem(models.Model):
         help_text='Number of Items already found in the store.'
     )
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
-    total_in_store = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        # Update total in store
-        self.total_in_store = self.quantity_on_hand + self.balance
-        super().save(*args, **kwargs)
+    total_in_store = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return self.name
@@ -42,13 +37,7 @@ class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     order_date = models.DateField(default=timezone.now)
     delivery_date = models.DateField()
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    def save(self, *args, **kwargs):
-        # Update total cost in store
-        self.total_cost = 0
-        self.total_cost = self.purchaseorderitem_set.aggregate(total_cost=Sum('sub_total'))['total_cost'] or 0
-        super().save(*args, **kwargs)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return f"Purchase Order #{self.pk} - {self.supplier.name}"
@@ -62,8 +51,6 @@ class PurchaseOrderItem(models.Model):
         max_digits=10,
         decimal_places=2,
         default=0,
-        blank=True,
-        null=True,
     )
     def save(self, *args, **kwargs):
         # Calculate sub total quantity
@@ -100,14 +87,10 @@ class InventoryTransaction(models.Model):
     available_quantity = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        blank=True,
-        null=True
+        default=0,
     )
 
-    def save(self, *args, **kwargs):
-        # Calculate available quantity
-        self.available_quantity = self.inventory_item.total_in_store - self.quantity
-        super().save(*args, **kwargs)
+    
 
     def __str__(self):
         return f"{self.transaction_type} - {self.inventory_item.name}"

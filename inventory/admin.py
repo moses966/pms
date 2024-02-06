@@ -8,7 +8,7 @@ from .models import (
 class PurchaseOrderItemInline(admin.TabularInline):
     model = PurchaseOrderItem
     readonly_fields = ('sub_total',)
-    can_delete = False
+    can_delete = True
     extra = 1
 
 class PurchaseOrderAdmin(admin.ModelAdmin):
