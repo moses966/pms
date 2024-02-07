@@ -64,6 +64,10 @@ class MaintenanceRequest(models.Model):
 
     def __str__(self):
         return f"Maintenance Request for Room {self.housekeeping_task.room_number}"
+    
+    class Meta:
+        verbose_name = 'Maintenance Update'
+        verbose_name_plural = 'Maintenance Updates'
 
 class CleanRoom(models.Model):
     room = models.OneToOneField(
