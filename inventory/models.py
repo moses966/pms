@@ -71,6 +71,9 @@ class PurchaseOrderItem(models.Model):
 
     def __str__(self):
         return f"{self.inventory_item.name} - Qty: {self.quantity_ordered}"
+    class Meta:
+        verbose_name = 'Order Item'
+        verbose_name_plural = 'Order Items'
 
 class InventoryTransaction(models.Model):
     inventory_item = models.ForeignKey(
@@ -96,16 +99,15 @@ class InventoryTransaction(models.Model):
         blank=True,
         null=True
     ) 
-    '''remaining_in_store = models.DecimalField(
+    remaining_in_store = models.DecimalField(
         max_digits=10,
         default=0,
         decimal_places=2,
         editable=False,
-    )'''
+    )
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.update_total_in_store()
-        #self.remaining_in_store = self.inventory_item.total_in_store
 
     def update_total_in_store(self):
         if self.transaction_type in ['consumption', 'transfer']:

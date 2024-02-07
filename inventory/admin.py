@@ -30,7 +30,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
         return obj.total_in_store
 
 class InventoryTransactionAdmin(admin.ModelAdmin):
-    list_display = ('inventory_item', 'transaction_type', 'quantity', 'transaction_date', 'remaining_in_store',)
+    list_display = ('inventory_item', 'transaction_type', 'quantity', 'transaction_date',)
     list_filter = ('inventory_item',)
     search_fields = ['transaction_date', 'transaction_type']
 
