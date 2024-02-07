@@ -17,7 +17,7 @@ class HouseKeepingConfig(AppConfig):
             sender='house_keeping.HouseKeepingTask',
             dispatch_uid='delete_previous_task',
         )
-        post_save.connect(
+        '''post_save.connect(
             signals.add_room_to_clean_rooms,
             sender='house_keeping.MaintenanceRequest',
             dispatch_uid='add_room_to_clean_rooms',
@@ -31,4 +31,4 @@ class HouseKeepingConfig(AppConfig):
             signals.restore_room_to_clean_rooms,
             sender='house_keeping.HouseKeepingTask',
             dispatch_uid='restore_room_to_clean_rooms',
-        )
+        )'''

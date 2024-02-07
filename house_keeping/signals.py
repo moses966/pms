@@ -11,9 +11,9 @@ def delete_previous_task(sender, instance, **kwargs):
         # Delete the previous task before saving the new one
         previous_task.delete()
 
-@receiver(post_save, sender=MaintenanceRequest)
+'''@receiver(post_save, sender=MaintenanceRequest)
 def add_room_to_clean_rooms(sender, instance, created, **kwargs):
-    if instance.resolved:
+    if created and instance.resolved:
         CleanRoom.objects.get_or_create(room=instance.housekeeping_task.room_number)
 
 @receiver(post_save, sender=HousekeepingTask)
@@ -22,4 +22,4 @@ def remove_room_from_clean_rooms(sender, instance, created, **kwargs):
 
 @receiver(pre_delete, sender=HousekeepingTask)
 def restore_room_to_clean_rooms(sender, instance, **kwargs):
-    CleanRoom.objects.get_or_create(room=instance.room_number)
+    CleanRoom.objects.get_or_create(room=instance.room_number)'''

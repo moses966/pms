@@ -55,12 +55,20 @@ class MaintenanceRequest(models.Model):
         # Update HousekeepingTask status based on MaintenanceRequest status
         if self.resolved:
             self.housekeeping_task.task_status = 'completed'
+            # Add the room to CleanRoom if resolved
+            CleanRoom.objects.get_or_create(room=self.housekeeping_task.room_number)
         elif self.in_progress:
             self.housekeeping_task.task_status = 'in_progress'
         else:
             self.housekeeping_task.task_status = 'pending'
         self.housekeeping_task.save()  # Save the updated status
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Remove the room from CleanRoom if deleted
+        if self.resolved:
+            CleanRoom.objects.filter(room=self.housekeeping_task.room_number).delete()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Maintenance Request for Room {self.housekeeping_task.room_number}"
@@ -81,5 +89,15 @@ class CleanRoom(models.Model):
         verbose_name = 'Clean Room'
         verbose_name_plural = 'Clean Rooms'
 
+    def save(self, *args, **kwargs):
+        if not self.pk:  # If the instance is newly created
+            # Check if there is an existing CleanRoom instance for the same room
+            existing_clean_room = CleanRoom.objects.filter(room=self.room).first()
+            if existing_clean_room:
+                # Delete the existing CleanRoom instance
+                existing_clean_room.delete()
+            self.last_cleaned = timezone.now()  # Set the last_cleaned to the current time
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"Room {self.room.room_number} - Last cleaned: {self.last_cleaned}"
