@@ -18,22 +18,20 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
     list_filter = ['supplier']
     inlines = [PurchaseOrderItemInline]
 
-class InventoryTransactionInline(admin.StackedInline):
-    model = InventoryTransaction
-    can_delete = False
-    extra = 1
-
 class InventoryItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'balance', 'quantity_on_hand', 'units', 'supplier', 'total_in_store')
+    list_display = ('name', 'balance', 'quantity_on_hand', 'units', 'supplier', 'initial_total_in_store', 'current_total_in_store')
     search_fields = ['name']
     list_filter = ['name']
-    readonly_fields = ('total_in_store',)
-    inlines = [InventoryTransactionInline]
+    fields = [
+        'name', 'description', 'quantity_on_hand', 'units', 'balance', 'supplier'
+    ]
+    readonly_fields = ('current_total_in_store', 'initial_total_in_store',)
+    def current_total_in_store(self, obj):
+        return obj.total_in_store
 
 class InventoryTransactionAdmin(admin.ModelAdmin):
-    list_display = ('inventory_item', 'transaction_type', 'quantity', 'transaction_date', 'available_quantity',)
+    list_display = ('inventory_item', 'transaction_type', 'quantity', 'transaction_date', 'remaining_in_store',)
     list_filter = ('inventory_item',)
-    readonly_fields = ('available_quantity',)
     search_fields = ['transaction_date', 'transaction_type']
 
 class supplierAdmin(admin.ModelAdmin):

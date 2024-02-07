@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 class Supplier(models.Model):
@@ -29,9 +29,21 @@ class InventoryItem(models.Model):
     )
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     total_in_store = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    initial_total_in_store = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        # Calculate initial total in store
+        if not self.pk:  # Only calculate initial total in store if it's a new object
+            self.initial_total_in_store = self.quantity_on_hand + self.balance
+            self.total_in_store = self.initial_total_in_store
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = 'Item'
+        verbose_name_plural = 'items'
 
 class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -83,18 +95,33 @@ class InventoryTransaction(models.Model):
     remarks = models.TextField(
         blank=True,
         null=True
-    )
-    available_quantity = models.DecimalField(
+    ) 
+    '''remaining_in_store = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
         default=0,
-    )
+        decimal_places=2,
+        editable=False,
+    )'''
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_total_in_store()
+        #self.remaining_in_store = self.inventory_item.total_in_store
 
-    
+    def update_total_in_store(self):
+        if self.transaction_type in ['consumption', 'transfer']:
+            self.inventory_item.total_in_store -= self.quantity
+            self.inventory_item.save()
+            
+    def delete(self, *args, **kwargs):
+        # Before deleting, add quantity back to total_in_store
+        if self.transaction_type in ['consumption', 'transfer']:
+            self.inventory_item.total_in_store += self.quantity
+            self.inventory_item.save()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.transaction_type} - {self.inventory_item.name}"
-
+    
     class Meta:
-        verbose_name = "Inventory Transaction"
-        verbose_name_plural = "Inventory Transactions"
+        verbose_name = "Item Transaction"
+        verbose_name_plural = "Item Transactions"

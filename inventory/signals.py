@@ -1,8 +1,11 @@
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete,pre_save
 from django.dispatch import receiver
 from django.db.models import Sum
+from django.db import models
 
-from .models import PurchaseOrderItem
+from .models import (
+    PurchaseOrderItem,
+)
 
 @receiver(post_save, sender=PurchaseOrderItem)
 def update_purchase_order_total_cost(sender, instance, created, **kwargs):
