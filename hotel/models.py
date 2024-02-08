@@ -107,6 +107,10 @@ class Room(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    cleaned = models.CharField(
+        max_length=15,
+        default='Not yet'
+    )
 
     def __str__(self):
         return f"{self.name} - Room No. {self.room_number}"

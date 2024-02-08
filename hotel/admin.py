@@ -22,7 +22,7 @@ class ReservationAdmin(admin.ModelAdmin):
 class RoomAdmin(admin.ModelAdmin):
     fields = ('name','room_number', 'floor_number',
               'capacity', 'price', 'category', 'description', 'status',)
-    list_display = ['name', 'capacity', 'price', 'status']
+    list_display = ['name', 'cleaned', 'capacity', 'price', 'status']
     search_fields = ['name', 'capacity', 'status']
     list_filter = ('status',)
 
