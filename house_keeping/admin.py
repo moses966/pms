@@ -23,4 +23,5 @@ class HousekeepingTaskAdmin(admin.ModelAdmin):
 @admin.register(CleanRoom)
 class CleanRoomAdmin(admin.ModelAdmin):
     list_display = ('room', 'last_cleaned')
-    search_fields = ('room__room_number',)
+    search_fields = ('room__room_number', 'room__floor_number', 'room__status',)
+    # Note: Search by room number, floor number, or status (available, occupied, out of service)

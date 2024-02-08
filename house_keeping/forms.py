@@ -1,4 +1,4 @@
-from django import forms
+'''from django import forms
 from .models import HousekeepingTask, BaseUserProfile
 
 class HousekeepingTaskForm(forms.ModelForm):
@@ -11,4 +11,4 @@ class HousekeepingTaskForm(forms.ModelForm):
 
     class Meta:
         model = HousekeepingTask
-        fields = '__all__'
+        fields = '__all__'''
