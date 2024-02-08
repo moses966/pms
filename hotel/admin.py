@@ -14,9 +14,14 @@ class ReservationAdmin(admin.ModelAdmin):
               'room_or_rooms', 'check_in_date', 'check_out_date', 'special_requests', 'created_at',
               'deposit', 'deposit_amount',
     )
-    list_display = ('guest_name', 'guest_contact', 'guest_email',)
-    search_fields = ('guest_name', 'guest_contact', 'guest_email')
+    list_display = ('guest_name', 'guest_contact', 'check_in_date', 'get_room_numbers',)
+    search_fields = ('guest_name', 'guest_contact', 'guest_email',)
     list_filter = ('guest_name', 'room_or_rooms')
+
+    def get_room_numbers(self, obj):
+        room_numbers = ", ".join(room.room_number for room in obj.room_or_rooms.all())
+        return room_numbers if room_numbers else "No rooms booked"
+    get_room_numbers.short_description = 'Room Number'
 
 # Adding Rooms model to admin
 class RoomAdmin(admin.ModelAdmin):
@@ -47,13 +52,17 @@ class GuestAdmin(admin.ModelAdmin):
         BookingInline,
     )
     fields = ('full_name', 'gender', 'email_adress', 'phone_number', 'nin', 'address')
-    list_display = ['full_name', 'phone_number', 'room_number',]
-    search_fields = ['full_name',]
+    list_display = ['full_name', 'phone_number', 'room_number', 'get_booking_number']
+    search_fields = ['full_name', 'phone_number']
     def room_number(self, obj):
         # Retrieve the associated booking and then fetch the room number
         booking = obj.guest_profile  #  'guest_profile' is the OneToOneField name
         return booking.room_or_rooms.first().room_number if booking.room_or_rooms.exists() else None
     room_number.short_description = 'Room Number'
+
+    def get_booking_number(self, obj):
+        return obj.guest_profile.booking_number if obj.guest_profile else None
+    get_booking_number.short_description = 'Booking Number'
 
 
 

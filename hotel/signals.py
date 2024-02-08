@@ -1,5 +1,4 @@
 from django.dispatch import receiver
-from .models import Room
 from django.utils import timezone
 
 

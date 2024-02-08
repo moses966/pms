@@ -239,4 +239,4 @@ class Reservation(models.Model):
     deposit_amount = models.FloatField(default=0)
 
     def __str__(self):
-        return f"Reservation for {self.guest_name} - Room: {self.room_number}"
+        return f"Reservation for {self.guest_name} - Room: {self.room_or_rooms}"
