@@ -11,12 +11,12 @@ class CategoryAdmin(admin.ModelAdmin):
 # adding Reservation to admin
 class ReservationAdmin(admin.ModelAdmin):
     fields = ('guest_name', 'guest_email', 'guest_contact', 'number_of_children', 'number_of_adults',
-              'room_or_rooms', 'check_in_date', 'check_out_date', 'special_requests', 'created_at',
+              'room_or_rooms', 'check_in_date', 'check_out_date', 'deadline', 'special_requests', 'created_at', 'status',
               'deposit', 'deposit_amount',
     )
-    list_display = ('guest_name', 'guest_contact', 'check_in_date', 'get_room_numbers',)
-    search_fields = ('guest_name', 'guest_contact', 'guest_email',)
-    list_filter = ('guest_name', 'room_or_rooms')
+    list_display = ('guest_name', 'guest_contact', 'check_in_date', 'get_room_numbers', 'status',)
+    search_fields = ('guest_name', 'guest_contact', 'guest_email', 'status',)
+    list_filter = ('guest_name', 'room_or_rooms', 'status',)
 
     def get_room_numbers(self, obj):
         room_numbers = ", ".join(room.room_number for room in obj.room_or_rooms.all())

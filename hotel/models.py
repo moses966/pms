@@ -237,6 +237,21 @@ class Reservation(models.Model):
         help_text='Tick if there is any deposit payment'
     )
     deposit_amount = models.FloatField(default=0)
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled')
+    ]
+    status = models.CharField(
+        max_length=11,
+        choices=STATUS_CHOICES,
+        default='active',
+    )
+    deadline = models.DateTimeField(
+        help_text='Time for invalidation of reservation contract.',
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"Reservation for {self.guest_name} - Room: {self.room_or_rooms}"
