@@ -27,17 +27,3 @@ def setup_periodic_tasks(sender, **kwargs):
     from hotel.tasks import check_reservation_deadline
     # Execute every minute
     sender.add_periodic_task(crontab(minute='*/2'), check_reservation_deadline.s())
-
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    from ryt.tasks import subtract_one_periodically
-
-    # Run the subtract_one_periodically task every minute
-    sender.add_periodic_task(crontab(minute='*'), subtract_one_periodically.s())
-
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    from ryt.tasks import add_one_periodically
-
-    # Run the add_one_periodically task every minute
-    sender.add_periodic_task(add_one_periodically.s())

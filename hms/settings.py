@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'hotel',
     'inventory',
     'house_keeping',
-    'ryt',
     'django_celery_beat',
     'django_celery_results',
 ]
