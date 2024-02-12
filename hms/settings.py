@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 from decouple import Config, RepositoryEnv
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +44,20 @@ INSTALLED_APPS = [
     'hotel',
     'inventory',
     'house_keeping',
+    'ryt',
+    'django_celery_beat',
+    'django_celery_results',
 ]
+
+# save Celery task results in Django's database
+CELERY_RESULT_BACKEND = "django-db"
+# this allows you to schedule items in the Django admin.
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+BROKER_URL = os.environ.get('RABBITMQ_URL', 'amqp://guest:guest@localhost:5672/')
+
+# Set this to True to retain the existing behavior for retrying connections on startup
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

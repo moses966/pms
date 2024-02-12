@@ -9,6 +9,7 @@ click-repl==0.3.0
 cron-descriptor==1.4.3
 Django==4.2
 django-celery-beat==2.5.0
+django-celery-results==2.5.1
 django-timezone-field==6.1.0
 kombu==5.3.5
 pillow==10.2.0
