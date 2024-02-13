@@ -4,42 +4,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 
-# Guest model
-class Guest(models.Model):
-    full_name = models.CharField(
-        max_length=25,
-    )
-    GENDER = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
-    gender = models.CharField(
-        max_length=10,
-        choices=GENDER,
-        default='male',
-    )
-    email_adress = models.EmailField(
-        null=True,
-        blank=True,
-    )
-    phone_number = models.CharField(
-        max_length = 10,
-        validators=[validate_contact],
-    )
-    nin = models.CharField(
-        max_length=14,
-        validators=[validate_nin],
-        blank=True,
-        null=True,
-    )
-    address = models.CharField(
-        max_length=60,
-        null=True,
-        blank=True,
-    )
-    def __str__(self):
-        return self.full_name
-    
 # Room category class
 class Category(models.Model):
     name = models.CharField(
@@ -89,12 +53,12 @@ class Room(models.Model):
         null=True,
         blank=True,
     )
-    price = models.DecimalField(
+    '''price = models.DecimalField(
         null=True,
         blank=True,
         max_digits=10,
         decimal_places=2,
-    )
+    )'''
     STATUS_CHOICES = (
         ('available', 'Available'),
         ('occupied', 'Occupied'),
@@ -111,17 +75,45 @@ class Room(models.Model):
         max_length=15,
         default='Not yet'
     )
+    # Pricing based on rate category
+    standard_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    promotional_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    corporate_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    # Discount percentage (0-100)
+    discount = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        help_text='Discount percentage (0-100)',
+    )
+
+    def save(self, *args, **kwargs):
+        # Automatically calculate promotional price based on standard price and discount
+        if self.standard_price is not None and self.discount is not None:
+            self.promotional_price = self.standard_price - (self.discount / 100 * self.standard_price)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} - Room No. {self.room_number}"
 
 # Booking model
 class Booking(models.Model):
-    guest_profile = models.OneToOneField(
-        Guest,
-        on_delete=models.CASCADE,
-        related_name='guest_profile',
-    )
     children = models.BooleanField(
         default=False,
         verbose_name='Children.',
@@ -141,18 +133,6 @@ class Booking(models.Model):
         ('pending', 'Pending'),
         ('cancelled', 'Cancelled'),
     )
-
-    PAYMENT_CHOICES = (
-        ('paid', 'Paid'),
-        ('pending', 'Pending'),
-        ('due', 'Due'),
-    )
-    PAYMENT_METHOD = (
-        ('cash', 'Cash'),
-        ('mtn', 'Mtn MOMO'),
-        ('airtel', 'Airtel Money'),
-        ('bank', 'Bank transfer'),
-    )
     BOOKING_SOURCE = (
         ('online', 'Online'),
         ('walk_in', 'Walk-in'),
@@ -162,16 +142,6 @@ class Booking(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending',
-    )
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_CHOICES,
-        default='pending',
-    )
-    payment_method = models.CharField(
-        max_length=15,
-        choices=PAYMENT_METHOD,
-        default='cash'
     )
     booking_source = models.CharField(
         null=True,
@@ -186,21 +156,6 @@ class Booking(models.Model):
         null=True,
         help_text='Special considerations or instructions to hotel staff.'
     )
-    RATE_PLAN_CHOICES = [
-        ('standard', 'Standard Rate'),
-        ('promotional', 'Promotional Rate'),
-        ('corporate', 'Corporate Rate'),
-    ]
-    standard_rate = models.BooleanField('Standard Rate', default=False)
-    promotional_rate = models.BooleanField('Promotional Rate', default=False)
-    corporate_rate = models.BooleanField('Corporate Rate', default=False)
-
-    def clean(self):
-        # Ensure only one rate plan is selected
-        rate_plan_count = sum([self.standard_rate, self.promotional_rate, self.corporate_rate])
-        if rate_plan_count != 1:
-            raise ValidationError("Select exactly one rate plan.")
-    
     booking_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -213,7 +168,48 @@ class Booking(models.Model):
 
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
-        return f"Room: {room_numbers} - {self.guest_profile} - {self.booking_date}"
+        return f"Room: {room_numbers}  - {self.booking_date}"
+    
+# Guest model
+class Guest(models.Model):
+    guest_profile = models.OneToOneField(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='guest_profile',
+    )
+    full_name = models.CharField(
+        max_length=25,
+    )
+    GENDER = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+    ]
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER,
+        default='male',
+    )
+    email_adress = models.EmailField(
+        null=True,
+        blank=True,
+    )
+    phone_number = models.CharField(
+        max_length = 10,
+        validators=[validate_contact],
+    )
+    nin = models.CharField(
+        max_length=14,
+        validators=[validate_nin],
+        blank=True,
+        null=True,
+    )
+    address = models.CharField(
+        max_length=60,
+        null=True,
+        blank=True,
+    )
+    def __str__(self):
+        return self.full_name
     
 # Reservation model
 class Reservation(models.Model):
@@ -255,3 +251,96 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"Reservation for {self.guest_name} - Room: {self.room_or_rooms}"
+
+class PaymentInformation(models.Model):
+    '''guest_details = models.ForeignKey(
+        Guest,
+        on_delete=models.CASCADE,
+        related_name='guest_details',
+        blank=True,
+        null=True,
+    )'''
+    booking_info = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='booking_info',
+        blank=True,
+        null=True,
+    )
+    reserve_info = models.ForeignKey(
+        Reservation,
+        on_delete=models.CASCADE,
+        related_name='reserve_info',
+        blank=True,
+        null=True,
+    )
+    PAYMENT_CHOICES = (
+        ('paid', 'Paid'),
+        ('pending', 'Pending'),
+        ('due', 'Due'),
+    )
+    PAYMENT_METHOD = (
+        ('cash', 'Cash'),
+        ('mtn', 'Mtn MOMO'),
+        ('airtel', 'Airtel Money'),
+        ('bank', 'Bank transfer'),
+    )
+    RATE_PLAN_CHOICES = [
+        ('standard', 'Standard Rate'),
+        ('promotional', 'Promotional Rate'),
+        ('corporate', 'Corporate Rate'),
+    ]    
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_CHOICES,
+        default='pending',
+    )
+    payment_method = models.CharField(
+        max_length=15,
+        choices=PAYMENT_METHOD,
+        default='cash'
+    )
+    amount_paid = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text='Currency: Ugx'
+    )
+    #reciept_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    standard_rate = models.BooleanField('Standard Rate', default=False)
+    promotional_rate = models.BooleanField('Promotional Rate', default=False)
+    corporate_rate = models.BooleanField('Corporate Rate', default=False)
+    def clean(self):
+        # Ensure only one rate plan is selected
+        rate_plan_count = sum([self.standard_rate, self.promotional_rate, self.corporate_rate])
+        if rate_plan_count != 1:
+            raise ValidationError("Select exactly one rate plan.")
+    def save(self, *args, **kwargs):
+        if self.reserve_info:
+            rooms = self.reserve_info.room_or_rooms.all()
+        elif self.booking_info:
+            rooms = self.booking_info.room_or_rooms.all()
+        else:
+            rooms = None
+
+        if rooms:
+            room_prices = []
+            for room in rooms:
+                if self.standard_rate:
+                    room_prices.append(room.standard_price)
+                elif self.promotional_rate:
+                    room_prices.append(room.promotional_price)
+                elif self.corporate_rate:
+                    room_prices.append(room.corporate_price)
+                else:
+                    room_prices.append(0)  # Default to 0 if no rate plan selected
+            self.amount_paid = sum(room_prices)
+        else:
+            self.amount_paid = 0  # Handle case when no room is associated
+
+        super().save(*args, **kwargs)
+
+
+
+    def __str__(self):
+        return f" - Amount Paid: {self.amount_paid}"

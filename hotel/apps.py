@@ -22,6 +22,7 @@ class HotelConfig(AppConfig):
             sender='house_keeping.CleanRoom',
             dispatch_uid='update_room_cleaned_on_delete',
         )
+        '''
         post_save.connect(
             signals.mark_reservations_as_cancelled,
             sender='hotel.Booking',
@@ -31,4 +32,4 @@ class HotelConfig(AppConfig):
             signals.update_reservation_status,
             sender='hotel.Reservation',
             dispatch_uid='update_reservation_status',
-        )
+        )'''

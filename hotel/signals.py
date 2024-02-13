@@ -14,18 +14,16 @@ def update_room_cleaned_on_delete(sender, instance, **kwargs):
         instance.room.cleaned = 'Not yet'
         instance.room.save()
 
-def mark_reservations_as_cancelled(sender, instance, **kwargs):
+'''def mark_reservations_as_cancelled(sender, instance, **kwargs):
     if instance.pk:
         for room in instance.room_or_rooms.all():
             reservations = room.reservations.filter(status='active')
             for reservation in reservations:
                 reservation.status = 'cancelled'
-                reservation.save()
-
+                reservation.save()'''
+"""
 def update_reservation_status(sender, instance, **kwargs):
-    """
-    Signal handler to update the reservation status based on the deadline.
-    """
+   
     '''
     if instance.status == 'active':
         if instance.deadline and timezone.now() > instance.deadline:
@@ -38,4 +36,4 @@ def update_reservation_status(sender, instance, **kwargs):
                 if timezone.now() > reservation.deadline:
                     reservation.status = 'cancelled'
                     reservation.save()'''
-                    
+"""         
