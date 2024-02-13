@@ -38,9 +38,11 @@ class ReservationAdmin(admin.ModelAdmin):
               'room_or_rooms', 'check_in_date', 'check_out_date', 'deadline', 'special_requests', 'created_at', 'status',
               'deposit', 'deposit_amount',
     )
-    list_display = ('guest_name', 'guest_contact', 'check_in_date', 'get_room_numbers', 'get_amount_paid', 'status',)
-    search_fields = ('guest_name', 'guest_contact', 'guest_email', 'status',)
-    list_filter = ('guest_name', 'room_or_rooms', 'status',)
+    list_display = ('guest_name', 'guest_contact', 'check_in_date',
+        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number',
+    )
+    search_fields = ('guest_name', 'guest_contact', 'guest_email', 'status', 'reservation_number',)
+    list_filter = ('guest_name', 'room_or_rooms', 'status', 'reservation_number',)
     inlines = [
         PaymentInformationInline,
     ]

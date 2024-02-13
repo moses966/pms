@@ -2,7 +2,7 @@ from django.db import models
 from management.custom_validators import validate_contact, validate_nin
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-
+import uuid
 
 # Room category class
 class Category(models.Model):
@@ -157,14 +157,13 @@ class Booking(models.Model):
         help_text='Special considerations or instructions to hotel staff.'
     )
     booking_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            # Generate booking number based on guest's primary key and current timestamp
-            guest_pk = self.guest_profile.pk
-            timestamp = timezone.now().strftime('%Y%m%d%H%M%S')
-            self.booking_number = f'BK-{guest_pk}-{timestamp}'
-        super().save(*args, **kwargs)
+    booking_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.booking_number:
+            # Generate a unique booking number using the first 4 characters of a UUID
+            self.booking_number = 'BK-' + str(uuid.uuid4())[:4]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
@@ -248,18 +247,19 @@ class Reservation(models.Model):
         blank=True,
         null=True,
     )
+    reservation_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.reservation_number:
+            # Generate a unique reservation number using the first 4 characters of a UUID
+            self.reservation_number = 'RS-' + str(uuid.uuid4())[:4]
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Reservation for {self.guest_name} - Room: {self.room_or_rooms}"
+        room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
+        return f"Room: {room_numbers} - Reservation Number: {self.reservation_number}"
 
 class PaymentInformation(models.Model):
-    '''guest_details = models.ForeignKey(
-        Guest,
-        on_delete=models.CASCADE,
-        related_name='guest_details',
-        blank=True,
-        null=True,
-    )'''
     booking_info = models.ForeignKey(
         Booking,
         on_delete=models.CASCADE,
@@ -310,16 +310,20 @@ class PaymentInformation(models.Model):
     standard_rate = models.BooleanField('Standard Rate', default=False)
     promotional_rate = models.BooleanField('Promotional Rate', default=False)
     corporate_rate = models.BooleanField('Corporate Rate', default=False)
+    receipt_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
     def clean(self):
         # Ensure only one rate plan is selected
         rate_plan_count = sum([self.standard_rate, self.promotional_rate, self.corporate_rate])
         if rate_plan_count != 1:
             raise ValidationError("Select exactly one rate plan.")
     def save(self, *args, **kwargs):
+        instance_type = None  # Default to None
         if self.reserve_info:
             rooms = self.reserve_info.room_or_rooms.all()
+            instance_type = "Reservation"  # Set instance_type to "Reservation"
         elif self.booking_info:
             rooms = self.booking_info.room_or_rooms.all()
+            instance_type = "Booking"  # Set instance_type to "Booking"
         else:
             rooms = None
 
@@ -336,11 +340,18 @@ class PaymentInformation(models.Model):
                     room_prices.append(0)  # Default to 0 if no rate plan selected
             self.amount_paid = sum(room_prices)
         else:
-            self.amount_paid = 0  # Handle case when no room is associated
+           self.amount_paid = 0  # Handle case when no room is associated
+
+        # assigning a receipt number
+        if not self.receipt_number:
+            if instance_type == "Booking":
+                # Generate a receipt number using the booking number
+                self.receipt_number = self.booking_info.booking_number if self.booking_info else None
+            elif instance_type == "Reservation":
+                # Generate a receipt number using the reservation number
+                self.receipt_number = self.reserve_info.reservation_number if self.reserve_info else None
 
         super().save(*args, **kwargs)
 
-
-
     def __str__(self):
-        return f" - Amount Paid: {self.amount_paid}"
+        return f"Receipt number: {self.receipt_number} - Amount Paid: {self.amount_paid}"
