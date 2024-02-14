@@ -53,12 +53,6 @@ class Room(models.Model):
         null=True,
         blank=True,
     )
-    '''price = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=10,
-        decimal_places=2,
-    )'''
     STATUS_CHOICES = (
         ('available', 'Available'),
         ('occupied', 'Occupied'),
@@ -231,7 +225,8 @@ class Reservation(models.Model):
         verbose_name='Deposit Paid',
         help_text='Tick if there is any deposit payment'
     )
-    deposit_amount = models.FloatField(default=0)
+    deposit_amount = models.DecimalField(max_digits=10, default=0, decimal_places=2)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     STATUS_CHOICES = [
         ('active', 'Active'),
         ('confirmed', 'Confirmed'),
@@ -254,6 +249,12 @@ class Reservation(models.Model):
             # Generate a unique reservation number using the first 4 characters of a UUID
             self.reservation_number = 'RS-' + str(uuid.uuid4())[:4]
         super().save(*args, **kwargs)
+
+    # update reservation status if PaymentInformation Instance is saved
+    def update_status_if_payment_info_exists(self):
+        if self.reserve_info.exists():
+            self.status = 'confirmed'
+            self.save()
 
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
