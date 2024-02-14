@@ -135,7 +135,7 @@ class Booking(models.Model):
     booking_status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='pending',
+        default='confirmed',
     )
     booking_source = models.CharField(
         null=True,
@@ -210,7 +210,7 @@ class Reservation(models.Model):
     guest_email = models.EmailField(null=True, blank=True)
     guest_contact = models.CharField(max_length=15)
     check_in_date = models.DateField()
-    check_out_date = models.DateField()
+    check_out_date = models.DateTimeField()
     room_or_rooms = models.ManyToManyField(
         Room,
         related_name='reservations',

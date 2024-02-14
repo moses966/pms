@@ -22,8 +22,20 @@ app.autodiscover_tasks()
 def debug_task(self):
     print(f'Request: {self.request!r}')
 
+"""Adding custom tasks
+"""
+
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    from hotel.tasks import check_reservation_deadline
-    # Execute every minute
-    sender.add_periodic_task(crontab(minute='*/2'), check_reservation_deadline.s())
+    from hotel.tasks import (
+        check_reservation_deadline,
+        update_room_status,
+    )
+    sender.add_periodic_task(
+        check_reservation_deadline.s(),
+    )
+    sender.add_periodic_task(
+        update_room_status.s(),
+    )
+
+
