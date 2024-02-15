@@ -13,10 +13,18 @@ class CategoryAdmin(admin.ModelAdmin):
 class RoomAdmin(admin.ModelAdmin):
     fields = ('name','room_number', 'floor_number',
               'capacity', 'standard_price', 'promotional_price', 'corporate_price', 'discount', 'category', 'description', 'status',)
-    list_display = ['name', 'cleaned', 'capacity', 'room_number', 'standard_price', 'promotional_price', 'corporate_price', 'status']
+    list_display = ['name', 'cleaned', 'capacity', 'room_number',
+         'standard_price', 'corporate_price', 'status', 'check_in_date_for_reservations']
     search_fields = ['name', 'capacity', 'status']
     list_filter = ('status', 'floor_number',)
     readonly_fields = ('promotional_price',)
+    def check_in_date_for_reservations(self, obj):
+        # Get the check-in date for reservations associated with this room
+        reservations_check_in_dates = [reservation.check_in_date for reservation in obj.reservations.all()]
+        # Return the earliest check-in date
+        return min(reservations_check_in_dates, default=None)
+    
+    check_in_date_for_reservations.short_description = 'Earliest Check-in Date'
 
 # adding PaymentInformation model to admin
 class PaymentInformationInline(admin.StackedInline):
@@ -35,11 +43,11 @@ class PaymentInformationInline(admin.StackedInline):
 # adding Reservation to admin
 class ReservationAdmin(admin.ModelAdmin):
     fields = ('guest_name', 'guest_email', 'guest_contact', 'number_of_children', 'number_of_adults',
-              'room_or_rooms', 'check_in_date', 'check_out_date', 'deadline', 'special_requests', 'created_at', 'status',
+              'room_or_rooms', 'check_in_date', 'check_out_date', 'deadline', 'check_in', 'special_requests', 'created_at', 'status',
               'deposit', 'deposit_amount', 'balance'
     )
     list_display = ('guest_name', 'guest_contact', 'deposit',
-        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number',
+        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number', 'check_in',
     )
     search_fields = ('guest_name', 'guest_contact', 'guest_email', 'status', 'reservation_number',)
     list_filter = ('room_or_rooms', 'status',)
@@ -79,7 +87,7 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ('booking_date', 'booking_number',)
     fields = (
         'children','number_of_children', 'number_of_adults','room_or_rooms','booking_date','check_in_date','check_out_date',
-        'booking_status','booking_source','special_requests',
+        'booking_status', 'check_in', 'booking_source','special_requests',
         'special_instructions','booking_number',
     )
     inlines = (
@@ -91,7 +99,7 @@ class BookingAdmin(admin.ModelAdmin):
     ]
     # Define list display with desired fields
     list_display = ('get_guest_full_name', 'get_guest_phone_number',
-        'get_room_number', 'booking_number', 'booking_status', 'get_amount_paid',
+        'get_room_number', 'booking_number', 'booking_status', 'check_in', 'get_amount_paid',
     )
 
     # Optionally, include these methods directly in the list display

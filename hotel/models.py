@@ -124,7 +124,6 @@ class Booking(models.Model):
     booking_date = models.DateTimeField(default=timezone.now)
     STATUS_CHOICES = (
         ('confirmed', 'Confirmed'),
-        ('pending', 'Pending'),
         ('cancelled', 'Cancelled'),
     )
     BOOKING_SOURCE = (
@@ -150,14 +149,19 @@ class Booking(models.Model):
         null=True,
         help_text='Special considerations or instructions to hotel staff.'
     )
-    booking_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
     booking_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
+    check_in = models.BooleanField(
+        default=False,
+        verbose_name='Guest Has Checked In',
+        help_text='Tick if guest has checked in',
+    )
 
     def save(self, *args, **kwargs):
         if not self.booking_number:
             # Generate a unique booking number using the first 4 characters of a UUID
             self.booking_number = 'BK-' + str(uuid.uuid4())[:4]
         super().save(*args, **kwargs)
+        
 
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
@@ -243,6 +247,11 @@ class Reservation(models.Model):
         null=True,
     )
     reservation_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
+    check_in = models.BooleanField(
+        default=False,
+        verbose_name='Guest Has Checked In',
+        help_text='Tick if guest has checked in',
+    )
 
     def save(self, *args, **kwargs):
         if not self.reservation_number:

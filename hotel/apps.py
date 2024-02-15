@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.models.signals import  post_save, post_delete
+from django.db.models.signals import  post_save, post_delete, pre_save
 
 
 class HotelConfig(AppConfig):
@@ -26,5 +26,15 @@ class HotelConfig(AppConfig):
             signals.update_reservation_status,
             sender='hotel.PaymentInformation',
             dispatch_uid='update_reservation_status',
+        )
+        pre_save.connect(
+            signals.update_room_status_on_reservation_change,
+            sender='hotel.Reservation',
+            dispatch_uid='update_room_status_on_reservation_change',
+        )
+        post_save.connect(
+            signals.update_room_status_on_reservation_save,
+            sender='hotel.Reservation',
+            dispatch_uid='update_room_status_on_reservation_save',
         )
         
