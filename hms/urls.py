@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('hotel/', include('hotel.urls')),
-    #path("", TemplateView.as_view(template_name="home.html"), name="home"), 
+    path('accounts/', include('accounts.urls')),  # Include accounts app URLs
+    path('home/', include('darsh_board.urls')), # include darsh_board app URLs
+    path('', include('landing.urls')), # include landing app urls
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

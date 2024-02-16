@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'house_keeping',
     'django_celery_beat',
     'django_celery_results',
+    'landing',
+    'darsh_board',
+    'accounts',
 ]
 
 # save Celery task results in Django's database
@@ -148,5 +151,5 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "management.User"
-#LOGIN_REDIRECT_URL = 'home.html'
+LOGIN_REDIRECT_URL = 'home'
 #LOGOUT_REDIRECT_URL = 'home.html'
