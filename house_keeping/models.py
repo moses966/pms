@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from hotel.models import Room
 from management.models import BaseUserProfile
 
@@ -58,6 +59,11 @@ class MaintenanceRequest(models.Model):
         null=True,
         related_name='maintenance_request',
     )
+    def clean(self):
+        # Ensure only one progress status is selected
+        progress_count = sum([self.in_progress, self.resolved])
+        if progress_count != 1:
+            raise ValidationError("Select exactly one rate plan.")
     
     def save(self, *args, **kwargs):
         if self.resolved:

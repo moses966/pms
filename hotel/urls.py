@@ -1,4 +1,4 @@
-from django.urls import path
+'''from django.urls import path
 from .views import LoginView, HomeView, CustomLogoutView
 
 urlpatterns = [
@@ -6,3 +6,4 @@ urlpatterns = [
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', HomeView.as_view(), name='home'),
 ]
+'''

@@ -19,7 +19,9 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
     inlines = [PurchaseOrderItemInline]
 
 class InventoryItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'balance', 'quantity_on_hand', 'units', 'supplier', 'initial_total_in_store', 'current_total_in_store')
+    list_display = ('name', 'balance', 'quantity_on_hand', 'units',
+            'initial_total_in_store', 'current_total_in_store', 'date',
+    )
     search_fields = ['name']
     list_filter = ['name']
     fields = [
@@ -43,4 +45,5 @@ admin.site.register(Supplier, supplierAdmin)
 admin.site.register(InventoryItem, InventoryItemAdmin)
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(InventoryTransaction, InventoryTransactionAdmin)
+
 

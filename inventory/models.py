@@ -30,6 +30,7 @@ class InventoryItem(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     total_in_store = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     initial_total_in_store = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date = models.DateTimeField(default=timezone.now, editable=False)
 
     def save(self, *args, **kwargs):
         # Calculate initial total in store
@@ -43,7 +44,7 @@ class InventoryItem(models.Model):
         return self.name
     class Meta:
         verbose_name = 'Item'
-        verbose_name_plural = 'items'
+        verbose_name_plural = 'Items'
 
 class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)

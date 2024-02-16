@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+'''from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
@@ -40,3 +40,4 @@ class HomeView(TemplateView):
 class CustomLogoutView(LogoutView):
     # Redirect to home page after logging out
     next_page = reverse_lazy('home')
+'''
