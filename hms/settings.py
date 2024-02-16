@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'landing',
     'darsh_board',
     'accounts',
+    'stats',
 ]
 
 # save Celery task results in Django's database

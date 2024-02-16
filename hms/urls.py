@@ -25,4 +25,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),  # Include accounts app URLs
     path('home/', include('darsh_board.urls')), # include darsh_board app URLs
     path('', include('landing.urls')), # include landing app urls
+    path('stats/', include('stats.urls')), # include stats app urls
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
