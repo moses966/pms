@@ -24,6 +24,12 @@
     <p>Place of Residence: {{ user.profile.location }}</p>
     <p>Profile Picture: {{ user.profile.photo }}</p>
     <!-- Add more profile fields as needed -->
+    <h3>Documents</h3>
+    <ul>
+        {% for qualification in user.qualifications.all %}
+            <li>{{ qualification.title}} - {{ qualification.document }} </li>
+        {% endfor %}
+    </ul>
     <h3>Miscellaneous Information</h3>
     <p>Personal ID: {{ user.miscella.userid }}</p>
     <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>

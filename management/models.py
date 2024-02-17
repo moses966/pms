@@ -160,6 +160,15 @@ class EquipmentAllocation(models.Model):
     def __str__(self):
         return f"{self.quantity_allocated} {self.equipment.name} allocated to {self.user.email}"
 
+class Document(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='qualifications',
+    )
+    title = models.CharField(max_length=40, null=True, blank=True)
+    document = models.FileField(upload_to='documents/', blank=True, null=True)
+
 # model to customize the group model
 class CustomGroup(models.Model):
     group = models.OneToOneField(

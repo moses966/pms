@@ -9,6 +9,7 @@ from .models import (
     EmploymentInformation,
     Miscellaneous,
     EquipmentAllocation,
+    Document,
 )
 from .forms import (
     CustomUserCreationForm, 
@@ -44,6 +45,17 @@ class EmploymentInformationInline(admin.StackedInline):
     )
     classes = ('collapse',)
 
+class DocumentInline(admin.StackedInline):
+    model = Document
+    can_delete = True
+    extra = 1  
+    verbose_name = 'Personal Document'
+    verbose_name_plural = 'Personal Documents'
+    fields = (
+        'title',
+        'document',
+    )
+    classes = ('collapse',)
 
 # adding miscell.. form to admin
 class MiscellaneousInline(admin.StackedInline):
@@ -71,6 +83,7 @@ class UserAdmin(BaseUserAdmin):
     inlines = (
         BaseUserProfileInline,
         EmploymentInformationInline,
+        DocumentInline,
         MiscellaneousInline,
         EquipmentAllocationInline,
     )
