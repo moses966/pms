@@ -51,7 +51,7 @@ class MiscellaneousInline(admin.StackedInline):
     can_delete = False
     verbose_name = 'Other Requirements'
     verbose_name_plural = 'Other Requirements'
-    fields = ('userid', 'payment',
+    fields = ('userid', 'payment_method', 'payment',
               'salary', 'ackno',
               )
     classes = ('collapse',)
@@ -80,7 +80,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
-        (None, {"fields": ("email", "password",)}),
+        (None, {"fields": ("email", "password", "position",)}),
         ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions", "date_joined")}),
     )
     add_fieldsets = (
@@ -113,6 +113,7 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'total_number',
+        'time_of_allocation',
     ]
     search_fields = ['name']
 

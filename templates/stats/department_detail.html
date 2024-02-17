@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Detail</title>
+</head>
+<body>
+    <h1>{{ department.name }}</h1>
+    <h2>Users in this Department</h2>
+    <ul>
+        {% for user in users %}
+            <li>
+                {{ user.profile.surname }} {{ user.profile.given_name }} - 
+                <a href="{% url 'base_user_detail' user.pk %}">{{ user.email }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class Supplier(models.Model):
     name = models.CharField(max_length=60)
@@ -114,6 +115,10 @@ class InventoryTransaction(models.Model):
         if self.transaction_type in ['consumption', 'transfer']:
             self.inventory_item.total_in_store -= self.quantity
             self.inventory_item.save()
+
+    def clean(self):
+        if self.transaction_type in ['consumption', 'transfer'] and self.quantity > self.inventory_item.total_in_store:
+            raise ValidationError({"quantity": "Insufficient quantity in store."})
             
     def delete(self, *args, **kwargs):
         # Before deleting, add quantity back to total_in_store

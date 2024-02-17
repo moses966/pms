@@ -7,7 +7,21 @@
 </head>
 <body>
     <h2>Welcome to the Home Page</h2>
+    <br>
+    <div>
     <a href="{% url 'logout' %}">Logout</a>
+    </div>
+    <div>
     <a href="{% url 'admin:index' %}" target="_blank">Admin</a>
+    </div>
+    <div>
+    <a href="{% url 'room_stats' %}">View Room Stats</a>
+    </div>
+    <div>
+        <a href="{% url 'user_list' %}" >View Users</a>
+    </div>
+    <div>
+        <a href="{% url 'department_list' %}" >Departments</a>
+    </div>
 </body>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <h2>{{ user.email }}</h2>
+    <h3>Position:</h3>
+    <h4> {{ user.position }} </h4>
+    <h3>Profile Information</h3>
+    <p>Surname: {{ user.profile.surname }}</p>
+    <p>Given Name: {{ user.profile.given_name }}</p>
+    <p>Gender: {{ user.profile.get_gender_display }}</p>
+    <p>Contact: {{ user.profile.contact }}</p>
+    <p>Next of kin: {{ user.profile.next_of_kin }}</p>
+    <p>Emergency Contact for next of kin: {{ user.profile.emergency_contact }}</p>
+    <p>Date of Birth: {{ user.profile.date_of_birth }}</p>
+    <p>Place of birth: {{ user.profile.place_of_birth }}</p>
+    <p>NIN: {{ user.profile.nin }}</p>
+    <p>Place of Residence: {{ user.profile.location }}</p>
+    <p>Profile Picture: {{ user.profile.photo }}</p>
+    <!-- Add more profile fields as needed -->
+    <h3>Miscellaneous Information</h3>
+    <p>Personal ID: {{ user.miscella.userid }}</p>
+    <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>
+    <p>Salary: UGX. {{ user.miscella.salary|format_salary }}</p>
+    <p>Payment Details: {{ user.miscella.payment }}</p>
+    <!-- Add more miscellaneous fields as needed -->
+    <h3>Equipment Allocations</h3>
+    <ul>
+        {% for allocation in user.equipment_allocations.all %}
+            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }} At {{ allocation.time_of_allocation }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

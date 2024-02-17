@@ -10,15 +10,6 @@ from .custom_validators import validate_nin, validate_contact
 
 # model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
-
-    Positions = [
-        ('man', 'Manager'),
-        ('hum', 'Human Resource'),
-        ('cou', 'Counter'),
-        ('pub', 'Officer public relations'),
-        ('rom', 'Room attendant'),
-    ]
-    
     email = models.EmailField(
         _("email address"),
         unique=True,
@@ -29,11 +20,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     position = models.CharField(
         max_length=30,
-        choices=Positions,
-        default="man",
-        null=False,
-        blank=False,
-        help_text="Choose User Position in the hotel management",
+        null=True,
+        blank=True,
+        help_text="Enter User Position in the hotel management",
     )
    
     
@@ -107,11 +96,24 @@ class Miscellaneous(models.Model):
         on_delete=models.CASCADE,
         related_name='miscella',
     )
+    PAY_CHOICE = [
+        ('momo', 'MoMo Pay'),
+        ('airtel', 'Airtel Money Pay'),
+        ('bank', 'Bank Transfer'),
+    ]
     salary = models.FloatField(
         max_length=17,
         null=True,
         blank=True,
         help_text='Input only the UGX amount e.g: 50000',
+    )
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAY_CHOICE,
+        null=False, 
+        blank=False,
+        default='momo',
+        help_text="Choose Payment Method"
     )
     payment = models.CharField(
         max_length=15,
@@ -149,6 +151,11 @@ class EquipmentAllocation(models.Model):
         related_name='allocations',
     )
     quantity_allocated = models.IntegerField(default=0)
+    time_of_allocation = models.DateTimeField(default=timezone.now, editable=False)
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set timestamp if the object is being created, not updated
+            self.time_of_allocation = timezone.now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.quantity_allocated} {self.equipment.name} allocated to {self.user.email}"
