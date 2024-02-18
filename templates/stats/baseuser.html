@@ -25,11 +25,15 @@
     <p>Profile Picture: {{ user.profile.photo }}</p>
     <!-- Add more profile fields as needed -->
     <h3>Documents</h3>
-    <ul>
-        {% for qualification in user.qualifications.all %}
-            <li>{{ qualification.title}} - {{ qualification.document }} </li>
-        {% endfor %}
-    </ul>
+    {% if user.qualifications.all %}
+        <ul>
+            {% for qualification in user.qualifications.all %}
+                <li>{{ qualification.title }} - {{ qualification.document }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents available.</p>
+    {% endif %}
     <h3>Miscellaneous Information</h3>
     <p>Personal ID: {{ user.miscella.userid }}</p>
     <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>
@@ -37,10 +41,14 @@
     <p>Payment Details: {{ user.miscella.payment }}</p>
     <!-- Add more miscellaneous fields as needed -->
     <h3>Equipment Allocations</h3>
+    {% if user.equipment_allocations.all %}
     <ul>
         {% for allocation in user.equipment_allocations.all %}
             <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }} At {{ allocation.time_of_allocation }}</li>
         {% endfor %}
     </ul>
+    {% else %}
+        <p>No equipments allocated.</p>
+    {% endif %}
 </body>
 </html>

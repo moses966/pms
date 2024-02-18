@@ -49,7 +49,7 @@ class Room(models.Model):
         help_text='Location of the room on the building counting from the bottom level.'
     )
     description = models.TextField()
-    capacity = models.PositiveBigIntegerField(
+    capacity = models.PositiveIntegerField(
         null=True,
         blank=True,
     )

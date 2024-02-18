@@ -1,0 +1,24 @@
+<!-- room_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Detail</title>
+</head>
+<body>
+    <h2>Room Detail</h2>
+    <div>
+        <h3>{{ room_details.name }}</h3>
+        <p><strong>Room Number:</strong> {{ room_details.room_number }}</p>
+        <p><strong>Floor Number:</strong> {{ room_details.floor_number }}</p>
+        <p><strong>Capacity:</strong> {{ room_details.capacity }}</p>
+        <p><strong>Status:</strong> {{ room_details.status }}</p>
+        <!-- Add more fields as needed -->
+    </div>
+    <br>
+    <div>
+        <a href="{% url 'room_stats' %}">Back to Room List</a>
+    </div>
+</body>
+</html>

@@ -1,4 +1,3 @@
-<!-- stats/templates/stats/room_stats.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,11 @@
 </head>
 <body>
     <h2>Room Statistics</h2>
+    <!-- Add a form element with a text input and a submit button -->
+    <form method="get">
+        <input type="text" name="q" placeholder="Search by name, room number, capacity or status">
+        <button type="submit">Search</button>
+    </form>
     <table>
         <thead>
             <tr>
@@ -23,7 +27,7 @@
             {% for room in rooms %}
                 <tr>
                     <td>{{ room.name }}</td>
-                    <td>{{ room.room_number }}</td>
+                    <td><a href="{% url 'room_detail' room.pk %}" >{{ room.room_number }} </a> </td>
                     <td>{{ room.floor_number }}</td>
                     <td>{{ room.capacity }}</td>
                     <td>{{ room.status }}</td>

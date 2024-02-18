@@ -1,4 +1,4 @@
-# stats/views.py
+from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from hotel.models import Room
 from management.models import User, CustomGroup
@@ -8,6 +8,28 @@ class RoomStatsView(ListView):
     model = Room
     template_name = 'stats/room_stats.html'
     context_object_name = 'rooms'
+    paginate_by = 10
+    ordering = ['room_number']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Get the search query from the GET parameters
+        query = self.request.GET.get('q')
+        if query:
+            # Perform search query
+            queryset = queryset.filter(
+                Q(name__icontains=query) 
+                | Q(capacity__icontains=query)
+                | Q(status__icontains=query)
+                | Q(room_number__icontains=query)
+            )
+        return queryset
+    
+class RoomDetailView(DetailView):
+    model = Room
+    template_name = 'stats/room_details.html'
+    context_object_name = 'room_details'
+
 
 class UserListView(ListView):
     model = User
