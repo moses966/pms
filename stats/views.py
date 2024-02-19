@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.views.generic import ListView, DetailView
-from hotel.models import Room
+from hotel.models import Room, Category
 from house_keeping.models import CleanRoom, HousekeepingTask
 from management.models import User, CustomGroup
 from management.customs import Departments
@@ -85,4 +85,26 @@ class DepartmentDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['users'] = self.object.user_set.all()
+        return context
+class CleaningTasksListView(ListView):
+    model = HousekeepingTask
+    template_name = 'stats/cleaning_tasks.html'
+    context_object_name = 'cleaning_tasks'
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'stats/category_list.html'
+    context_object_name = 'categories'
+
+class CategoryDetailView(DetailView):
+    model = Category
+    template_name = 'stats/category_detail.html'
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = self.get_object()
+        # Fetch all rooms associated with the category
+        rooms = category.room_set.all()  # Assuming the related_name is 'room_set' in Category model
+        context['rooms'] = rooms
         return context

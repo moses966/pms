@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Detail</title>
+</head>
+<body>
+    <h2>Category Detail</h2>
+    <h3>{{ category.name }}</h3>
+    <p>Description: {{ category.description }}</p>
+    <p>Price: ${{ category.price }}</p>
+    <p>Capacity: {{ category.capacity }}</p>
+    <p>Count: {{ category.room_count }}</p>
+    <br>
+    <h2>Rooms in {{ room_category.name }}</h2>
+    <ul>
+        {% for room in rooms %}
+            <li>{{ room.name }} - {{ room.room_number }}</li>
+            <!-- Add more room details as needed -->
+        {% empty %}
+            <li>No rooms available in this category.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <div>
+    <a href="{% url 'category_list' %}">Back to Category List</a>
+    </div>
+    <div>
+    <a href="{% url 'home' %}">Back to Home</a>
+    </div>
+</body>
+</html>

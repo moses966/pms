@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleaning Tasks</title>
+</head>
+<body>
+    <h2>Cleaning Tasks</h2>
+    <ul>
+        {% for task in cleaning_tasks %}
+            Room: <a href="{% url 'room_detail' task.room_number.id %}">{{ task.room_number }}</a> - 
+            Status: {{ task.get_task_status_display }}
+            <li>Created at: {{ task.created_at }} - Special Instructions: {{ task.special_instructions }} </li>
+        {% empty %}
+            <li>No cleaning tasks available.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'home' %}">Back to Home</a>
+</body>
+</html>

@@ -15,11 +15,16 @@ class Category(models.Model):
         decimal_places=2,
     )
     capacity = models.PositiveIntegerField()
-    count = models.PositiveBigIntegerField(
-        help_text='number of rooms in this category.'
+    room_count = models.PositiveIntegerField(
+        help_text='number of rooms in this category.',
+        default=0,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def update_room_count(self):
+        self.room_count = self.room_set.count()
+        self.save()
     class Meta:
         verbose_name = "Room Category"
         verbose_name_plural = "Room Categories"
@@ -101,7 +106,19 @@ class Room(models.Model):
         # Automatically calculate promotional price based on standard price and discount
         if self.standard_price is not None and self.discount is not None:
             self.promotional_price = self.standard_price - (self.discount / 100 * self.standard_price)
+        # Check if the room is being saved for the first time (creating a new room)
+        is_new_room = not self.pk
         super().save(*args, **kwargs)
+        # If the room is new, increment the room count for the category
+        if is_new_room:
+            self.category.update_room_count()
+        
+    def delete(self, *args, **kwargs):
+        # Store the category before deleting the room
+        category = self.category
+        super().delete(*args, **kwargs)
+        # Decrement the room count for the category after deleting the room
+        category.update_room_count()
 
     def __str__(self):
         return f"{self.name} - Room No. {self.room_number}"
