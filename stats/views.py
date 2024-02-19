@@ -108,3 +108,8 @@ class CategoryDetailView(DetailView):
         rooms = category.room_set.all()  # Assuming the related_name is 'room_set' in Category model
         context['rooms'] = rooms
         return context
+
+class CleanRoomListView(ListView):
+    model = CleanRoom
+    template_name = 'stats/clean_rooms.html'
+    context_object_name = 'clean_rooms'

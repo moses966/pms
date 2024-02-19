@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load custom_filters %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +10,14 @@
     <h2>Category Detail</h2>
     <h3>{{ category.name }}</h3>
     <p>Description: {{ category.description }}</p>
-    <p>Price: ${{ category.price }}</p>
+    <p>Standard Price: UGX. {{ category.price|add_commas }}</p>
     <p>Capacity: {{ category.capacity }}</p>
-    <p>Count: {{ category.room_count }}</p>
+    <p>Number of rooms: {{ category.room_count }}</p>
     <br>
     <h2>Rooms in {{ room_category.name }}</h2>
     <ul>
         {% for room in rooms %}
-            <li>{{ room.name }} - {{ room.room_number }}</li>
+            <a href="{% url 'room_detail' room.pk %}" ><li>{{ room.name }} - {{ room.room_number }}</li></a>
             <!-- Add more room details as needed -->
         {% empty %}
             <li>No rooms available in this category.</li>

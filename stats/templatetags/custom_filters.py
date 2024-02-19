@@ -1,25 +1,17 @@
 from django import template
 register = template.Library()
 
-@register.filter(name='format_salary')
-def format_salary(value):
-    """
-    Formats the salary value with commas after every three digits.
-    """
+
+@register.filter(name='add_commas')
+def add_commas(value):
     try:
-        # Attempt to convert value to float
-        salary = float(value)
-        # Format the salary as a float with two decimal places
-        return "{:,.2f}".format(salary)
-    except (ValueError, TypeError):
+        # Convert the value to a float or integer and then format it with commas
+        value_formatted = "{:,.0f}".format(float(value))
+        return value_formatted
+    except (TypeError, ValueError):
         # If conversion fails, return the original value
         return value
 
-# custom_filters.py
-from django import template
-
-register = template.Library()
-
 @register.filter(name='get_item')
 def get_item(dictionary, key):
-    return dictionary.get(key, 'Not cleaned')
+    return dictionary.get(key, 'Not Sure!')

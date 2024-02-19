@@ -4,7 +4,7 @@ from .views import (
     RoomStatsView, DepartmentDetailView,
     BaseUserDetailView, DepartmentListView,
     UserListView, RoomDetailView, CleaningTasksListView,
-    CategoryDetailView, CategoryListView,
+    CategoryDetailView, CategoryListView, CleanRoomListView,
 )
 
 urlpatterns = [
@@ -17,4 +17,5 @@ urlpatterns = [
     path('rooms/room-category/', CategoryListView.as_view(), name='category_list'), # URL to Categories list view
     path('rooms/room-category/<int:pk>/', CategoryDetailView.as_view(), name='category_detail'), # URL to Category detail view
     path('departments/<int:pk>/', DepartmentDetailView.as_view(), name='department_detail'), # URL to User details
+    path('rooms/clean-rooms/', CleanRoomListView.as_view(), name='clean_rooms_list')
 ]
