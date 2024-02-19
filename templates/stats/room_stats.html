@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load custom_filters %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,8 @@
                 <th>Floor Number</th>
                 <th>Capacity</th>
                 <th>Status</th>
+                <th>Cleaned</th>
+                <th>Last Cleaned</th>
                 <!-- Add more columns as needed -->
             </tr>
         </thead>
@@ -31,6 +34,8 @@
                     <td>{{ room.floor_number }}</td>
                     <td>{{ room.capacity }}</td>
                     <td>{{ room.status }}</td>
+                    <td>{{ room.cleaned }}</td>
+                    <td>{{ room_cleaned_data|default:"Not Sure!"|get_item:room.pk }}</td>
                     <!-- Add more columns as needed -->
                 </tr>
             {% endfor %}

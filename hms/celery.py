@@ -41,5 +41,5 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         update_room_statuses.s(),
     )
-
+    
 

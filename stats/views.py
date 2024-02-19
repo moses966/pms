@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from hotel.models import Room
+from house_keeping.models import CleanRoom, HousekeepingTask
 from management.models import User, CustomGroup
 from management.customs import Departments
 
@@ -25,10 +26,40 @@ class RoomStatsView(ListView):
             )
         return queryset
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        rooms = context['rooms']
+        room_cleaned_data = {}
+        for room in rooms:
+            try:
+                clean_room = CleanRoom.objects.get(room=room)
+                room_cleaned_data[room.pk] = clean_room.last_cleaned.strftime('%Y-%m-%d %H:%M:%S') if clean_room.last_cleaned else "Not Sure!"
+            except CleanRoom.DoesNotExist:
+                room_cleaned_data[room.pk] = "Not Sure!"
+        context['room_cleaned_data'] = room_cleaned_data
+        return context
+    
 class RoomDetailView(DetailView):
     model = Room
     template_name = 'stats/room_details.html'
     context_object_name = 'room_details'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        room = context['room_details']
+        try:
+            clean_room = CleanRoom.objects.get(room=room)
+            context['last_cleaned'] = clean_room.last_cleaned.strftime('%Y-%m-%d %H:%M:%S') if clean_room.last_cleaned else "Not Sure!"
+        except CleanRoom.DoesNotExist:
+            context['last_cleaned'] = "Not Sure!"
+        return context
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        room = self.get_object()
+        housekeeping_task = HousekeepingTask.objects.filter(room_number=room).first()
+        context['task_status'] = housekeeping_task.task_status if housekeeping_task else None
+        return context
 
 
 class UserListView(ListView):

@@ -14,6 +14,32 @@
         <p><strong>Floor Number:</strong> {{ room_details.floor_number }}</p>
         <p><strong>Capacity:</strong> {{ room_details.capacity }}</p>
         <p><strong>Status:</strong> {{ room_details.status }}</p>
+        <p><strong>Room Category:</strong> {{ room_details.category }}</p>
+        <p><strong>Cleaned:</strong> {{ room_details.cleaned }}</p>
+        <p><strong>Standard Price:</strong> {{ room_details.standard_price }}</p>
+        <p><strong>Corporate Price:</strong> {{ room_details.corporate_price }}</p>
+        <p><strong>Promotional Price:</strong> {{ room_details.promotional_price }}</p>
+        <p><strong>Room Created at:</strong> {{ room_details.created_at }}</p>
+        <p><strong>Room Updated_at:</strong> {{ room_details.updated_at }}</p>
+        <p><strong>Last Cleaned:</strong> {{ last_cleaned }}</p>
+        <p><strong>Room Description:</strong> {{ room_details.description }}</p>
+        <!-- Display task_status with custom mapping -->
+        {% if task_status %}
+            <li>Cleaning Order Status: 
+                {% if task_status == 'pending' %}
+                    Pending
+                {% elif task_status == 'in_progress' %}
+                    In Progress
+                {% elif task_status == 'completed' %}
+                    Completed
+                {% else %}
+                    {{ task_status }}
+                {% endif %}
+            </li>
+        {% else %}
+            <li>Cleaning Order Status: No Cleaning order!</li>
+        {% endif %}
+
         <!-- Add more fields as needed -->
     </div>
     <br>

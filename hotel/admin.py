@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils import timezone
 from .models import Room, Category, Guest, Booking, Reservation, PaymentInformation
+from house_keeping.models import CleanRoom
 
 # adding Category to admin
 class CategoryAdmin(admin.ModelAdmin):
@@ -15,7 +16,7 @@ class RoomAdmin(admin.ModelAdmin):
     fields = ('name','room_number', 'floor_number',
               'capacity', 'standard_price', 'promotional_price', 'corporate_price', 'discount', 'category', 'description', 'status',)
     list_display = ['name', 'cleaned', 'capacity', 'room_number',
-         'standard_price', 'corporate_price', 'status', 'check_in_date_for_reservations']
+         'standard_price', 'corporate_price', 'status', 'check_in_date_for_reservations', 'get_last_cleaned']
     search_fields = ['name', 'capacity', 'status']
     list_filter = ('status', 'floor_number',)
     readonly_fields = ('promotional_price',)
@@ -26,6 +27,20 @@ class RoomAdmin(admin.ModelAdmin):
         return min(reservations_check_in_dates, default=None)
     
     check_in_date_for_reservations.short_description = 'Earliest Check-in Date'
+
+    def get_last_cleaned(self, obj):
+        """
+        Custom method to display the last cleaned time for the room.
+        """
+        try:
+            # Get the CleanRoom instance for the room
+            clean_room = CleanRoom.objects.get(room=obj)
+            # Return the last_cleaned time if available
+            return clean_room.last_cleaned.strftime('%Y-%m-%d %H:%M:%S') if clean_room.last_cleaned else "Not Sure!"
+        except CleanRoom.DoesNotExist:
+            return "Not Sure!"
+
+    get_last_cleaned.short_description = 'Last Cleaned'
 
 # adding PaymentInformation model to admin
 class PaymentInformationInline(admin.StackedInline):
