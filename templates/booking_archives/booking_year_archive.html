@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yearly Archives</title>
+</head>
+<body>
+    <h1>Yearly Archives</h1>
+    <ul>
+        {% for year in years %}
+            <li><a href="{% url 'monthly_archives' year=year %}">{{ year }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

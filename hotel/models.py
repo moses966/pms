@@ -138,7 +138,8 @@ class Booking(models.Model):
     )
     check_in_date = models.DateTimeField(default=timezone.now)
     check_out_date = models.DateTimeField(default=timezone.now)
-    booking_date = models.DateTimeField(default=timezone.now)
+    booking_date = models.DateField(default=timezone.now)
+    booking_time = models.TimeField(auto_now_add=True)
     STATUS_CHOICES = (
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled'),
