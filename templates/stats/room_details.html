@@ -1,48 +1,113 @@
-<!-- room_detail.html -->
 <!DOCTYPE html>
 <html lang="en">
+    {% load custom_filters %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h2>Room Detail</h2>
-    <div>
-        <h3>{{ room_details.name }}</h3>
-        <p><strong>Room Number:</strong> {{ room_details.room_number }}</p>
-        <p><strong>Floor Number:</strong> {{ room_details.floor_number }}</p>
-        <p><strong>Capacity:</strong> {{ room_details.capacity }}</p>
-        <p><strong>Status:</strong> {{ room_details.status }}</p>
-        <p><strong>Room Category:</strong> {{ room_details.category }}</p>
-        <p><strong>Cleaned:</strong> {{ room_details.cleaned }}</p>
-        <p><strong>Standard Price:</strong> {{ room_details.standard_price }}</p>
-        <p><strong>Corporate Price:</strong> {{ room_details.corporate_price }}</p>
-        <p><strong>Promotional Price:</strong> {{ room_details.promotional_price }}</p>
-        <p><strong>Room Created at:</strong> {{ room_details.created_at }}</p>
-        <p><strong>Room Updated_at:</strong> {{ room_details.updated_at }}</p>
-        <p><strong>Last Cleaned:</strong> {{ last_cleaned }}</p>
-        <p><strong>Room Description:</strong> {{ room_details.description }}</p>
+    <table>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>{{ room_details.name }}</td>
+        </tr>
+        <tr>
+            <td>Room Number</td>
+            <td>{{ room_details.room_number }}</td>
+        </tr>
+        <tr>
+            <td>Floor Number</td>
+            <td>{{ room_details.floor_number }}</td>
+        </tr>
+        <tr>
+            <td>Capacity</td>
+            <td>{{ room_details.capacity }}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>{{ room_details.status }}</td>
+        </tr>
+        <tr>
+            <td>Room Category</td>
+            <td>{{ room_details.category }}</td>
+        </tr>
+        <tr>
+            <td>Cleaned</td>
+            <td>{{ room_details.cleaned }}</td>
+        </tr>
+        <tr>
+            <td>Standard Price</td>
+            <td>UGX. {{ room_details.standard_price|add_commas }}</td>
+        </tr>
+        <tr>
+            <td>Corporate Price</td>
+            <td>UGX. {{ room_details.corporate_price|add_commas }}</td>
+        </tr>
+        <tr>
+            <td>Promotional Price</td>
+            <td>UGX. {{ room_details.promotional_price|add_commas }}</td>
+        </tr>
+        <tr>
+            <td>Room Created at</td>
+            <td>{{ room_details.created_at }}</td>
+        </tr>
+        <tr>
+            <td>Room Updated_at</td>
+            <td>{{ room_details.updated_at }}</td>
+        </tr>
+        <tr>
+            <td>Last Cleaned</td>
+            <td>{{ last_cleaned }}</td>
+        </tr>
+        <tr>
+            <td>Room Description</td>
+            <td>{{ room_details.description }}</td>
+        </tr>
         <!-- Display task_status with custom mapping -->
-        {% if task_status %}
-            <li>Cleaning Order Status: 
-                {% if task_status == 'pending' %}
-                    Pending
-                {% elif task_status == 'in_progress' %}
-                    In Progress
-                {% elif task_status == 'completed' %}
-                    Completed
+        <tr>
+            <td>Cleaning Order Status</td>
+            <td>
+                {% if task_status %}
+                    {% if task_status == 'pending' %}
+                        Pending
+                    {% elif task_status == 'in_progress' %}
+                        In Progress
+                    {% elif task_status == 'completed' %}
+                        Completed
+                    {% else %}
+                        {{ task_status }}
+                    {% endif %}
                 {% else %}
-                    {{ task_status }}
+                    No Cleaning order!
                 {% endif %}
-            </li>
-        {% else %}
-            <li>Cleaning Order Status: No Cleaning order!</li>
-        {% endif %}
-
+            </td>
+        </tr>
         <!-- Add more fields as needed -->
-    </div>
-    <br>
+    </table>
     <div>
         <a href="{% url 'room_stats' %}">Back to Room List</a>
     </div>

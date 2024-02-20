@@ -1,54 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load custom_filters %}
+    {% load custom_filters%}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #dddddd;
+        }
+    </style>
 </head>
 <body>
     <h1>User Profile</h1>
-    <h2>{{ user.email }}</h2>
-    <h3>Position:</h3>
-    <h4> {{ user.position }} </h4>
-    <h3>Profile Information</h3>
-    <p>Surname: {{ user.profile.surname }}</p>
-    <p>Given Name: {{ user.profile.given_name }}</p>
-    <p>Gender: {{ user.profile.get_gender_display }}</p>
-    <p>Contact: {{ user.profile.contact }}</p>
-    <p>Next of kin: {{ user.profile.next_of_kin }}</p>
-    <p>Emergency Contact for next of kin: {{ user.profile.emergency_contact }}</p>
-    <p>Date of Birth: {{ user.profile.date_of_birth }}</p>
-    <p>Place of birth: {{ user.profile.place_of_birth }}</p>
-    <p>NIN: {{ user.profile.nin }}</p>
-    <p>Place of Residence: {{ user.profile.location }}</p>
-    <p>Profile Picture: {{ user.profile.photo }}</p>
-    <!-- Add more profile fields as needed -->
-    <h3>Documents</h3>
-    {% if user.qualifications.all %}
-        <ul>
-            {% for qualification in user.qualifications.all %}
-                <li>{{ qualification.title }} - {{ qualification.document }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No documents available.</p>
-    {% endif %}
-    <h3>Miscellaneous Information</h3>
-    <p>Personal ID: {{ user.miscella.userid }}</p>
-    <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>
-    <p>Salary: UGX. {{ user.miscella.salary|add_commas }}</p>
-    <p>Payment Details: {{ user.miscella.payment }}</p>
-    <!-- Add more miscellaneous fields as needed -->
-    <h3>Equipment Allocations</h3>
-    {% if user.equipment_allocations.all %}
-    <ul>
-        {% for allocation in user.equipment_allocations.all %}
-            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }} At {{ allocation.time_of_allocation }}</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>No equipments allocated.</p>
-    {% endif %}
+    <table>
+        <tr>
+            <th>Email</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>Position</th>
+            <td>{{ user.position }}</td>
+        </tr>
+        <tr>
+            <th colspan="2">Profile Information</th>
+        </tr>
+        <tr>
+            <th>Surname</th>
+            <td>{{ user.profile.surname }}</td>
+        </tr>
+        <tr>
+            <th>Given Name</th>
+            <td>{{ user.profile.given_name }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ user.profile.get_gender_display }}</td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td>{{ user.profile.contact }}</td>
+        </tr>
+        <tr>
+            <th>Next of kin</th>
+            <td>{{ user.profile.next_of_kin }}</td>
+        </tr>
+        <tr>
+            <th>Emergency Contact for next of kin</th>
+            <td>{{ user.profile.emergency_contact }}</td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{ user.profile.date_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>Place of birth</th>
+            <td>{{ user.profile.place_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>NIN</th>
+            <td>{{ user.profile.nin }}</td>
+        </tr>
+        <tr>
+            <th>Place of Residence</th>
+            <td>{{ user.profile.location }}</td>
+        </tr>
+        <tr>
+            <th>Profile Picture</th>
+            <td>{{ user.profile.photo }}</td>
+        </tr>
+        <!-- Add more profile fields as needed -->
+        <tr>
+            <th>Documents</th>
+            <td>
+                {% if user.qualifications.all %}
+                    <ul>
+                        {% for qualification in user.qualifications.all %}
+                            <li>{{ qualification.title }} - {{ qualification.document }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    No documents available.
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Miscellaneous Information</th>
+            <td>
+                <p>Personal ID: {{ user.miscella.userid }}</p>
+                <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>
+                <p>Salary: UGX. {{ user.miscella.salary|add_commas }}</p>
+                <p>Payment Details: {{ user.miscella.payment }}</p>
+                <!-- Add more miscellaneous fields as needed -->
+            </td>
+        </tr>
+        <tr>
+            <th>Equipment Allocations</th>
+            <td>
+                {% if user.equipment_allocations.all %}
+                    <ul>
+                        {% for allocation in user.equipment_allocations.all %}
+                            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }} At {{ allocation.time_of_allocation }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    No equipments allocated.
+                {% endif %}
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

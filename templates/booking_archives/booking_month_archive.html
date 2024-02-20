@@ -1,21 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load archive_custom_filters %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Archives</title>
+    <style>
+        /* Style the details and summary elements */
+        details {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+
+        summary {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        /* Change the arrow symbol when the details element is open 
+        details[open] summary::before {
+            content: "▼";
+        }*/
+
+        details summary::before {
+            content: "▶";
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Monthly Archives for {{ year }}</h1>
     <ul>
         {% for month_archive in monthly_archives %}
             <li>
-                <h2>{{ month_archive.month }}</h2>
-                <ul>
-                    {% for booking in month_archive.bookings %}
-                       <li><a href="{% url 'booking_detail' year=year month=month pk=booking.pk %}">{{ booking }}</a></li>
-                    {% endfor %}
-                </ul>
+                <!-- Use the details and summary elements for each month -->
+                <details>
+                    <summary>{{ month_archive.month|month_name }}</summary>
+                    <ul>
+                        {% for booking in month_archive.bookings %}
+                           <li><a href="{% url 'booking_detail' year=year month=month pk=booking.pk %}">{{ booking }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </details>
             </li>
         {% endfor %}
     </ul>

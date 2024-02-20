@@ -5,6 +5,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Statistics</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #dddddd;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button[type="submit"] {
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <h2>Room Statistics</h2>
@@ -30,7 +75,7 @@
             {% for room in rooms %}
                 <tr>
                     <td>{{ room.name }}</td>
-                    <td><a href="{% url 'room_detail' room.pk %}" >{{ room.room_number }} </a> </td>
+                    <td><a href="{% url 'room_detail' room.pk %}">{{ room.room_number }}</a></td>
                     <td>{{ room.floor_number }}</td>
                     <td>{{ room.capacity }}</td>
                     <td>{{ room.status }}</td>
@@ -43,7 +88,7 @@
     </table>
     <br>
     <div>
-    <a href="{% url 'home' %}">Back to Home</a>
+        <a href="{% url 'home' %}">Back to Home</a>
     </div>
 </body>
 </html>

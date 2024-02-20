@@ -4,15 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clean Rooms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h1>Clean Rooms</h1>
     {% if clean_rooms %}
-        <ul>
-            {% for clean_room in clean_rooms %}
-                <li>Room <a href="{% url 'room_detail' clean_room.room.id %}" >{{ clean_room.room.room_number }}</a> - Last Cleaned: {{ clean_room.last_cleaned }}</li>
-            {% endfor %}
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room Number</th>
+                    <th>Last Cleaned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for clean_room in clean_rooms %}
+                    <tr>
+                        <td><a href="{% url 'room_detail' clean_room.room.id %}">{{ clean_room.room.room_number }}</a></td>
+                        <td>{{ clean_room.last_cleaned }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <p>No clean rooms at the moment.</p>
     {% endif %}

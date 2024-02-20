@@ -1,15 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load custom_filters archive_custom_filters %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Detail</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h1>Booking Detail</h1>
-    <p>Booking Number: {{ booking.booking_number }}</p>
-    <p>Check-in Date: {{ booking.check_in_date }}</p>
-    <p>Check-out Date: {{ booking.check_out_date }}</p>
-    <!-- Add more details as needed -->
+    <table>
+        <tr>
+            <th>Guest Name</th>
+            <td>{{ booking.guest_profile.full_name }}</td>
+        </tr>
+        <tr>
+            <th>Rooms</th>
+            <td>{{ booking.room_or_rooms.all|join:", " }}</td>
+        </tr>
+        <tr>
+            <th>Booking Date</th>
+            <td>{{ booking.booking_date }}</td>
+        </tr>
+        <tr>
+            <th>Booking Number</th>
+            <td>{{ booking.booking_number }}</td>
+        </tr>
+        <tr>
+            <th>Check-in Date</th>
+            <td>{{ booking.check_in_date }}</td>
+        </tr>
+        <tr>
+            <th>Check-out Date</th>
+            <td>{{ booking.check_out_date }}</td>
+        </tr>
+        <tr>
+            <th>Booking Time</th>
+            <td>{{ booking.booking_time }}</td>
+        </tr>
+        <tr>
+            <th>Booking Status</th>
+            <td>{{ booking.get_booking_status_display }}</td>
+        </tr>
+        <tr>
+            <th>Number of Adults</th>
+            <td>{{ booking.number_of_adults }}</td>
+        </tr>
+        <tr>
+            <th>Children</th>
+            <td>{% if booking.children %}✓{% else %}✗{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Number of Children</th>
+            <td>{% if booking.number_of_children %} {{ booking.number_of_children }} {% else %}None{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ booking.guest_profile.get_gender_display }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{% if booking.guest_profile.email_adress %} {{ booking.guest_profile.email_adress }}{% else %}No email address.{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td>{{ booking.guest_profile.phone_number }}</td>
+        </tr>
+        <tr>
+            <th>NIN</th>
+            <td>{% if booking.nin %}{{ booking.nin }}{% else %}No NIN provided{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Guest Address</th>
+            <td>{{ booking.guest_profile.address }}</td>
+        </tr>
+        <tr>
+            <th>Booking Channel</th>
+            <td>{{ booking.get_booking_source_display }}</td>
+        </tr>
+        <tr>
+            <th>Special Requests</th>
+            <td>{% if booking.special_requests %} {{ booking.special_requests }} {% else %} No special Requests{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Special Instructions</th>
+            <td>{% if booking.special_instructions %} {{ booking.special_instructions }} {% else %} No special Instructions{% endif %}</td>
+        </tr>
+    </table>
+
+    <h2>Payment Information</h2>
+    <table>
+        <tr>
+            <th>Receipt Number</th>
+            <th>Payment Status</th>
+            <th>Rate Type</th>
+            <th>Amount Paid</th>
+            <th>Amount In Words</th>
+        </tr>
+        {% for info in booking.booking_info.all %}
+            <tr>
+                <td>{{ info.receipt_number }}</td>
+                <td>{{ info.get_payment_status_display }}</td>
+                <td>
+                    {% if info.standard_rate %}
+                        Standard Rate
+                    {% elif info.promotional_rate %}
+                        Promotional Rate
+                    {% else %}
+                        Corporate Rate
+                    {% endif %}
+                </td>
+                <td>UGX. {{ info.amount_paid|add_commas }}</td>
+                <td>{{ info.amount_paid|shillings_in_words }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

@@ -4,12 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #dddddd;
+        }
+    </style>
 </head>
 <body>
     <h1>User List</h1>
     <table>
         <thead>
             <tr>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Position</th>
                 <th>View Profile</th>
@@ -18,6 +43,7 @@
         <tbody>
             {% for user in users %}
                 <tr>
+                    <td>{{ user.profile.surname }} {{ user.profile.given_name }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.position }}</td>
                     <td><a href="{% url 'base_user_detail' user.pk %}">View</a></td>

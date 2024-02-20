@@ -5,30 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h2>Category Detail</h2>
     <h3>{{ category.name }}</h3>
-    <p>Description: {{ category.description }}</p>
-    <p>Standard Price: UGX. {{ category.price|add_commas }}</p>
-    <p>Capacity: {{ category.capacity }}</p>
-    <p>Number of rooms: {{ category.room_count }}</p>
-    <br>
+    <table>
+        <tr>
+            <td>Description:</td>
+            <td>{{ category.description }}</td>
+        </tr>
+        <tr>
+            <td>Standard Price:</td>
+            <td>UGX. {{ category.price|add_commas }}</td>
+        </tr>
+        <tr>
+            <td>Capacity:</td>
+            <td>{{ category.capacity }}</td>
+        </tr>
+        <tr>
+            <td>Number of rooms:</td>
+            <td>{{ category.room_count }}</td>
+        </tr>
+    </table>
+
     <h2>Rooms in {{ room_category.name }}</h2>
-    <ul>
-        {% for room in rooms %}
-            <a href="{% url 'room_detail' room.pk %}" ><li>{{ room.name }} - {{ room.room_number }}</li></a>
-            <!-- Add more room details as needed -->
-        {% empty %}
-            <li>No rooms available in this category.</li>
-        {% endfor %}
-    </ul>
-    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>Room Name</th>
+                <th>Room Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+                <tr>
+                    <td><a href="{% url 'room_detail' room.pk %}">{{ room.name }}</a></td>
+                    <td>{{ room.room_number }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No rooms available in this category.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <div>
-    <a href="{% url 'category_list' %}">Back to Category List</a>
+        <a href="{% url 'category_list' %}">Back to Category List</a>
     </div>
     <div>
-    <a href="{% url 'home' %}">Back to Home</a>
+        <a href="{% url 'home' %}">Back to Home</a>
     </div>
 </body>
 </html>

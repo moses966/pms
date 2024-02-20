@@ -4,18 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #dddddd;
+        }
+    </style>
 </head>
 <body>
     <h1>Department List</h1>
-    <ul>
-        {% for department in departments %}
-            <li>
-                <a href="{% url 'department_detail' department.group.pk %}">
-                    {{ department.group.name }}
-                </a>
-                - Head of Department: <a href="{% url 'base_user_detail' department.leader.pk %}">{{ department.leader.email }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Department Name</th>
+                <th>Head of Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for department in departments %}
+                <tr>
+                    <td>
+                        <a href="{% url 'department_detail' department.group.pk %}">
+                            {{ department.group.name }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'base_user_detail' department.leader.pk %}">
+                            {{ department.leader.email }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
