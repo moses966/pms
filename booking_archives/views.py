@@ -1,10 +1,13 @@
+from typing import Any
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, TemplateView
-from django.views.generic.dates import ArchiveIndexView
+from django.views.generic.dates import ArchiveIndexView, WeekArchiveView
 from django.utils import timezone
 from datetime import date, datetime
 from hotel.models import Booking
+from django.urls import reverse
+from django.http import Http404
 
 class CustomTodayArchiveView(ArchiveIndexView):
     """
@@ -12,12 +15,33 @@ class CustomTodayArchiveView(ArchiveIndexView):
     """
     model = Booking
     date_field = "booking_date"
+    allow_empty = True
     template_name = "booking_archives/custom_today_archive.html"
     context_object_name = 'bookings'
 
     def get_queryset(self):
-        queryset = Booking.objects.filter(booking_date=date.today())
+        today = timezone.now().date()
+        queryset = super().get_queryset().filter(booking_date=today)
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['home_url'] = reverse('home')
+        return context
+    
+class BookingWeekArchiveView(WeekArchiveView):
+    queryset = Booking.objects.all()
+    date_field = "booking_date"
+    template_name = 'booking_archives/booking_weekly_archives.html'
+    week_format = "%W"
+    allow_empty = True
+    allow_future = True
+    #context_object_name = 'weekly_bookings'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['home_url'] = reverse('home')
+        return context
 
 class BookingYearArchiveView(TemplateView):
     """
@@ -47,6 +71,7 @@ class BookingYearArchiveView(TemplateView):
         context = super().get_context_data(**kwargs)
         current_year = timezone.now().year
         context['years'] = range(self.start_year, current_year + 1)
+        context['home_url'] = reverse('home')
         return context
 
 class BookingMonthArchiveView(ListView):
@@ -117,6 +142,7 @@ class BookingMonthArchiveView(ListView):
             monthly_archives.append(monthly_archive)
         
         context['monthly_archives'] = monthly_archives
+        context['home_url'] = reverse('home')
         return context
 
 class BookingDetailView(DetailView):
@@ -148,4 +174,5 @@ class BookingDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['year'] = self.kwargs['year']
         context['month'] = self.kwargs['month']
+        context['home_url'] = reverse('home')
         return context

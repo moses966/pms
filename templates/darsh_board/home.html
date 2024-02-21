@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load tz %}
+    {% now "W" as current_week %}
+    {% now "Y" as current_year %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,6 +40,9 @@
     </div>
     <div>
         <a href="{% url 'booking_today_archive' %}" >Today Bookings</a>
+    </div>
+    <div>
+        <a href="{% url 'archive_week' year=current_year week=current_week  %}" >Weekly Bookings</a>
     </div>
 </body>
 </html>
