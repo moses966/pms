@@ -1,66 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load tz %}
+{% now "Y" as current_year %}
+{% now "M" as current_month %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Archives</title>
+    <title>Yearly Archives</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
+        /* Add your CSS styling here */
         table {
-            width: 100%;
             border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        input[type=text] {
             width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
             padding: 8px;
-            margin-top: 10px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .search-bar {
             margin-bottom: 20px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
         .message {
             margin-top: 20px;
             padding: 10px;
@@ -73,16 +41,35 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Week {{ week|date:'W' }}</h1>
-
-        <!-- Search field -->
+    <!-- Search field -->
     <div class="search-bar">
-        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for guest name or booking number">
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for booking number..">
     </div>
 
-        {% if object_list %}
-        <table>
+    <ul>
+        {% for date in date_list %}
+        <li> {{ date|date }} <a href="{% url 'archive_month' year=current_year month=current_month %}">View</a></li>
+        {% endfor %}
+    </ul>
+
+    <p>
+        {% if previous_year %}
+        <a href="{% url 'booking_year_archive' year=previous_year|date:'Y' %}">
+            Previous Year: </a>{{ previous_year|date:"F j, Y" }}
+        {% endif %}
+        {% if next_year %}
+        <a href="{% url 'booking_year_archive' year=next_year|date:'Y' %}">
+            Next Year: </a>{{ next_yeah|date:"F j, Y" }}
+        {% endif %}
+    </p>
+    <div>
+        <a href="{{ home_url }}">Back Home</a>
+    </div>
+    {% if object_list %}
+
+    <div>
+        <h1>All Bookings for {{ year|date:"Y" }}</h1>
+        <table id="bookingTable">
             <thead>
                 <tr>
                     <th>Guest Full Name</th>
@@ -104,31 +91,23 @@
                         {{ room.room_number }}
                         {% endfor %}
                     </td>
-                    <td><a href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">{{ booking.booking_number }}</a></td>
+                    <td>
+                        <a
+                            href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">
+                            {{ booking.booking_number }}
+                        </a>
+                    </td>
                     <td>{{ booking.booking_status }}</td>
                     <td> {% if booking.check_in %}✓{% else %}✗ {% endif %}</td>
-                    <td>{{ booking.check_in_date }}</td> 
+                    <td>{{ booking.check_in_date }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {% else %}
-        <p class="message">No bookings available for this week.</p>
-        {% endif %}
-
-        <p>
-            {% if previous_week %}
-            <a href="{% url 'archive_week' year=previous_week|date:'Y' week=previous_week|date:'W' %}">Previous Week: </a>{{ previous_week|date:"W" }} of year {{ previous_week|date:"Y" }}
-            {% endif %}
-            {% if previous_week and next_week %}--{% endif %}
-            {% if next_week %}
-            <a href="{% url 'archive_week' year=next_week|date:'Y' week=next_week|date:'W' %}">Next Week: </a>{{ next_week|date:"W" }} of year {{ next_week|date:"Y" }}
-            {% endif %}
-        </p>
-        <div>
-            <a href="{{ home_url }}">Back Home</a>
-        </div>
     </div>
+    {% else %}
+    <p class="message">No bookings available for this year.</p>
+    {% endif %}
 
     <script>
         function searchFunction() {
@@ -153,7 +132,6 @@
             }
         }
     </script>
-    
 </body>
 
 </html>

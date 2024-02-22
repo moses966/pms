@@ -38,11 +38,9 @@
         <a href="{% url 'clean_rooms_list' %}" >View clean rooms</a>
     </div>
     <div>
-        <a href="{% url 'yearly_archives' %}" >Yearly Archives</a>
+        <a href="{% url 'booking_year_archive' year=current_year %}" >Yearly Archives</a>
     </div>
-    <div>
-        <a href="{% url 'booking_latest_archive' %}" >Latest Bookings</a>
-    </div>
+    
     <div>
         <a href="{% url 'archive_week' year=current_year week=current_week  %}" >Weekly Bookings</a>
     </div>
