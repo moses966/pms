@@ -138,7 +138,7 @@ class Booking(models.Model):
     )
     check_in_date = models.DateTimeField(default=timezone.now)
     check_out_date = models.DateTimeField(default=timezone.now)
-    booking_date = models.DateField(default=timezone.now)
+    booking_date = models.DateField(default=timezone.now, blank=False, null=False)
     booking_time = models.TimeField(auto_now_add=True)
     STATUS_CHOICES = (
         ('confirmed', 'Confirmed'),
@@ -231,7 +231,7 @@ class Reservation(models.Model):
     guest_name = models.CharField(max_length=100)
     guest_email = models.EmailField(null=True, blank=True)
     guest_contact = models.CharField(max_length=15)
-    check_in_date = models.DateField()
+    check_in_date = models.DateField(blank=False, null=False)
     check_out_date = models.DateTimeField()
     room_or_rooms = models.ManyToManyField(
         Room,
@@ -240,7 +240,8 @@ class Reservation(models.Model):
     number_of_adults = models.PositiveIntegerField(default=1)
     number_of_children = models.PositiveIntegerField(default=0)
     special_requests = models.TextField(blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
+    reservation_date = models.DateField(default=timezone.now, blank=False, null=False)
+    created_at = models.TimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     deposit = models.BooleanField(
         default=False,

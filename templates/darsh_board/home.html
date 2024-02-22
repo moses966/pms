@@ -3,6 +3,8 @@
     {% load tz %}
     {% now "W" as current_week %}
     {% now "Y" as current_year %}
+    {% now "M" as current_month %}
+    {% now "d" as current_day %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,10 +41,13 @@
         <a href="{% url 'yearly_archives' %}" >Yearly Archives</a>
     </div>
     <div>
-        <a href="{% url 'booking_today_archive' %}" >Today Bookings</a>
+        <a href="{% url 'booking_latest_archive' %}" >Latest Bookings</a>
     </div>
     <div>
         <a href="{% url 'archive_week' year=current_year week=current_week  %}" >Weekly Bookings</a>
+    </div>
+    <div>
+        <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}" >Daily Bookings</a>
     </div>
 </body>
 </html>

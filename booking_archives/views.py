@@ -1,8 +1,9 @@
 from typing import Any
+from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, TemplateView
-from django.views.generic.dates import ArchiveIndexView, WeekArchiveView
+from django.views.generic.dates import ArchiveIndexView, WeekArchiveView, DayArchiveView
 from django.utils import timezone
 from datetime import date, datetime
 from hotel.models import Booking
@@ -16,12 +17,36 @@ class CustomTodayArchiveView(ArchiveIndexView):
     model = Booking
     date_field = "booking_date"
     allow_empty = True
-    template_name = "booking_archives/custom_today_archive.html"
+    template_name = "booking_archives/booking_latest_archive.html"
     context_object_name = 'bookings'
 
     def get_queryset(self):
         today = timezone.now().date()
         queryset = super().get_queryset().filter(booking_date=today)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['home_url'] = reverse('home')
+        return context
+
+class BookingDayArchiveView(DayArchiveView):
+    model = Booking
+    queryset = Booking.objects.all()
+    date_field = "booking_date"
+    template_name = 'booking_archives/booking_daily_archives.html'
+    allow_empty = True
+    allow_future = True
+    #context_object_name = 'daily_bookings'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(guest_profile__full_name__icontains=query) |
+                Q(booking_number__icontains=query)
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
