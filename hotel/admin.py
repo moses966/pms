@@ -59,7 +59,7 @@ class PaymentInformationInline(admin.StackedInline):
 # adding Reservation to admin
 class ReservationAdmin(admin.ModelAdmin):
     fields = ('guest_name', 'guest_email', 'guest_contact', 'number_of_children', 'number_of_adults',
-              'room_or_rooms', 'check_in_date', 'check_out_date', 'deadline', 'check_in', 'special_requests', 'created_at', 'status',
+              'room_or_rooms', 'reservation_date', 'check_in_date', 'check_out_date', 'deadline', 'check_in', 'special_requests', 'created_at', 'status',
               'deposit', 'deposit_amount', 'balance'
     )
     list_display = ('guest_name', 'guest_contact', 'deposit',
@@ -67,6 +67,7 @@ class ReservationAdmin(admin.ModelAdmin):
     )
     search_fields = ('guest_name', 'guest_contact', 'guest_email', 'status', 'reservation_number',)
     list_filter = ('room_or_rooms', 'status',)
+    readonly_fields = ['created_at']
     inlines = [
         PaymentInformationInline,
     ]

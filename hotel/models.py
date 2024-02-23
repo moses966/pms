@@ -231,7 +231,7 @@ class Reservation(models.Model):
     guest_name = models.CharField(max_length=100)
     guest_email = models.EmailField(null=True, blank=True)
     guest_contact = models.CharField(max_length=15)
-    check_in_date = models.DateField(blank=False, null=False)
+    check_in_date = models.DateField(blank=True, null=True)
     check_out_date = models.DateTimeField()
     room_or_rooms = models.ManyToManyField(
         Room,
@@ -241,7 +241,7 @@ class Reservation(models.Model):
     number_of_children = models.PositiveIntegerField(default=0)
     special_requests = models.TextField(blank=True)
     reservation_date = models.DateField(default=timezone.now, blank=False, null=False)
-    created_at = models.TimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     deposit = models.BooleanField(
         default=False,
@@ -276,6 +276,7 @@ class Reservation(models.Model):
         if not self.reservation_number:
             # Generate a unique reservation number using the first 4 characters of a UUID
             self.reservation_number = 'RS-' + str(uuid.uuid4())[:4]
+        
         super().save(*args, **kwargs)
 
     # update reservation status if PaymentInformation Instance is saved

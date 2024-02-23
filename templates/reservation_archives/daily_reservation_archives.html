@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Archives</title>
+    <title>Daily Reservations</title>
     <style>
         /* Add your CSS styling here */
         table {
@@ -55,7 +55,7 @@
 
     <!-- Search field -->
     <div class="search-bar">
-        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for booking number..">
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for Reservation number..">
     </div>
     {% if object_list %}
     <!-- Display data in a table -->
@@ -65,46 +65,46 @@
                 <th>Guest Full Name</th>
                 <th>Phone Number</th>
                 <th>Room Number</th>
-                <th>Booking Number</th>
-                <th>Booking Status</th>
+                <th>Reservation Number</th>
+                <th>Reservation Status</th>
                 <th>Guest Checked In</th>
                 <th>Check-in date</th>
             </tr>
         </thead>
         <tbody>
-            {% for booking in object_list %}
+            {% for reservation in object_list %}
             <tr>
-                <td>{{ booking.guest_profile.full_name }}</td>
-                <td>{{ booking.guest_profile.phone_number }}</td>
+                <td>{{ reservation.guest_name }}</td>
+                <td>{{ reservation.guest_contact }}</td>
                 <td>
-                    {% for room in booking.room_or_rooms.all %}
+                    {% for room in reservation.room_or_rooms.all %}
                         {{ room.room_number }}
                     {% endfor %}
                 </td>
                 <td>
-                    <a href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">
-                    {{ booking.booking_number }}
+                    <a href="{% url 'reservation_detail' year=reservation.reservation_date|date:'Y' month=reservation.reservation_date|date:'m' pk=reservation.pk %}">
+                    {{ reservation.reservation_number }}
                     </a>
                 </td>
-                <td>{{ booking.booking_status }}</td>
-                <td> {% if booking.check_in %}✓{% else %}✗ {% endif %}</td>
-                <td>{{ booking.check_in_date }}</td>
+                <td>{{ reservation.status }}</td>
+                <td> {% if reservation.check_in %}✓{% else %}✗ {% endif %}</td>
+                <td>{{ reservation.check_in_date }}</td> 
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p class="message">No bookings available for this Day.</p>
+    <p class="message">No Reservations available for this Day.</p>
     {% endif %}
 
     <p>
         {% if previous_day %}
-        <a href="{% url 'archive_day' year=previous_day|date:'Y' month=previous_day|date:'M' day=previous_day|date:'d' %}">
+        <a href="{% url 'archive_day_reservation' year=previous_day|date:'Y' month=previous_day|date:'M' day=previous_day|date:'d' %}">
             -Previous Day: </a>{{ previous_day }}
         {% endif %}
         {% if previous_day and next_day %} -- {% endif %}
         {% if next_day %}
-        <a href="{% url 'archive_day' year=next_day|date:'Y' month=next_day|date:'M' day=next_day|date:'d' %}">
+        <a href="{% url 'archive_day_reservation' year=next_day|date:'Y' month=next_day|date:'M' day=next_day|date:'d' %}">
             Next Day+: </a>{{ next_day }}
         {% endif %}
     </p>

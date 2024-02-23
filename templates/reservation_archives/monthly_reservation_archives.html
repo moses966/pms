@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Archives</title>
+    <title>Monthly Reservations</title>
     <style>
         .message {
             margin-top: 20px;
@@ -18,12 +18,13 @@
 <body>
     <div>
         {% for date in date_list %}
-            <h1>Bookings for: {{ date|date }}</h1>
+            <h1>Reservationss for: {{ date|date }}</h1>
         {% endfor %}
     </div>
+    {% if object_list %}
     <ul>
-        {% for booking in object_list %}
-            <li>{{ booking.booking_date|date:"F j, Y" }}: <a href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">{{ booking.booking_number }}</a></li>
+        {% for reservation in object_list %}
+            <li>{{ reservation.reservation_date|date:"F j, Y" }}: <a href="{% url 'reservation_detail' year=reservation.reservation_date|date:'Y' month=reservation.reservation_date|date:'m' pk=reservation.pk %}">{{ reservation.reservation_number }}</a></li>
         {% endfor %}
     </ul>
     {% else %}
@@ -32,11 +33,11 @@
     
     <p>
         {% if previous_month %}
-        <a href="{% url 'archive_month' year=previous_month|date:'Y' month=previous_month|date:'M' %}">
+        <a href="{% url 'archive_month_reservation' year=previous_month|date:'Y' month=previous_month|date:'M' %}">
             Previous Month: </a>{{ previous_month|date:"F Y" }}
         {% endif %}
         {% if next_month %}
-        <a href="{% url 'archive_month' year=next_month|date:'Y' month=next_month|date:'M' %}">
+        <a href="{% url 'archive_month_reservation' year=next_month|date:'Y' month=next_month|date:'M' %}">
             Next Month: </a>{{ next_month|date:"F Y" }}
         {% endif %}
     </p>
