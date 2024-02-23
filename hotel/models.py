@@ -45,7 +45,7 @@ class Room(models.Model):
     room_number = models.CharField(
         null=True,
         blank=True,
-        max_length=3,
+        max_length=20,
     )
     floor_number = models.CharField(
         null=True,
@@ -173,6 +173,11 @@ class Booking(models.Model):
         verbose_name='Guest Has Checked In',
         help_text='Tick if guest has checked in',
     )
+    def get_rate_plans(self):
+        if self.booking_info.exists():
+            payment_info = self.booking_info.first()  # Get the first PaymentInformation instance
+            return payment_info.amount_paid / self.room_or_rooms.count()
+        return None
 
     def save(self, *args, **kwargs):
         if not self.booking_number:
@@ -272,11 +277,16 @@ class Reservation(models.Model):
         help_text='Tick if guest has checked in',
     )
 
+    def get_rate_plan(self):
+        if self.reserve_info.exists():
+            payment_info = self.reserve_info.first()  # Get the first PaymentInformation instance
+            return payment_info.amount_paid / self.room_or_rooms.count()
+        return None
+
     def save(self, *args, **kwargs):
         if not self.reservation_number:
             # Generate a unique reservation number using the first 4 characters of a UUID
             self.reservation_number = 'RS-' + str(uuid.uuid4())[:4]
-        
         super().save(*args, **kwargs)
 
     # update reservation status if PaymentInformation Instance is saved
@@ -323,7 +333,7 @@ class PaymentInformation(models.Model):
     payment_status = models.CharField(
         max_length=20,
         choices=PAYMENT_CHOICES,
-        default='pending',
+        default='paid',
     )
     payment_method = models.CharField(
         max_length=15,
@@ -382,6 +392,14 @@ class PaymentInformation(models.Model):
                 self.receipt_number = self.reserve_info.reservation_number if self.reserve_info else None
 
         super().save(*args, **kwargs)
+
+    def save_reservation(self):
+        self._skip_reservation_save = True
+        try:
+            if self.reserve_info:
+                self.reserve_info.save()
+        finally:
+            del self._skip_reservation_save
 
     def __str__(self):
         return f"Receipt number: {self.receipt_number} - Amount Paid: {self.amount_paid}"

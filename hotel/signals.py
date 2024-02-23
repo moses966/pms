@@ -1,6 +1,7 @@
 from django.dispatch import receiver
 from django.utils import timezone
-from .models import Reservation
+from django.db.models.signals import m2m_changed
+from .models import Reservation, Booking
 
 
 def update_room_cleaned(sender, instance, **kwargs):
@@ -42,3 +43,29 @@ def update_room_status_on_reservation_save(sender, instance, created, **kwargs):
     # proceed to update the room status
     if created or not hasattr(instance, '_changed_fields') or 'status' not in instance._changed_fields:
         update_room_status(instance)
+
+@receiver(
+    m2m_changed, sender=Reservation.room_or_rooms.through,
+    dispatch_uid='update_payment_info_amount_paid_for_reservation',
+)
+def update_payment_info_amount_paid_for_reservation(sender, instance, action, **kwargs):
+    if action in ['post_add', 'post_remove', 'post_clear']:  # Check if the M2M relationship is changed
+        if instance.reserve_info.exists():  # Check if there is an associated PaymentInformation instance
+            payment_info = instance.reserve_info.first()
+            room_count = instance.room_or_rooms.count()
+            new_amount_paid = room_count * instance.get_rate_plan()  # Recalculate amount_paid based on the rate plan
+            payment_info.amount_paid = new_amount_paid
+            payment_info.save()
+
+@receiver(
+    m2m_changed, sender=Booking.room_or_rooms.through,
+    dispatch_uid='update_payment_info_amount_paid_for_booking',
+)
+def update_payment_info_amount_paid_for_booking(sender, instance, action, **kwargs):
+    if action in ['post_add', 'post_remove', 'post_clear']:  # Check if the M2M relationship is changed
+        if instance.booking_info.exists():  # Check if there is an associated PaymentInformation instance
+            payment_info = instance.booking_info.first()
+            room_count = instance.room_or_rooms.count()
+            new_amount_paid = room_count * instance.get_rate_plans()  # Recalculate amount_paid based on the rate plan
+            payment_info.amount_paid = new_amount_paid
+            payment_info.save()

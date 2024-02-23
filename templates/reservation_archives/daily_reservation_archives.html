@@ -78,7 +78,7 @@
                 <td>{{ reservation.guest_contact }}</td>
                 <td>
                     {% for room in reservation.room_or_rooms.all %}
-                        {{ room.room_number }}
+                        {{ room.room_number }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td>
