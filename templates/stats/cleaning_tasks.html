@@ -1,56 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cleaning Tasks</title>
+    <title>Daily Reservations</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+        /* Add your CSS styling here */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
         th, td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #dddddd;
             text-align: left;
+            padding: 8px;
         }
-        th {
+        tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button[type="submit"] {
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
+
 <body>
-    <h2>Cleaning Tasks</h2>
-    <table>
+    <h1>{{ day }}</h1>
+
+    <!-- Search field -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for Reservation number..">
+    </div>
+    {% if object_list %}
+    <!-- Display data in a table -->
+    <table id="bookingTable">
         <thead>
             <tr>
                 <th>Room</th>
+                <th>Day</th>
                 <th>Status</th>
                 <th>Created at</th>
                 <th>Special Instructions</th>
             </tr>
         </thead>
         <tbody>
-            {% for task in cleaning_tasks %}
-                <tr>
-                    <td><a href="{% url 'room_detail' task.room_number.id %}">{{ task.room_number }}</a></td>
-                    <td>{{ task.get_task_status_display }}</td>
-                    <td>{{ task.created_at }}</td>
-                    <td>{{ task.special_instructions }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No cleaning tasks available.</td>
-                </tr>
+            {% for task in object_list %}
+            <tr>
+                <td><a href="{% url 'room_detail' task.room_number.id %}">{{ task.room_number }}</a></td>
+                <td>
+                    <a href="{% url 'cleaning_task_detail' year=task.creation_date|date:'Y' month=task.creation_date|date:'m' pk=task.pk %}">
+                    {{ task.creation_date }}
+                    </a>
+                </td>
+                <td>{{ task.get_task_status_display }}</td>
+                <td>{{ task.created_at }}</td>
+                <td>{{ task.special_instructions }}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p class="message">No Cleaning Tasks available for this Day.</p>
+    {% endif %}
+
+    <p>
+        {% if previous_day %}
+        <a href="{% url 'archive_day_reservation' year=previous_day|date:'Y' month=previous_day|date:'M' day=previous_day|date:'d' %}">
+            -Previous Day: </a>{{ previous_day }}
+        {% endif %}
+        {% if previous_day and next_day %} -- {% endif %}
+        {% if next_day %}
+        <a href="{% url 'archive_day_reservation' year=next_day|date:'Y' month=next_day|date:'M' day=next_day|date:'d' %}">
+            Next Day+: </a>{{ next_day }}
+        {% endif %}
+    </p>
     <div>
-        <a href="{{ home_url }}">Back to Home</a>
+        <a href="{{ home_url }}" >Back Home</a>
     </div>
+
 </body>
+
 </html>

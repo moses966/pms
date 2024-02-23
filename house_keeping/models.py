@@ -17,6 +17,7 @@ class HousekeepingTask(models.Model):
     )
     task_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     special_instructions = models.TextField(blank=True, null=True)
+    creation_date = models.DateField(default=timezone.now)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

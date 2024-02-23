@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.views.generic import ListView, DetailView
+from django.views.generic.dates import DayArchiveView
 from hotel.models import Room, Category
 from house_keeping.models import CleanRoom, HousekeepingTask
 from management.models import User, CustomGroup
@@ -105,7 +106,21 @@ class DepartmentDetailView(DetailView):
         context['users'] = self.object.user_set.all()
         context['home_url'] = reverse('home') 
         return context
-class CleaningTasksListView(ListView):
+    
+class DailyCleaningTasksView(DayArchiveView):
+    model = HousekeepingTask
+    queryset = HousekeepingTask.objects.all()
+    date_field = "creation_date"
+    template_name = 'stats/cleaning_tasks.html'
+    allow_future = True
+    allow_empty = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['home_url'] = reverse('home')
+        return context
+    
+'''class CleaningTasksListView(ListView):
     model = HousekeepingTask
     template_name = 'stats/cleaning_tasks.html'
     context_object_name = 'cleaning_tasks'
@@ -113,7 +128,7 @@ class CleaningTasksListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
-        return context
+        return context'''
 
 class CategoryListView(ListView):
     model = Category
@@ -122,6 +137,18 @@ class CategoryListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['home_url'] = reverse('home')
+        return context
+
+class CleaningTaskDetailView(DetailView):
+    model = HousekeepingTask
+    template_name = 'stats/cleaning_task_details.html'
+    context_object_name = 'tasks'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['year'] = self.kwargs['year']
+        context['month'] = self.kwargs['month']
         context['home_url'] = reverse('home')
         return context
 

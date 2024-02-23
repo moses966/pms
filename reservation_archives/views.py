@@ -110,4 +110,3 @@ class ReservationDetailView(DetailView):
         context['month'] = self.kwargs['month']
         context['home_url'] = reverse('home')
         return context
-

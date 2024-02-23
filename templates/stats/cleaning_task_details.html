@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load custom_filters archive_custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cleaning Task Details</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cleaning task Details</h1>
+    <table>
+        <tr>
+            <th>Room number</th>
+            <td>{{ tasks.room_number }}</td>
+        </tr>
+        <tr>
+            <th>Task Status</th>
+            <td> {{ tasks.get_task_status_display }} </td>
+        </tr>
+        <tr>
+            <th>Time Issued</th>
+            <td>{{ tasks.created_at }}</td>
+        </tr>
+        <tr>
+            <th>Time Of Update</th>
+            <td>{{ tasks.updated_at }}</td>
+        </tr>
+        <tr>
+            <th>Special Instructions</th>
+            <td>{{ tasks.special_instructions }}</td>
+        </tr>
+    </table>
+    <h2>Cleaning Progress Information</h2>
+    <table>
+        <tr>
+            <th>Time of Response</th>
+            <th>Asigned To</th>
+            <th>Progress Status</th>
+            <th>Special Note</th>
+        </tr>
+        <tr>
+            <td>{{ tasks.maintenance_request.created_at }}</td>
+            {% for user in tasks.maintenance_request.assigned_to.all %}
+              <td>{{ user }}{% if not forloop.last %}, {% endif %}</td>
+            {% endfor %}
+            <td>{{ tasks.get_task_status_display }}</td>
+            {% if tasks.maintenance_request.description %}
+            <td>{{ tasks.maintenance_request.description }}</td>
+            {% else %}
+            <td>No special note!</td>
+            {% endif %}
+        </tr>
+        {% for info in reservation.reserve_info.all %}
+            <tr>
+                <td>{{ info.receipt_number }}</td>
+                <td>{{ info.get_payment_status_display }}</td>
+                <td>
+                    {% if info.standard_rate %}
+                        Standard Rate
+                    {% elif info.promotional_rate %}
+                        Promotional Rate
+                    {% else %}
+                        Corporate Rate
+                    {% endif %}
+                </td>
+                <td>UGX. {{ info.amount_paid|add_commas }}</td>
+                <td>{{ info.amount_paid|shillings_in_words }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div>
+        <a href="{{ home_url }}">Back to Home</a>
+    </div>
+</body>
+</html>

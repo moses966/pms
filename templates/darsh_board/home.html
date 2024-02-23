@@ -29,7 +29,7 @@
         <a href="{% url 'department_list' %}" >Departments</a>
     </div>
     <div>
-        <a href="{% url 'cleaning_tasks' %}" >Cleaning tasks</a>
+        <a href="{% url 'cleaning_task_archives' year=current_year month=current_month day=current_day %}" >Cleaning tasks</a>
     </div>
     <div>
         <a href="{% url 'category_list' %}" >Room Categories</a>
