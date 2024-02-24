@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Suppliers</title>
+    <style>
+        /* Add your custom styling here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .supplier {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .supplier-info {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Item Suppliers</h1>
+        <ul>
+            {% for supplier in suppliers %}
+            <li class="supplier">
+                <div class="supplier-info">
+                    <h2>{{ supplier.name }}</h2>
+                    <p>Contact Person: {{ supplier.contact_person }}</p>
+                    <p>Phone Number: {{ supplier.phone_number }}</p>
+                    <p>Email: {{ supplier.email }}</p>
+                    <p>Location: {{ supplier.location }}</p>
+                </div>
+                <a href="{% url 'items' %}" class="btn">View Items</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

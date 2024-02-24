@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Details</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transaction Detail</h1>
+    <table>
+        <tr>
+            <th>Inventory item</th>
+            <td>{{ transaction.inventory_item }}</td>
+        </tr>
+        <tr>
+            <th>Transaction Type</th>
+            <td> {{ transaction.get_transaction_type_display}} </td>
+        </tr>
+        <tr>
+            <th>Quantity Transfered</th>
+            <td>{{ transaction.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Transaction Time</th>
+            <td>{{ transaction.transaction_date }}</td>
+        </tr>
+        <tr>
+            <th>Note</th>
+            <td>{% if transaction.remarks %}{{ transaction.remarks }}{% else %}None{% endif %} </td>
+        </tr>
+    </table>
+    <div>
+        <a href="{{ home_url }}">Back to Home</a>
+    </div>
+</body>
+</html>

@@ -66,6 +66,7 @@ class PurchaseOrderItem(models.Model):
         decimal_places=2,
         default=0,
     )
+    creation_date = models.DateField(default=timezone.now)
     def save(self, *args, **kwargs):
         # Calculate sub total quantity
         self.sub_total = self.unit_price * self.quantity_ordered
@@ -88,6 +89,7 @@ class InventoryTransaction(models.Model):
         ('transfer', 'Transfer'),
     ]
     transaction_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateField(default=timezone.now)
     transaction_type = models.CharField(
         max_length=15,
         choices=TRANSACTION_TYPE,

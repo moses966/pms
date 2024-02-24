@@ -28,4 +28,5 @@ urlpatterns = [
     path('property/', include('stats.urls')), # include stats app urls
     path('bookings/', include('booking_archives.urls')),
     path('reservations/', include('reservation_archives.urls')),
+    path('inventory/', include('inventory.urls')),
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

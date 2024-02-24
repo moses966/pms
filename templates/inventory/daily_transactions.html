@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Items Transactions</title>
+    <style>
+        /* Add your CSS styling here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>{{ day }}</h1>
+    {% if object_list %}
+    <!-- Display data in a table -->
+    <table id="bookingTable">
+        <thead>
+            <tr>
+                <th>Inventory Item</th>
+                <th>Transaction Type</th>
+                <th>Quantity Transferred</th>
+                <th>Transaction Time</th>
+                <th>View Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in object_list %}
+            <tr>
+                <td><a href="{% url 'item' pk=transaction.inventory_item.pk %}" >{{ transaction.inventory_item }}</a></td>
+                <td>{{ transaction.get_transaction_type_display }}</td>
+                <td>
+                    {{ transaction.quantity }}
+                </td>
+                <td>{{ transaction.transaction_date }}</td>
+                <td><a href="{% url 'transaction_detail' year=transaction.transaction_date|date:'Y' month=transaction.transaction_date|date:'m' pk=transaction.pk %}" >Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="message">No Transactions available for this Day.</p>
+    {% endif %}
+
+    <p>
+        {% if previous_day %}
+        <a href="{% url 'day_transactions' year=previous_day|date:'Y' month=previous_day|date:'M' day=previous_day|date:'d' %}">
+            -Previous Day: </a>{{ previous_day }}
+        {% endif %}
+        {% if previous_day and next_day %} -- {% endif %}
+        {% if next_day %}
+        <a href="{% url 'day_transactions' year=next_day|date:'Y' month=next_day|date:'M' day=next_day|date:'d' %}">
+            Next Day+: </a>{{ next_day }}
+        {% endif %}
+    </p>
+    <div>
+        <a href="{{ home_url }}" >Back Home</a>
+    </div>
+</body>
+
+</html>

@@ -56,5 +56,19 @@
     <div>
         <a href="{% url 'reservation_year_archive' year=current_year %}" >Yearly Reservations</a>
     </div>
+    <br>
+    <br>
+    <div>
+        <a href="{% url 'day_transactions' year=current_year month=current_month day=current_day  %}" >Daily Transactions</a>
+    </div>
+    <div>
+        <a href="{% url 'month_transaction_archives' year=current_year month=current_month %}" >Monthly Transactions</a>
+    </div>
+    <div>
+        <a href="{% url 'year_transaction_archives' year=current_year %}" >Yearly Transactions</a>
+    </div>
+    <div>
+        <a href="{% url 'items' %}" >View Items</a>
+    </div>
 </body>
 </html>
