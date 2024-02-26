@@ -25,7 +25,7 @@
     <table>
         <tr>
             <th>Guest Name</th>
-            <td>{{ reservation.guest_name }}</td>
+            <td>{{ reservation.guest_name|upper }}</td>
         </tr>
         <tr>
             <th>Guest Email</th>
@@ -65,7 +65,7 @@
         </tr>
         <tr>
             <th>Reservation Status</th>
-            <td>{{ reservation.get_status_display }}</td>
+            <td>{{ reservation.status|capfirst }}</td>
         </tr>
         <tr>
             <th>Number of Adults</th>
@@ -113,7 +113,7 @@
         {% for info in reservation.reserve_info.all %}
             <tr>
                 <td>{{ info.receipt_number }}</td>
-                <td>{{ info.get_payment_status_display }}</td>
+                <td>{{ info.payment_status|capfirst }}</td>
                 <td>
                     {% if info.standard_rate %}
                         Standard Rate

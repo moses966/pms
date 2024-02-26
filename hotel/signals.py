@@ -2,6 +2,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.db.models.signals import m2m_changed
 from .models import Reservation, Booking
+from choices.models import ReservationStatus, RoomStatus, BookingStatus
+from django.db.models.signals import  post_save, post_delete, pre_save
 
 
 def update_room_cleaned(sender, instance, **kwargs):
@@ -21,14 +23,47 @@ def update_reservation_status(sender, instance, **kwargs):
     if instance.reserve_info:
         instance.reserve_info.update_status_if_payment_info_exists()
 
-def update_room_status(instance):
-    if instance.status == 'confirmed':
+# method for updating room status to confirmed
+# if, reservation is confirmed and check-in date reached
+def update_room_status_on_reservation(instance):
+    confirmed_status = ReservationStatus.objects.get(reservation_status='confirmed')
+    cancelled_status = ReservationStatus.objects.get(reservation_status='cancelled')
+    occupied_status = RoomStatus.objects.get(room_status='occupied')
+    available_status = RoomStatus.objects.get(room_status='available')
+
+    # Check if check-in dates are today
+    today = timezone.localdate()
+    if instance.check_in_date == today and instance.status == confirmed_status:
+        # Update corresponding rooms to occupied
         for room in instance.room_or_rooms.all():
-            room.status = 'occupied'
+            room.status = occupied_status
             room.save()
-    elif instance.status == 'cancelled':
+
+    elif instance.status == cancelled_status:
+        # Update corresponding rooms to available if reservation is cancelled
         for room in instance.room_or_rooms.all():
-            room.status = 'available'
+            room.status = available_status
+            room.save()
+
+# method for updating room status to confirmed
+# if, booking is confirmed and check-in date  and time reached
+def update_room_status_on_booking(instance):
+    confirmed_status = BookingStatus.objects.get(booking_status='confirmed')
+    cancelled_status = BookingStatus.objects.get(booking_status='cancelled')
+    occupied_status = RoomStatus.objects.get(room_status='occupied')
+    available_status = RoomStatus.objects.get(room_status='available')
+
+    # Check if check-in dates are today
+    today = timezone.localdate()
+    if (instance.check_in_date and instance.check_in_date.date() == today) and instance.booking_status == confirmed_status:
+        # Update corresponding rooms to occupied
+        for room in instance.room_or_rooms.all():
+            room.status = occupied_status
+            room.save()
+    elif instance.booking_status == cancelled_status:
+        # Update corresponding rooms to available if booking is cancelled
+        for room in instance.room_or_rooms.all():
+            room.status = available_status
             room.save()
  
 def update_room_status_on_reservation_change(sender, instance, **kwargs):
@@ -36,13 +71,28 @@ def update_room_status_on_reservation_change(sender, instance, **kwargs):
     if instance.pk:  # Check if the instance is already saved (i.e., has a primary key)
         old_instance = Reservation.objects.get(pk=instance.pk)
         if old_instance.status != instance.status:
-            update_room_status(instance)
+            update_room_status_on_reservation(instance)
 
 def update_room_status_on_reservation_save(sender, instance, created, **kwargs):
     # If the instance is newly created, or the status hasn't changed,
     # proceed to update the room status
     if created or not hasattr(instance, '_changed_fields') or 'status' not in instance._changed_fields:
-        update_room_status(instance)
+        update_room_status_on_reservation(instance)
+    
+@receiver(pre_save, sender=Booking)
+def update_room_status_on_booking_change(sender, instance, **kwargs):
+    # Check if the status has changed
+    if instance.pk:  # Check if the instance is already saved (i.e., has a primary key)
+        old_instance = Booking.objects.get(pk=instance.pk)
+        if old_instance.booking_status != instance.booking_status:
+            update_room_status_on_booking(instance)
+
+@receiver(post_save, sender=Booking)
+def update_room_status_on_booking_save(sender, instance, created, **kwargs):
+    # If the instance is newly created, or the status hasn't changed,
+    # proceed to update the room status
+    if created or not hasattr(instance, '_changed_fields') or 'booking_status' not in instance._changed_fields:
+        update_room_status_on_booking(instance)
 
 @receiver(
     m2m_changed, sender=Reservation.room_or_rooms.through,

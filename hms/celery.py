@@ -30,7 +30,7 @@ def setup_periodic_tasks(sender, **kwargs):
     from hotel.tasks import (
         check_reservation_deadline,
         update_room_status,
-        update_room_statuses,
+        update_room_status_to_occupied,
     )
     sender.add_periodic_task(
         check_reservation_deadline.s(),
@@ -39,7 +39,7 @@ def setup_periodic_tasks(sender, **kwargs):
         update_room_status.s(),
     )
     sender.add_periodic_task(
-        update_room_statuses.s(),
+        update_room_status_to_occupied.s(),
     )
     
 

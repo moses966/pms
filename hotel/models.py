@@ -3,6 +3,11 @@ from management.custom_validators import validate_contact, validate_nin
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import uuid
+from choices.models import (
+    RoomStatus, ReservationStatus,
+    BookingSource, BookingStatus, GenderChoices,
+    PaymentStatus, PaymentMethod, MenuAndDrinksChoice,
+)
 
 # Room category class
 class Category(models.Model):
@@ -58,15 +63,12 @@ class Room(models.Model):
         null=True,
         blank=True,
     )
-    STATUS_CHOICES = (
-        ('available', 'Available'),
-        ('occupied', 'Occupied'),
-        ('out_of_service', 'Out of Service'),
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='available',
+    status = models.ForeignKey(
+        RoomStatus,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -74,7 +76,6 @@ class Room(models.Model):
         max_length=15,
         default='Not yet'
     )
-    # Pricing based on rate category
     standard_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -93,15 +94,12 @@ class Room(models.Model):
         null=True,
         blank=True,
     )
-
-    # Discount percentage (0-100)
     discount = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         default=0,
         help_text='Discount percentage (0-100)',
     )
-
     def save(self, *args, **kwargs):
         # Automatically calculate promotional price based on standard price and discount
         if self.standard_price is not None and self.discount is not None:
@@ -140,26 +138,19 @@ class Booking(models.Model):
     check_out_date = models.DateTimeField(default=timezone.now)
     booking_date = models.DateField(default=timezone.now, blank=False, null=False)
     booking_time = models.TimeField(auto_now_add=True)
-    STATUS_CHOICES = (
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled'),
+    booking_status = models.ForeignKey(
+        BookingStatus,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
-    BOOKING_SOURCE = (
-        ('online', 'Online'),
-        ('walk_in', 'Walk-in'),
-        ('phone', 'Phone Reservation'),
-    )
-    booking_status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='confirmed',
-    )
-    booking_source = models.CharField(
-        null=True,
-        blank=True,
-        max_length=15,
-        choices=BOOKING_SOURCE,
-        default='walk_in',
+    booking_source = models.ForeignKey(
+        BookingSource,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
     special_requests = models.TextField(blank=True, null=True)
     special_instructions = models.TextField(
@@ -200,14 +191,12 @@ class Guest(models.Model):
     full_name = models.CharField(
         max_length=25,
     )
-    GENDER = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
-    gender = models.CharField(
-        max_length=10,
-        choices=GENDER,
-        default='male',
+    gender = models.ForeignKey(
+        GenderChoices,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
     email_adress = models.EmailField(
         null=True,
@@ -255,15 +244,12 @@ class Reservation(models.Model):
     )
     deposit_amount = models.DecimalField(max_digits=10, default=0, decimal_places=2)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled')
-    ]
-    status = models.CharField(
-        max_length=11,
-        choices=STATUS_CHOICES,
-        default='active',
+    status = models.ForeignKey(
+        ReservationStatus,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----', 
     )
     deadline = models.DateTimeField(
         help_text='Time for invalidation of reservation contract.',
@@ -292,7 +278,8 @@ class Reservation(models.Model):
     # update reservation status if PaymentInformation Instance is saved
     def update_status_if_payment_info_exists(self):
         if self.reserve_info.exists():
-            self.status = 'confirmed'
+            confirmed_status = ReservationStatus.objects.get(reservation_status='confirmed')
+            self.status = confirmed_status
             self.save()
 
     def __str__(self):
@@ -314,31 +301,19 @@ class PaymentInformation(models.Model):
         blank=True,
         null=True,
     )
-    PAYMENT_CHOICES = (
-        ('paid', 'Paid'),
-        ('pending', 'Pending'),
-        ('due', 'Due'),
+    payment_status = models.ForeignKey(
+        PaymentStatus,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
-    PAYMENT_METHOD = (
-        ('cash', 'Cash'),
-        ('mtn', 'Mtn MOMO'),
-        ('airtel', 'Airtel Money'),
-        ('bank', 'Bank transfer'),
-    )
-    RATE_PLAN_CHOICES = [
-        ('standard', 'Standard Rate'),
-        ('promotional', 'Promotional Rate'),
-        ('corporate', 'Corporate Rate'),
-    ]    
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_CHOICES,
-        default='paid',
-    )
-    payment_method = models.CharField(
-        max_length=15,
-        choices=PAYMENT_METHOD,
-        default='cash'
+    payment_method = models.ForeignKey(
+        PaymentMethod,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default='----',
     )
     amount_paid = models.DecimalField(
         max_digits=10,

@@ -105,7 +105,7 @@
                         {% endfor %}
                     </td>
                     <td><a href="{% url 'reservation_detail' year=reservation.reservation_date|date:'Y' month=reservation.reservation_date|date:'m' pk=reservation.pk %}">{{ reservation.reservation_number }}</a></td>
-                    <td>{{ reservation.status }}</td>
+                    <td>{{ reservation.status|capfirst }}</td>
                     <td> {% if reservation.check_in %}✓{% else %}✗ {% endif %}</td>
                     <td>{{ reservation.check_in_date }}</td> 
                 </tr>

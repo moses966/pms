@@ -1,74 +1,68 @@
 from celery import shared_task
-from django.utils import timezone as dj_timezone
+from django.utils import timezone
 from .models import Reservation, Room, Booking
+from choices.models import RoomStatus,  ReservationStatus
 
 # this method looks for deadlines
 # If caught, reservation is automatically marked 
 # cancelled
 @shared_task
 def check_reservation_deadline():
-    # Get all active reservations with deadlines that have passed
-    expired_reservations = Reservation.objects.filter(
-        status='active', deadline__lte=dj_timezone.now()
-    )
+    # Get all active reservations with exceeded deadlines
+    reservations_to_cancel = Reservation.objects.filter(status__reservation_status='active', deadline__lt=timezone.now())
 
-    # Update the status of each expired reservation to 'cancelled'
-    for reservation in expired_reservations:
-        reservation.status = 'cancelled'
+    # Cancel reservations
+    for reservation in reservations_to_cancel:
+        # Update status to cancelled
+        cancelled_status = ReservationStatus.objects.get(reservation_status='cancelled')
+        reservation.status = cancelled_status
         reservation.save()
 
 # This method looks for checkout date
 # If caught, room status is updated to available
-@shared_task(name='Update_room_status')
+@shared_task
 def update_room_status():
-    # Get all rooms
-    rooms = Room.objects.all()
+    # Get all rooms with bookings where the checkout time is exceeded
+    rooms_to_update = Room.objects.filter(bookings__check_out_date__lt=timezone.now())
 
-    for room in rooms:
-        # Check if the room has any associated bookings or reservations
-        if room.bookings.filter(booking_status__in=['confirmed']).exists() or \
-                room.reservations.filter(status='confirmed').exists():
-            check_out_dates = []
-            
-            # Filter bookings with status not cancelled
-            bookings = room.bookings.exclude(booking_status='cancelled')
-            for booking in bookings:
-                check_out_dates.append(booking.check_out_date)
+    # Update room status to available
+    for room in rooms_to_update:
+        available_status = RoomStatus.objects.get(room_status='available')
+        room.status = available_status
+        room.save()
 
-            # Filter reservations with status confirmed
-            reservations = room.reservations.filter(status='confirmed')
-            for reservation in reservations:
-                check_out_dates.append(reservation.check_out_date)
+    # Get all rooms with reservations where the checkout time is exceeded
+    rooms_to_update = Room.objects.filter(reservations__check_out_date__lt=timezone.now())
 
-            # Check if the current date and time exceed any of the check-out dates and times
-            current_datetime = dj_timezone.now()
-
-            for check_out_date in check_out_dates:
-                if current_datetime >= check_out_date:
-                    # Update room status to available
-                    room.status = 'available'
-                    room.save()
-                    break  # No need to continue checking if one check-out date is exceeded
-
-    return 'Room statuses updated'
-
+    # Update room status to available
+    for room in rooms_to_update:
+        available_status = RoomStatus.objects.get(room_status='available')
+        room.status = available_status
+        room.save()
+    return 'Room Status Updated'
 # This method implements:
-# if a bboking instance is saved with booking_status=confirmed, 
+# if a bboking instance is saved with booking_status=confirmed or reservation_status=confirmed,
+# and, checki-in is reached or exceeded
 # room status is updated to occupied else, available
-@shared_task(name='Update_room_status_with_confirmation')
-def update_room_statuses():
-    # Get all rooms
-    rooms = Room.objects.all()
+@shared_task(name='Update_room_status_on_check_in')
+def update_room_status_to_occupied():
+    # Get all confirmed bookings with check-in date and time reached
+    bookings_to_update = Booking.objects.filter(booking_status__booking_status='confirmed', check_in_date__lte=timezone.now())
 
-    for room in rooms:
-        # Check if the room has any associated bookings with status 'confirmed'
-        if room.bookings.filter(booking_status='confirmed').exists():
-            # Update room status to 'occupied'
-            room.status = 'occupied'
-            room.save()
-        else:
-            # Update room status to 'available'
-            room.status = 'available'
+    # Update room status to occupied
+    for booking in bookings_to_update:
+        for room in booking.room_or_rooms.all():
+            occupied_status = RoomStatus.objects.get(room_status='occupied')
+            room.status = occupied_status
             room.save()
 
-    return 'Confirmed Room statuses updated'
+    # Get all confirmed reservations with check-in date and time reached
+    reservations_to_update = Reservation.objects.filter(status__reservation_status='confirmed', check_in_date__lte=timezone.now())
+
+    # Update room status to occupied
+    for reservation in reservations_to_update:
+        for room in reservation.room_or_rooms.all():
+            occupied_status = RoomStatus.objects.get(room_status='occupied')
+            room.status = occupied_status
+            room.save()
+    return 'Check-in date detected'

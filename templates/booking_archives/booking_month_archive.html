@@ -21,13 +21,14 @@
             <h1>Bookings for: {{ date|date }}</h1>
         {% endfor %}
     </div>
+    {% if object_list %}
     <ul>
         {% for booking in object_list %}
             <li>{{ booking.booking_date|date:"F j, Y" }}: <a href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">{{ booking.booking_number }}</a></li>
         {% endfor %}
     </ul>
     {% else %}
-    <p class="message">No Reservations available for this Month.</p>
+       <p class="message">No Reservations available for this Month.</p>
     {% endif %}
     
     <p>

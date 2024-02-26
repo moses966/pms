@@ -96,7 +96,7 @@
                             {{ reservation.reservation_number }}
                         </a>
                     </td>
-                    <td>{{ reservation.status }}</td>
+                    <td>{{ reservation.status|capfirst }}</td>
                     <td> {% if reservation.check_in %}✓{% else %}✗ {% endif %}</td>
                     <td>{{ reservation.check_in_date }}</td>
                 </tr>
