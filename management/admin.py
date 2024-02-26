@@ -23,7 +23,7 @@ class BaseUserProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name = 'Personal Information'
     verbose_name_plural = 'Personal Information'
-    fields = ('surname', 'given_name',
+    fields = ('surname', 'given_name', 'position',
               'gender', 'contact', 'next_of_kin',
               'emergency_contact',
               'date_of_birth', 'place_of_birth', 'nin', 'age', 'location', 'photo',
@@ -93,7 +93,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
-        (None, {"fields": ("email", "password", "position",)}),
+        (None, {"fields": ("email", "password",)}),
         ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions", "date_joined")}),
     )
     add_fieldsets = (

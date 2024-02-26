@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
 from .customs import Departments, Equipment
 from .custom_validators import validate_nin, validate_contact
+from choices.models import EmploymentStatus, Positions, EmployPaymentMethod, GenderChoices
 
 # model for creation of user
 class User(AbstractBaseUser, PermissionsMixin):
@@ -18,12 +19,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
-    position = models.CharField(
-        max_length=30,
-        null=True,
-        blank=True,
-        help_text="Enter User Position in the hotel management",
-    )
    
     
 
@@ -40,10 +35,6 @@ User = get_user_model()
 
 # Personal Information model
 class BaseUserProfile(models.Model):
-    gender_s = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -51,15 +42,21 @@ class BaseUserProfile(models.Model):
     )
     surname = models.CharField(max_length=17)
     given_name = models.CharField(max_length=15)
-    gender = models.CharField(
+    gender = models.ForeignKey(
+        GenderChoices,
+        on_delete=models.CASCADE,
         max_length=10,
-        choices=gender_s,
         null=False, 
         blank=False,
-        default='male',
-        help_text="Choose Gender"
     )
-
+    position = models.ForeignKey(
+        Positions,
+        on_delete=models.CASCADE,
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text="Choose User Position in the hotel management",
+    )
     contact = models.CharField(
         max_length=10,
         validators=[validate_contact],
@@ -96,37 +93,32 @@ class Miscellaneous(models.Model):
         on_delete=models.CASCADE,
         related_name='miscella',
     )
-    PAY_CHOICE = [
-        ('momo', 'MoMo Pay'),
-        ('airtel', 'Airtel Money Pay'),
-        ('bank', 'Bank Transfer'),
-    ]
     salary = models.FloatField(
         max_length=17,
         null=True,
         blank=True,
         help_text='Input only the UGX amount e.g: 50000',
     )
-    payment_method = models.CharField(
+    payment_method = models.ForeignKey(
+        EmployPaymentMethod,
+        on_delete=models.CASCADE,
         max_length=20,
-        choices=PAY_CHOICE,
         null=False, 
         blank=False,
-        default='momo',
         help_text="Choose Payment Method"
     )
     payment = models.CharField(
         max_length=15,
         null=True,
         blank=True,
-        help_text='If applicable, provide bank account/airtel pay code/MOMO pay code.',
-        verbose_name='Payment Details'
+        help_text='Provide Payment Info according to payment method above.',
+        verbose_name='Payment Information'
     )
     userid = models.CharField(
-        max_length=2,
+        max_length=4,
         null=False, 
         blank=False,
-        help_text="Enter user ID number(01-99).",
+        help_text="Enter user ID like (01-99 or R-56).",
         verbose_name='Personal ID',
     )
 
@@ -188,23 +180,16 @@ class CustomGroup(models.Model):
     
 # User employment information
 class EmploymentInformation(models.Model):
-    EMPLOY = [
-        ('ft', 'full-time'),
-        ('pt', 'part-time'),
-        ('ct', 'contract'),
-    ]
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='employment_info',
     )
-    employment_status = models.CharField(
-        max_length=15,
-        choices=EMPLOY,
-        null=False, 
+    employment_status = models.ForeignKey(
+        EmploymentStatus,
+        on_delete=models.CASCADE,
+        null=False,
         blank=False,
-        default='ft',
-        help_text="Choose Status"
     )
     department = models.ForeignKey(
         Departments,

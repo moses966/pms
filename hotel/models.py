@@ -68,7 +68,6 @@ class Room(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -143,14 +142,12 @@ class Booking(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     booking_source = models.ForeignKey(
         BookingSource,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     special_requests = models.TextField(blank=True, null=True)
     special_instructions = models.TextField(
@@ -196,7 +193,6 @@ class Guest(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     email_adress = models.EmailField(
         null=True,
@@ -249,7 +245,6 @@ class Reservation(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----', 
     )
     deadline = models.DateTimeField(
         help_text='Time for invalidation of reservation contract.',
@@ -306,14 +301,12 @@ class PaymentInformation(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     payment_method = models.ForeignKey(
         PaymentMethod,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        default='----',
     )
     amount_paid = models.DecimalField(
         max_digits=10,

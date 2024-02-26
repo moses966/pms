@@ -129,6 +129,20 @@ class EmploymentStatus(models.Model):
         verbose_name = 'Employment Status'
         verbose_name_plural = 'Employment Status'
 
+class EmployPaymentMethod(models.Model):
+    payment_method = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.employment_status
+    
+    def save(self, *args, **kwargs):
+        self.payment_method = self.payment_method.lower()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Salary Payment Channel'
+        verbose_name_plural = 'Salary Payment Channels'
+
 class MenuAndDrinksChoice(models.Model):
     food_or_drink = models.CharField(max_length=20)
 
