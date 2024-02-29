@@ -3,7 +3,7 @@ from .models import (
     Positions, RoomStatus, BookingSource,
     BookingStatus, GenderChoices, ReservationStatus,
     PaymentStatus, PaymentMethod, EmploymentStatus,
-    EmployPaymentMethod,
+    EmployPaymentMethod, MenuAndDrinksChoice, ServiceChoices
 )
 
 @admin.register(Positions)
@@ -45,3 +45,11 @@ class EmploymentStatusAdmin(admin.ModelAdmin):
 @admin.register(EmployPaymentMethod)
 class EmployPayMethodAdmin(admin.ModelAdmin):
     list_display = ['payment_method']
+
+@admin.register(MenuAndDrinksChoice)
+class MenuAndDrinksChoiceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'units', 'unit_price']
+
+@admin.register(ServiceChoices)
+class ServiceChoicesAdmin(admin.ModelAdmin):
+    list_display = ['place', 'price_per_day', 'reservation_date', 'event_date']

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'booking_archives',
     'reservation_archives',
     'choices',
+    'restaurant',
 ]
 
 # save Celery task results in Django's database

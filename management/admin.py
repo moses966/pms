@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from typing import Set
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
 from .customs import Equipment
 from .models import (
@@ -96,6 +97,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {"fields": ("email", "password",)}),
         ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions", "date_joined")}),
     )
+    readonly_fields = ('date_joined',)
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
@@ -107,6 +109,35 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ("email",)
     ordering = ("email",)
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        disabled_fields = set() # type: Set[str]
+
+        if not is_superuser:
+            disabled_fields |= {
+                'email',
+                'is_superuser',
+            }
+
+        # Prevent non-superusers from editing their own permissions
+        if (
+            not is_superuser
+            and obj is not None
+            and obj == request.user
+        ):
+            disabled_fields |= {
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            }
+
+        for f in disabled_fields:
+            if f in form.base_fields:
+                form.base_fields[f].disabled = True
+
+        return form
 
 
 # customized group

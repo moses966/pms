@@ -1,5 +1,7 @@
 from django.apps import AppConfig
-from django.db.models.signals import  post_save, post_delete, pre_save, m2m_changed
+from django.db.models.signals import  (
+    post_save, post_delete, pre_save, post_migrate
+)
 
 
 class HotelConfig(AppConfig):
@@ -9,6 +11,7 @@ class HotelConfig(AppConfig):
 
     def ready(self):
         from . import signals
+        from . import custom_permissions
         '''
           Connect signal handlers to the appropriate signals
         '''
@@ -36,4 +39,8 @@ class HotelConfig(AppConfig):
             signals.update_room_status_on_reservation_save,
             sender='hotel.Reservation',
             dispatch_uid='update_room_status_on_reservation_save',
-        )    
+        )
+        post_migrate.connect(
+            custom_permissions.create_custom_permissions,
+            sender=self,
+        )  

@@ -144,17 +144,36 @@ class EmployPaymentMethod(models.Model):
         verbose_name_plural = 'Salary Payment Channels'
 
 class MenuAndDrinksChoice(models.Model):
-    food_or_drink = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    units = models.CharField(max_length=15)
+    unit_price = models.DecimalField(max_digits=10, default=0, decimal_places=2)
+    
 
     def __str__(self):
-        return self.food_or_drink
+        return self.name
     
     def save(self, *args, **kwargs):
-        self.food_or_drink = self.food_or_drink.lower()
+        self.name = self.name.lower()
         super().save(*args, **kwargs)
     
     class Meta:
         verbose_name = 'Food or Drink Choice'
         verbose_name_plural = 'Food or Drinks Choices'
+
+class ServiceChoices(models.Model):
+    place = models.CharField(max_length=20)
+    price_per_day = models.DecimalField(
+        max_digits=10, default=0, decimal_places=2,
+    )
+    reservation_date = models.DateTimeField(auto_now_add=True)
+    event_date = models.DateTimeField()
+    def __str__(self):
+        return self.name
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'Event Choices'
+        verbose_name_plural = 'Event Choices'
 
 

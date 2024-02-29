@@ -164,8 +164,11 @@ class Booking(models.Model):
     def get_rate_plans(self):
         if self.booking_info.exists():
             payment_info = self.booking_info.first()  # Get the first PaymentInformation instance
-            return payment_info.amount_paid / self.room_or_rooms.count()
+            room_count = self.room_or_rooms.count()
+            if room_count > 0:
+                return payment_info.amount_paid / room_count
         return None
+
 
     def save(self, *args, **kwargs):
         if not self.booking_number:
@@ -215,6 +218,7 @@ class Guest(models.Model):
     )
     def __str__(self):
         return self.full_name
+        
     
 # Reservation model
 class Reservation(models.Model):
@@ -257,12 +261,14 @@ class Reservation(models.Model):
         verbose_name='Guest Has Checked In',
         help_text='Tick if guest has checked in',
     )
-
     def get_rate_plan(self):
         if self.reserve_info.exists():
             payment_info = self.reserve_info.first()  # Get the first PaymentInformation instance
-            return payment_info.amount_paid / self.room_or_rooms.count()
+            room_count = self.room_or_rooms.count()
+            if room_count > 0:
+               return payment_info.amount_paid / room_count
         return None
+
 
     def save(self, *args, **kwargs):
         if not self.reservation_number:
