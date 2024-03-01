@@ -52,4 +52,4 @@ class MenuAndDrinksChoiceAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceChoices)
 class ServiceChoicesAdmin(admin.ModelAdmin):
-    list_display = ['place', 'price_per_day', 'reservation_date', 'event_date']
+    list_display = ['place', 'price_per_day']

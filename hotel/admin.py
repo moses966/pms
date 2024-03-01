@@ -62,13 +62,13 @@ class PaymentInformationInline(admin.StackedInline):
 # adding FoodOrDrinks to admin
 class FoodOrDrinksInline(admin.TabularInline):
     model = FoodOrDrinks
-    fields = ('food_or_drink', 'quantity', 'sub_total_amount',)
+    fields = ('food_or_drink', 'quantity', 'sub_total_amount', 'cumulative_amount',)
     can_delete = False
     verbose_name = 'Food And Drinks'
     verbose_name_plural = 'Food and Drinks'
     classes = ('collapse',)
     extra = 0
-    readonly_fields = ('sub_total_amount',)
+    readonly_fields = ('sub_total_amount', 'cumulative_amount',)
 
 # adding Reservation to admin
 class ReservationAdmin(admin.ModelAdmin):
@@ -98,7 +98,7 @@ class ReservationAdmin(admin.ModelAdmin):
         return fields
     def get_readonly_fields(self, request, obj=None):
         # List of fields that should be read-only for those with no permission
-        readonly_fields = []
+        readonly_fields = ['created_at']
         # Check if the current user has the required permission
         if request.user.has_perm('hotel.delete_reservation'):
             # User has permission to delete, so no fields need to be read-only
@@ -192,7 +192,7 @@ class BookingAdmin(admin.ModelAdmin):
     )
     def get_readonly_fields(self, request, obj=None):
         # List of fields that should be read-only
-        readonly_fields = []
+        readonly_fields = ['booking_number']
         # Check if the current user has the required permission
         if request.user.has_perm('hotel.delete_booking'):
             # User has permission to delete, so no fields need to be read-only
