@@ -25,7 +25,7 @@
     <table>
         <tr>
             <th>Guest Name</th>
-            <td>{{ booking.guest_profile.full_name|upper }}</td>
+            <td>{{ booking.guest_profile.first_name|upper }} {{ booking.guest_profile.given_name|upper }}</td>
         </tr>
         <tr>
             <th>Rooms</th>

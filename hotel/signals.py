@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.utils import timezone
+import datetime
 from django.db.models.signals import m2m_changed
 from .models import Booking
 from choices.models import RoomStatus, BookingStatus
@@ -17,43 +18,6 @@ def update_room_cleaned_on_delete(sender, instance, **kwargs):
         # Update the cleaned field to 'Not yet' upon deletion of the CleanRoom instance
         instance.room.cleaned = 'Not yet'
         instance.room.save()
-
-# method for updating room status to confirmed
-# if, booking is confirmed and check-in date  and time reached
-def update_room_status_on_booking(instance):
-    confirmed_status = BookingStatus.objects.get(booking_status='confirmed')
-    cancelled_status = BookingStatus.objects.get(booking_status='cancelled')
-    occupied_status = RoomStatus.objects.get(room_status='occupied')
-    available_status = RoomStatus.objects.get(room_status='available')
-
-    # Check if check-in dates are today
-    today = timezone.localdate()
-    if (instance.check_in_date and instance.check_in_date.date() == today) and instance.booking_status == confirmed_status:
-        # Update corresponding rooms to occupied
-        for room in instance.room_or_rooms.all():
-            room.status = occupied_status
-            room.save()
-    elif instance.booking_status == cancelled_status:
-        # Update corresponding rooms to available if booking is cancelled
-        for room in instance.room_or_rooms.all():
-            room.status = available_status
-            room.save()
-
-@receiver(pre_save, sender=Booking)
-def update_room_status_on_booking_change(sender, instance, **kwargs):
-    # Check if the status has changed
-    if instance.pk:  # Check if the instance is already saved (i.e., has a primary key)
-        old_instance = Booking.objects.get(pk=instance.pk)
-        if old_instance.booking_status != instance.booking_status:
-            update_room_status_on_booking(instance)
-
-@receiver(post_save, sender=Booking)
-def update_room_status_on_booking_save(sender, instance, created, **kwargs):
-    # If the instance is newly created, or the status hasn't changed,
-    # proceed to update the room status
-    if created or not hasattr(instance, '_changed_fields') or 'booking_status' not in instance._changed_fields:
-        update_room_status_on_booking(instance)
-
 @receiver(
     m2m_changed, sender=Booking.room_or_rooms.through,
     dispatch_uid='update_payment_info_amount_paid_for_booking',

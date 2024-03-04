@@ -25,20 +25,15 @@ class HotelConfig(AppConfig):
             sender='house_keeping.CleanRoom',
             dispatch_uid='update_room_cleaned_on_delete',
         )
-        '''post_save.connect(
-            signals.update_reservation_status,
-            sender='hotel.PaymentInformation',
-            dispatch_uid='update_reservation_status',
-        )'''
         '''pre_save.connect(
-            signals.update_room_status_on_reservation_change,
-            sender='hotel.Reservation',
-            dispatch_uid='update_room_status_on_reservation_change',
+            signals.update_room_status_on_booking_change,
+            sender='hotel.Booking',
+            dispatch_uid='update_room_status_on_booking_change',
         )
         post_save.connect(
-            signals.update_room_status_on_reservation_save,
-            sender='hotel.Reservation',
-            dispatch_uid='update_room_status_on_reservation_save',
+            signals.update_room_status_on_booking_save,
+            sender='hotel.Booking',
+            dispatch_uid='update_room_status_on_booking_save',
         )'''
         post_migrate.connect(
             custom_permissions.create_custom_permissions,

@@ -19,16 +19,10 @@ class RoomAdmin(admin.ModelAdmin):
     fields = ('name','room_number', 'floor_number',
               'capacity', 'standard_price', 'promotional_price', 'corporate_price', 'discount', 'category', 'description', 'status',)
     list_display = ['name', 'cleaned', 'capacity', 'room_number',
-         'standard_price', 'corporate_price', 'status', 'check_in_date_for_reservations', 'get_last_cleaned']
+         'standard_price', 'corporate_price', 'status', 'get_last_cleaned']
     search_fields = ['name', 'capacity', 'status']
     list_filter = ('status', 'floor_number',)
     readonly_fields = ('promotional_price',)
-    def check_in_date_for_reservations(self, obj):
-        # Get the check-in date for reservations associated with this room
-        reservations_check_in_dates = [reservation.check_in_date for reservation in obj.reservations.all()]
-        # Return the earliest check-in date
-        return min(reservations_check_in_dates, default=None)
-    check_in_date_for_reservations.short_description = 'Earliest Check-in Date'
 
     def get_last_cleaned(self, obj):
         """
@@ -159,7 +153,7 @@ class GuestInline(admin.StackedInline):
     classes = ('collapse',)
     can_delete = False
     extra = 1
-    fields = ('full_name', 'gender', 'email_adress', 'phone_number', 'nin', 'address')
+    fields = ('first_name', 'given_name', 'gender', 'email_adress', 'phone_number', 'nin', 'address')
 
     def get_fields(self, request, obj=None):
         fields = super().get_fields(request, obj)
@@ -237,7 +231,7 @@ class BookingAdmin(admin.ModelAdmin):
         # Check if the user has delete permission for the model
         if user and user.has_perm(self.model._meta.app_label + '.' + get_permission_codename('delete', self.model._meta)):
             # Return the full name of the guest if available, otherwise None
-            return obj.guest_profile.full_name if obj.guest_profile else None
+            return f"{obj.guest_profile.first_name} {obj.guest_profile.given_name}" if obj.guest_profile else None
         else:
             return 'Open'
         
@@ -269,6 +263,4 @@ class BookingAdmin(admin.ModelAdmin):
 # registering models
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Room, RoomAdmin)
-#admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Booking, BookingAdmin)
-#admin.site.unregister(Reservation)
