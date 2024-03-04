@@ -84,7 +84,7 @@
             <tbody>
                 {% for booking in object_list %}
                 <tr>
-                    <td>{{ booking.guest_profile.full_name }}</td>
+                    <td>{{ booking.guest_profile.first_name }}</td>
                     <td>{{ booking.guest_profile.phone_number }}</td>
                     <td>
                         {% for room in booking.room_or_rooms.all %}

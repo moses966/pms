@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils import timezone
 from django.contrib.auth import get_permission_codename
-from .models import Room, Category, Guest, Booking, Reservation, PaymentInformation
+from .models import Room, Category, Guest, Booking, PaymentInformation
 from house_keeping.models import CleanRoom
 from restaurant.models import FoodOrDrinks
 from django.db import models
@@ -71,13 +71,13 @@ class FoodOrDrinksInline(admin.TabularInline):
     readonly_fields = ('sub_total_amount', 'cumulative_amount',)
 
 # adding Reservation to admin
-class ReservationAdmin(admin.ModelAdmin):
+'''class ReservationAdmin(admin.ModelAdmin):
     fields = ('guest_name', 'guest_email', 'guest_contact', 'number_of_children', 'number_of_adults',
-              'room_or_rooms', 'reservation_date', 'check_in_date', 'check_out_date', 'deadline', 'check_in', 'special_requests', 'created_at', 'status',
+              'room_or_rooms', 'reservation_date', 'check_in_date', 'check_out_date', 'deadline', 'special_requests', 'created_at', 'status',
               'deposit', 'deposit_amount', 'balance'
     )
     list_display = ('get_guest_name', 'get_contact', 'deposit',
-        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number', 'check_in',
+        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number',
     )
     search_fields = ('get_guest_name', 'guest_contact', 'guest_email', 'status', 'reservation_number',)
     list_filter = ('room_or_rooms', 'status',)
@@ -152,7 +152,7 @@ class ReservationAdmin(admin.ModelAdmin):
             return '*******'
     get_contact.short_description = 'Contact'
     get_guest_name.short_description = 'Guest Name'
-    get_amount_paid.short_description = 'Amount Paid'  # Customize column header
+    get_amount_paid.short_description = 'Amount Paid'  # Customize column header'''
 
 class GuestInline(admin.StackedInline):
     model = Guest
@@ -175,7 +175,7 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ('booking_date', 'booking_number',)
     fields = (
         'children','number_of_children', 'number_of_adults','room_or_rooms','booking_date','check_in_date','check_out_date',
-        'booking_status', 'check_in', 'booking_source','special_requests',
+        'booking_status', 'booking_source','special_requests',
         'special_instructions','booking_number',
     )
     inlines = (
@@ -188,7 +188,7 @@ class BookingAdmin(admin.ModelAdmin):
     ]
     # Define list display with desired fields
     list_display = ('get_guest_full_name', 'get_guest_phone_number',
-        'get_room_number', 'booking_number', 'booking_status', 'check_in', 'get_amount_paid',
+        'get_room_number', 'booking_number', 'booking_status', 'get_amount_paid',
     )
     def get_readonly_fields(self, request, obj=None):
         # List of fields that should be read-only
@@ -269,5 +269,6 @@ class BookingAdmin(admin.ModelAdmin):
 # registering models
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Room, RoomAdmin)
-admin.site.register(Reservation, ReservationAdmin)
+#admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Booking, BookingAdmin)
+#admin.site.unregister(Reservation)

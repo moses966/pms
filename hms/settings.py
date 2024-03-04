@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'accounts',
     'stats',
     'booking_archives',
-    'reservation_archives',
     'choices',
     'restaurant',
 ]

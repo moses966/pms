@@ -1,6 +1,6 @@
 from django.db import models
 from choices.models import MenuAndDrinksChoice, ServiceChoices
-from hotel.models import Room, Guest, Booking, Reservation
+from hotel.models import Room, Guest, Booking
 from django.db.models import Sum
 
 class FoodOrDrinks(models.Model):
@@ -8,13 +8,6 @@ class FoodOrDrinks(models.Model):
         Booking,
         on_delete=models.CASCADE,
         related_name='booking_food',
-        blank=True,
-        null=True,
-    )
-    reserving_guest = models.ForeignKey(
-        Reservation,
-        on_delete=models.CASCADE,
-        related_name='reserving_food',
         blank=True,
         null=True,
     )
@@ -28,13 +21,10 @@ class FoodOrDrinks(models.Model):
 
     def save(self, *args, **kwargs):
         self.sub_total_amount = self.food_or_drink.unit_price * self.quantity
-
         if self.booking_guest:
             self.cumulative_amount = (self.booking_guest.booking_food.aggregate(total=models.Sum('sub_total_amount'))['total'] or 0) + self.sub_total_amount
-        elif self.reserving_guest:
-            self.cumulative_amount = (self.reserving_guest.reserving_food.aggregate(total=models.Sum('sub_total_amount'))['total'] or 0) + self.sub_total_amount
-
         super(FoodOrDrinks, self).save(*args, **kwargs)
+
 class Events(models.Model):
     customer_name = models.CharField(max_length=25)
     mobile_contact = models.CharField(max_length=25)

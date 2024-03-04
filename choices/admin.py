@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Positions, RoomStatus, BookingSource,
-    BookingStatus, GenderChoices, ReservationStatus,
+    BookingStatus, GenderChoices,
     PaymentStatus, PaymentMethod, EmploymentStatus,
     EmployPaymentMethod, MenuAndDrinksChoice, ServiceChoices
 )
@@ -25,10 +25,6 @@ class BookingStatusAdmin(admin.ModelAdmin):
 @admin.register(GenderChoices)
 class GenderChoicesAdmin(admin.ModelAdmin):
     list_display = ['gender_choices']
-
-@admin.register(ReservationStatus)
-class ReservationStatusAdmin(admin.ModelAdmin):
-    list_display = ['reservation_status']
 
 @admin.register(PaymentStatus)
 class PaymentStatusAdmin(admin.ModelAdmin):

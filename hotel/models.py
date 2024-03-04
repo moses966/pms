@@ -4,9 +4,9 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import uuid
 from choices.models import (
-    RoomStatus, ReservationStatus,
+    RoomStatus,
     BookingSource, BookingStatus, GenderChoices,
-    PaymentStatus, PaymentMethod, MenuAndDrinksChoice,
+    PaymentStatus, PaymentMethod,
 )
 
 # Room category class
@@ -128,13 +128,13 @@ class Booking(models.Model):
         help_text='Tick if there are children among guests.'
     )
     number_of_children = models.PositiveIntegerField(default=0)
-    number_of_adults = models.PositiveIntegerField(default=1)
+    number_of_adults = models.PositiveIntegerField(default=2)
     room_or_rooms = models.ManyToManyField(
         Room,
         related_name='bookings',
     )
-    check_in_date = models.DateTimeField(default=timezone.now)
-    check_out_date = models.DateTimeField(default=timezone.now)
+    check_in_date = models.DateTimeField()
+    check_out_date = models.DateTimeField()
     booking_date = models.DateField(default=timezone.now, blank=False, null=False)
     booking_time = models.TimeField(auto_now_add=True)
     booking_status = models.ForeignKey(
@@ -156,18 +156,15 @@ class Booking(models.Model):
         help_text='Special considerations or instructions to hotel staff.'
     )
     booking_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
-    check_in = models.BooleanField(
-        default=False,
-        verbose_name='Guest Has Checked In',
-        help_text='Tick if guest has checked in',
-    )
+    deadline = models.DateField(blank=True, null=True)
+    processed = models.BooleanField(default=False)
     def get_rate_plans(self):
         if self.booking_info.exists():
             payment_info = self.booking_info.first()  # Get the first PaymentInformation instance
             room_count = self.room_or_rooms.count()
             if room_count > 0:
                 return payment_info.amount_paid / room_count
-        return None
+        return 0
 
 
     def save(self, *args, **kwargs):
@@ -188,9 +185,10 @@ class Guest(models.Model):
         on_delete=models.CASCADE,
         related_name='guest_profile',
     )
-    full_name = models.CharField(
-        max_length=25,
+    first_name = models.CharField(
+        max_length=17,
     )
+    given_name = models.CharField(max_length=17)
     gender = models.ForeignKey(
         GenderChoices,
         on_delete=models.CASCADE,
@@ -217,11 +215,11 @@ class Guest(models.Model):
         blank=True,
     )
     def __str__(self):
-        return self.full_name
+        return f"{self.first_name} {self.given_name}"
         
     
 # Reservation model
-class Reservation(models.Model):
+'''class Reservation(models.Model):
     guest_name = models.CharField(max_length=100)
     guest_email = models.EmailField(null=True, blank=True)
     guest_contact = models.CharField(max_length=15)
@@ -256,18 +254,14 @@ class Reservation(models.Model):
         null=True,
     )
     reservation_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
-    check_in = models.BooleanField(
-        default=False,
-        verbose_name='Guest Has Checked In',
-        help_text='Tick if guest has checked in',
-    )
+    processed = models.BooleanField(default=False)
     def get_rate_plan(self):
         if self.reserve_info.exists():
             payment_info = self.reserve_info.first()  # Get the first PaymentInformation instance
             room_count = self.room_or_rooms.count()
             if room_count > 0:
                return payment_info.amount_paid / room_count
-        return None
+        return 0
 
 
     def save(self, *args, **kwargs):
@@ -277,15 +271,9 @@ class Reservation(models.Model):
         super().save(*args, **kwargs)
 
     # update reservation status if PaymentInformation Instance is saved
-    def update_status_if_payment_info_exists(self):
-        if self.reserve_info.exists():
-            confirmed_status = ReservationStatus.objects.get(reservation_status='confirmed')
-            self.status = confirmed_status
-            self.save()
-
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
-        return f"Room: {room_numbers} - Reservation Number: {self.reservation_number}"
+        return f"Room: {room_numbers} - Reservation Number: {self.reservation_number}" '''
 
 class PaymentInformation(models.Model):
     booking_info = models.ForeignKey(
@@ -295,13 +283,13 @@ class PaymentInformation(models.Model):
         blank=True,
         null=True,
     )
-    reserve_info = models.ForeignKey(
+    '''reserve_info = models.ForeignKey(
         Reservation,
         on_delete=models.CASCADE,
         related_name='reserve_info',
         blank=True,
         null=True,
-    )
+    )'''
     payment_status = models.ForeignKey(
         PaymentStatus,
         on_delete=models.CASCADE,
@@ -332,10 +320,7 @@ class PaymentInformation(models.Model):
             raise ValidationError("Select exactly one rate plan.")
     def save(self, *args, **kwargs):
         instance_type = None  # Default to None
-        if self.reserve_info:
-            rooms = self.reserve_info.room_or_rooms.all()
-            instance_type = "Reservation"  # Set instance_type to "Reservation"
-        elif self.booking_info:
+        if self.booking_info:
             rooms = self.booking_info.room_or_rooms.all()
             instance_type = "Booking"  # Set instance_type to "Booking"
         else:
@@ -361,19 +346,6 @@ class PaymentInformation(models.Model):
             if instance_type == "Booking":
                 # Generate a receipt number using the booking number
                 self.receipt_number = self.booking_info.booking_number if self.booking_info else None
-            elif instance_type == "Reservation":
-                # Generate a receipt number using the reservation number
-                self.receipt_number = self.reserve_info.reservation_number if self.reserve_info else None
-
         super().save(*args, **kwargs)
-
-    def save_reservation(self):
-        self._skip_reservation_save = True
-        try:
-            if self.reserve_info:
-                self.reserve_info.save()
-        finally:
-            del self._skip_reservation_save
-
     def __str__(self):
         return f"Receipt number: {self.receipt_number} - Amount Paid: {self.amount_paid}"

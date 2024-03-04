@@ -70,7 +70,7 @@ class GenderChoices(models.Model):
         verbose_name_plural = 'Gender Choices'
 
 
-class ReservationStatus(models.Model):
+'''class ReservationStatus(models.Model):
     reservation_status = models.CharField(max_length=20)
 
     def __str__(self):
@@ -82,7 +82,7 @@ class ReservationStatus(models.Model):
 
     class Meta:
         verbose_name = 'Reservation Status'
-        verbose_name_plural = 'Reservation Status'
+        verbose_name_plural = 'Reservation Status' '''
 
 
 class PaymentStatus(models.Model):
