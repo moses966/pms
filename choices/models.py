@@ -69,22 +69,6 @@ class GenderChoices(models.Model):
         verbose_name = 'Gender Choice'
         verbose_name_plural = 'Gender Choices'
 
-
-'''class ReservationStatus(models.Model):
-    reservation_status = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.reservation_status
-    
-    def save(self, *args, **kwargs):
-        self.reservation_status = self.reservation_status.lower()
-        super().save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = 'Reservation Status'
-        verbose_name_plural = 'Reservation Status' '''
-
-
 class PaymentStatus(models.Model):
     payment_status = models.CharField(max_length=20)
 
@@ -173,3 +157,18 @@ class ServiceChoices(models.Model):
     class Meta:
         verbose_name = 'Event Choices'
         verbose_name_plural = 'Event Choices'
+class Additionals(models.Model):
+    name = models.CharField(max_length=20)
+    unit_price = models.DecimalField(max_digits=10, default=0, decimal_places=2)
+    
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = 'Additional Services'
+        verbose_name_plural = 'Additional Services'

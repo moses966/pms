@@ -77,14 +77,13 @@
                     <th>Room Number</th>
                     <th>Booking Number</th>
                     <th>Booking Status</th>
-                    <th>Guest Checked In</th>
                     <th>Check-in Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for booking in object_list %}
                 <tr>
-                    <td>{{ booking.guest_profile.first_name }}</td>
+                    <td>{{ booking.guest_profile.first_name|capfirst }} {{ booking.guest_profile.given_name|capfirst }}</td>
                     <td>{{ booking.guest_profile.phone_number }}</td>
                     <td>
                         {% for room in booking.room_or_rooms.all %}
@@ -98,7 +97,6 @@
                         </a>
                     </td>
                     <td>{{ booking.booking_status|capfirst }}</td>
-                    <td> {% if booking.check_in %}✓{% else %}✗ {% endif %}</td>
                     <td>{{ booking.check_in_date }}</td>
                 </tr>
                 {% endfor %}

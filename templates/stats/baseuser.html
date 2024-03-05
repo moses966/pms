@@ -39,22 +39,22 @@
         </tr>
         <tr>
             <th>Position</th>
-            <td>{{ user.position }}</td>
+            <td>{{ user.profile.position.position|capfirst }}</td>
         </tr>
         <tr>
             <th colspan="2">Profile Information</th>
         </tr>
         <tr>
             <th>Surname</th>
-            <td>{{ user.profile.surname }}</td>
+            <td>{{ user.profile.surname|upper }}</td>
         </tr>
         <tr>
             <th>Given Name</th>
-            <td>{{ user.profile.given_name }}</td>
+            <td>{{ user.profile.given_name|upper }}</td>
         </tr>
         <tr>
             <th>Gender</th>
-            <td>{{ user.profile.get_gender_display }}</td>
+            <td>{{ user.profile.gender.gender_choices|capfirst }}</td>
         </tr>
         <tr>
             <th>Contact</th>
@@ -62,7 +62,7 @@
         </tr>
         <tr>
             <th>Next of kin</th>
-            <td>{{ user.profile.next_of_kin }}</td>
+            <td>{{ user.profile.next_of_kin|capitalize_name }}</td>
         </tr>
         <tr>
             <th>Emergency Contact for next of kin</th>
@@ -74,7 +74,7 @@
         </tr>
         <tr>
             <th>Place of birth</th>
-            <td>{{ user.profile.place_of_birth }}</td>
+            <td>{{ user.profile.place_of_birth|capfirst }}</td>
         </tr>
         <tr>
             <th>NIN</th>
@@ -82,11 +82,11 @@
         </tr>
         <tr>
             <th>Place of Residence</th>
-            <td>{{ user.profile.location }}</td>
+            <td>{{ user.profile.location|capfirst }}</td>
         </tr>
         <tr>
             <th>Profile Picture</th>
-            <td>{{ user.profile.photo }}</td>
+            <td>{% if user.profile.photo %}{{ user.profile.photo }}{% else %}No Photo{% endif %}</td>
         </tr>
         <!-- Add more profile fields as needed -->
         <tr>

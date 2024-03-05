@@ -133,7 +133,7 @@ class Booking(models.Model):
         Room,
         related_name='bookings',
     )
-    check_in_date = models.DateTimeField()
+    check_in_date = models.DateTimeField(default=timezone.now)
     check_out_date = models.DateTimeField()
     booking_date = models.DateField(default=timezone.now, blank=False, null=False)
     booking_time = models.TimeField(auto_now_add=True)
@@ -165,6 +165,16 @@ class Booking(models.Model):
             if room_count > 0:
                 return payment_info.amount_paid / room_count
         return 0
+    
+    @property
+    def total_bill(self):
+        food_or_drinks_cumulative = self.booking_food.last().cumulative_amount if self.booking_food.exists() else 0
+        other_services_cumulative = self.booking_service.last().cumulative_amount if self.booking_service.exists() else 0
+        total_amount_paid = self.booking_info.amount_paid if self.booking_info else 0
+        return food_or_drinks_cumulative + other_services_cumulative + total_amount_paid
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
 
     def save(self, *args, **kwargs):
@@ -172,6 +182,7 @@ class Booking(models.Model):
             # Generate a unique booking number using the first 4 characters of a UUID
             self.booking_number = 'BK-' + str(uuid.uuid4())[:4]
         super().save(*args, **kwargs)
+        self.update_total_bill()
         
 
     def __str__(self):
@@ -216,64 +227,6 @@ class Guest(models.Model):
     )
     def __str__(self):
         return f"{self.first_name} {self.given_name}"
-        
-    
-# Reservation model
-'''class Reservation(models.Model):
-    guest_name = models.CharField(max_length=100)
-    guest_email = models.EmailField(null=True, blank=True)
-    guest_contact = models.CharField(max_length=15)
-    check_in_date = models.DateField(blank=True, null=True)
-    check_out_date = models.DateTimeField()
-    room_or_rooms = models.ManyToManyField(
-        Room,
-        related_name='reservations',
-    )
-    number_of_adults = models.PositiveIntegerField(default=1)
-    number_of_children = models.PositiveIntegerField(default=0)
-    special_requests = models.TextField(blank=True)
-    reservation_date = models.DateField(default=timezone.now, blank=False, null=False)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-    deposit = models.BooleanField(
-        default=False,
-        verbose_name='Deposit Paid',
-        help_text='Tick if there is any deposit payment'
-    )
-    deposit_amount = models.DecimalField(max_digits=10, default=0, decimal_places=2)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    status = models.ForeignKey(
-        ReservationStatus,
-        on_delete=models.CASCADE,
-        null=False,
-        blank=False,
-    )
-    deadline = models.DateTimeField(
-        help_text='Time for invalidation of reservation contract.',
-        blank=True,
-        null=True,
-    )
-    reservation_number = models.CharField(max_length=4, unique=True, blank=True, null=True)
-    processed = models.BooleanField(default=False)
-    def get_rate_plan(self):
-        if self.reserve_info.exists():
-            payment_info = self.reserve_info.first()  # Get the first PaymentInformation instance
-            room_count = self.room_or_rooms.count()
-            if room_count > 0:
-               return payment_info.amount_paid / room_count
-        return 0
-
-
-    def save(self, *args, **kwargs):
-        if not self.reservation_number:
-            # Generate a unique reservation number using the first 4 characters of a UUID
-            self.reservation_number = 'RS-' + str(uuid.uuid4())[:4]
-        super().save(*args, **kwargs)
-
-    # update reservation status if PaymentInformation Instance is saved
-    def __str__(self):
-        room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
-        return f"Room: {room_numbers} - Reservation Number: {self.reservation_number}" '''
 
 class PaymentInformation(models.Model):
     booking_info = models.ForeignKey(
@@ -283,13 +236,6 @@ class PaymentInformation(models.Model):
         blank=True,
         null=True,
     )
-    '''reserve_info = models.ForeignKey(
-        Reservation,
-        on_delete=models.CASCADE,
-        related_name='reserve_info',
-        blank=True,
-        null=True,
-    )'''
     payment_status = models.ForeignKey(
         PaymentStatus,
         on_delete=models.CASCADE,

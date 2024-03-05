@@ -36,7 +36,7 @@
             <tbody>
                 {% for clean_room in clean_rooms %}
                     <tr>
-                        <td><a href="{% url 'room_detail' clean_room.room.id %}">{{ clean_room.room.room_number }}</a></td>
+                        <td><a href="{% url 'room_detail' clean_room.room.id %}">Room No. {{ clean_room.room.room_number }}</a></td>
                         <td>{{ clean_room.last_cleaned }}</td>
                     </tr>
                 {% endfor %}

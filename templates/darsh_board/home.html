@@ -11,6 +11,24 @@
     <title>Home Page</title>
 </head>
 <body>
+    <h1>Monthly Guest Statistics</h1>
+    <ul>
+        <li>Total Guests: {{ monthly_statistics.total_guests }}</li>
+        <li>Male Guests: {{ monthly_statistics.male_guests }}</li>
+        <li>Female Guests: {{ monthly_statistics.female_guests }}</li>
+    </ul>
+    <br>
+    <br>
+    <h1>Daily Booking stats:</h1>
+    <ul>
+        <li>Daily Bookings:{% if daily_booking_statistics %} {{ daily_booking_statistics.num_bookings }} {% else %}0{% endif %}</li>
+        <li>Daily Total Guests:{% if daily_guest_statistics %} {{ daily_guest_statistics.num_guests }}{% else %} 0 {% endif %} </li>
+    </ul>
+    <br>
+    <h1>Total Bill</h1>
+    <p>Total Bill: {{ total_bill }}</p>
+    <br>
+    <br>
     <h2>Welcome to the Home Page</h2>
     <br>
     <div>

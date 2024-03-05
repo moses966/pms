@@ -33,11 +33,11 @@
     
     <p>
         {% if previous_month %}
-        <a href="{% url 'archive_month_reservation' year=previous_month|date:'Y' month=previous_month|date:'M' %}">
+        <a href="{% url 'month_transaction_archives' year=previous_month|date:'Y' month=previous_month|date:'M' %}">
             Previous Month: </a>{{ previous_month|date:"F Y" }}
         {% endif %}
         {% if next_month %}
-        <a href="{% url 'archive_month_reservation' year=next_month|date:'Y' month=next_month|date:'M' %}">
+        <a href="{% url 'month_transaction_archives' year=next_month|date:'Y' month=next_month|date:'M' %}">
             Next Month: </a>{{ next_month|date:"F Y" }}
         {% endif %}
     </p>

@@ -10,8 +10,14 @@ def month_name(month_number):
 
 @register.filter(name='shillings_in_words')
 def shillings_in_words(amount):
-    amount = int(amount)  # Convert to integer to handle Decimal values
-
+    """
+    Convert shillings amount to words.
+    """
+    try:
+        amount = int(amount)  # Convert to integer to handle Decimal values
+    except (TypeError, ValueError):
+        return ''  # Return empty string if the input is not a valid integer
+    
     if amount <= 0:
         return "Zero Shillings"
 
@@ -35,3 +41,4 @@ def shillings_in_words(amount):
 
     words = num_to_words(amount)
     return f"{words} Shillings"
+

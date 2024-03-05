@@ -48,6 +48,7 @@ class BaseUserProfile(models.Model):
         max_length=10,
         null=False, 
         blank=False,
+        related_name='gender_c',
     )
     position = models.ForeignKey(
         Positions,
@@ -55,6 +56,7 @@ class BaseUserProfile(models.Model):
         max_length=20,
         null=True,
         blank=True,
+        related_name='user_position',
         help_text="Choose User Position in the hotel management",
     )
     contact = models.CharField(

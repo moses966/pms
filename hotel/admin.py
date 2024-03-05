@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth import get_permission_codename
 from .models import Room, Category, Guest, Booking, PaymentInformation
 from house_keeping.models import CleanRoom
-from restaurant.models import FoodOrDrinks
+from restaurant.models import FoodOrDrinks, OtherService
 from django.db import models
 
 # adding Category to admin
@@ -64,89 +64,16 @@ class FoodOrDrinksInline(admin.TabularInline):
     extra = 0
     readonly_fields = ('sub_total_amount', 'cumulative_amount',)
 
-# adding Reservation to admin
-'''class ReservationAdmin(admin.ModelAdmin):
-    fields = ('guest_name', 'guest_email', 'guest_contact', 'number_of_children', 'number_of_adults',
-              'room_or_rooms', 'reservation_date', 'check_in_date', 'check_out_date', 'deadline', 'special_requests', 'created_at', 'status',
-              'deposit', 'deposit_amount', 'balance'
-    )
-    list_display = ('get_guest_name', 'get_contact', 'deposit',
-        'get_room_numbers', 'get_amount_paid', 'status', 'reservation_number',
-    )
-    search_fields = ('get_guest_name', 'guest_contact', 'guest_email', 'status', 'reservation_number',)
-    list_filter = ('room_or_rooms', 'status',)
-    readonly_fields = ['created_at']
-    inlines = [
-        PaymentInformationInline,
-        FoodOrDrinksInline,
-    ]
-    def get_fields(self, request, obj=None):
-        # Get the fields from the parent class
-        fields = super().get_fields(request, obj)
-        # Check if the current user has the required permission
-        if not request.user.has_perm('hotel.view_sensitive_fields'):
-            # Exclude sensitive fields from the list of fields
-            fields = [
-                field for field in fields if field not in ['guest_name', 'guest_email', 'guest_contact', 'deposit', 'deposit_amount', 'balance']
-            ]
-        return fields
-    def get_readonly_fields(self, request, obj=None):
-        # List of fields that should be read-only for those with no permission
-        readonly_fields = ['created_at']
-        # Check if the current user has the required permission
-        if request.user.has_perm('hotel.delete_reservation'):
-            # User has permission to delete, so no fields need to be read-only
-            pass
-        else:
-            # User doesn't have permission to delete, make all fields read-only
-            readonly_fields = [
-                'number_of_children', 'number_of_adults',
-                'room_or_rooms', 'reservation_date', 'check_in_date', 'check_out_date', 'deadline', 'check_in', 'special_requests', 'created_at', 'status',
-                'status', 'reservation_number', 'check_in',
-            ]
-        return readonly_fields
-    def get_room_numbers(self, obj):
-        room_numbers = ", ".join(room.room_number for room in obj.room_or_rooms.all())
-        return room_numbers if room_numbers else "No rooms booked"
-    get_room_numbers.short_description = 'Room Number'
-    def get_queryset(self, request):
-        # Store the request object as an attribute of the admin instance
-        self.request = request
-        return super().get_queryset(request)
-    def get_amount_paid(self, obj):
-        """
-        Method to retrieve the amount paid for each reservation.
-        Users with no Permission shouldn't access this info
-        """
-        user = self.request.user if hasattr(self, 'request') else None
-        if user and user.has_perm(self.model._meta.app_label + '.' + get_permission_codename('delete', self.model._meta)):
-            payment_info = obj.reserve_info.first()
-            return payment_info.amount_paid if payment_info else None
-        else:
-            return '*******'
-    def get_guest_name(self, obj):
-        """
-        Method to retrieve the guest name for each reservation.
-        Users with no Permission shouldn't access this info
-        """
-        user = self.request.user if hasattr(self, 'request') else None
-        if user and user.has_perm('hotel.view_sensitive_fields'):
-            return obj.guest_name if obj.guest_name else None
-        else:
-            return 'Open'
-    def get_contact(self, obj):
-        """
-        Method to retrieve the get contact for each reservation.
-        Users with no Permission shouldn't access this info
-        """
-        user = self.request.user if hasattr(self, 'request') else None
-        if user and user.has_perm('hotel.view_sensitive_fields'):
-            return obj.guest_contact if obj.guest_contact else None
-        else:
-            return '*******'
-    get_contact.short_description = 'Contact'
-    get_guest_name.short_description = 'Guest Name'
-    get_amount_paid.short_description = 'Amount Paid'  # Customize column header'''
+# adding Additional services to admin
+class OtherServiceInline(admin.TabularInline):
+    model = OtherService
+    fields = ('service', 'number_of_users', 'number_of_times', 'sub_total_amount', 'cumulative_amount')
+    can_delete = False
+    verbose_name = 'Additional Service'
+    verbose_name_plural = 'Additional Services'
+    classes = ('collapse',)
+    extra = 0
+    readonly_fields = ('sub_total_amount', 'cumulative_amount',)
 
 class GuestInline(admin.StackedInline):
     model = Guest
@@ -176,6 +103,7 @@ class BookingAdmin(admin.ModelAdmin):
         GuestInline,
         PaymentInformationInline,
         FoodOrDrinksInline,
+        OtherServiceInline,
     )
     list_filter = [
         'room_or_rooms', 'booking_status',

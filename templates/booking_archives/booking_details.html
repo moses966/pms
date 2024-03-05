@@ -100,7 +100,7 @@
             <td>{% if booking.special_instructions %} {{ booking.special_instructions }} {% else %} No special Instructions{% endif %}</td>
         </tr>
     </table>
-
+    {% if booking.booking_info.first %}
     <h2>Payment Information</h2>
     <table>
         <tr>
@@ -128,6 +128,55 @@
             </tr>
         {% endfor %}
     </table>
+    {% else %}
+        <p><li>No Payment Information Available.</li></p>
+    {% endif %}
+    {% if booking.booking_food.all %}
+    <h2>Restaurant</h2>
+    <table>
+        <tr>
+            <th>Food or Drink</th>
+            <th>Units</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+            <th>Sub total amount</th>
+        </tr>
+        {% for food in booking.booking_food.all %}
+            <tr>
+                <td>{{ food.food_or_drink.name|capfirst }}</td>
+                <td>{{ food.food_or_drink.units|capfirst }}</td>
+                <td>{{ food.quantity }}</td>
+                <td>UGX. {{ food.sub_total_amount|add_commas }}</td>
+                <td>UGX. {{ food.cumulative_amount|add_commas }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+       <p><li>No Food or Drink Bought.</li></p>
+    {% endif %}
+    {% if booking.booking_service.all %}
+    <h2>Additional Services</h2>
+    <table>
+        <tr>
+            <th>Service</th>
+            <th>Number of users</th>
+            <th>Frequency of use</th>
+            <th>Amount</th>
+            <th>Sub total amount</th>
+        </tr>
+        {% for service in booking.booking_service.all %}
+            <tr>
+                <td>{{ service.service.name|capfirst }}</td>
+                <td>{{ service.number_of_users }}</td>
+                <td>{{ service.number_of_times }}</td>
+                <td>UGX. {{ service.sub_total_amount|add_commas }}</td>
+                <td>UGX. {{ service.cumulative_amount|add_commas }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p><li>No additional services.</li></p>
+    {% endif %}
     <div>
         <a href="{{ home_url }}">Back to Home</a>
     </div>

@@ -43,9 +43,11 @@
         <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.profile.surname }} {{ user.profile.given_name }}</td>
+                    <td>{{ user.profile.surname|capfirst }} {{ user.profile.given_name|capfirst }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.position }}</td>
+                    
+                    <td>{{ user.profile.position.position|capfirst }}</td><!--Note-->
+                    
                     <td><a href="{% url 'base_user_detail' user.pk %}">View</a></td>
                 </tr>
             {% endfor %}

@@ -2,9 +2,10 @@ from django.dispatch import receiver
 from django.utils import timezone
 import datetime
 from django.db.models.signals import m2m_changed
-from .models import Booking
+from .models import Booking, PaymentInformation
 from choices.models import RoomStatus, BookingStatus
 from django.db.models.signals import  post_save, post_delete, pre_save
+from restaurant.models import FoodOrDrinks, OtherService
 
 
 def update_room_cleaned(sender, instance, **kwargs):
@@ -30,3 +31,11 @@ def update_payment_info_amount_paid_for_booking(sender, instance, action, **kwar
             new_amount_paid = room_count * instance.get_rate_plans()  # Recalculate amount_paid based on the rate plan
             payment_info.amount_paid = new_amount_paid
             payment_info.save()
+
+# Signal receivers to update total bill when related models are saved
+@receiver(post_save, sender=FoodOrDrinks)
+@receiver(post_save, sender=OtherService)
+@receiver(post_save, sender=PaymentInformation)
+def update_total_bill(sender, instance, **kwargs):
+    if instance.booking_guest:
+        instance.booking_guest.save()

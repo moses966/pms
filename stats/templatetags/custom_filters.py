@@ -15,3 +15,10 @@ def add_commas(value):
 @register.filter(name='get_item')
 def get_item(dictionary, key):
     return dictionary.get(key, 'Not Sure!')
+
+@register.filter(name='capitalize_name')
+def capitalize_name(value):
+    """
+    Capitalize the first letter of each word in a string.
+    """
+    return ' '.join(word.capitalize() for word in value.split())

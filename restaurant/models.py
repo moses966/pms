@@ -1,5 +1,5 @@
 from django.db import models
-from choices.models import MenuAndDrinksChoice, ServiceChoices
+from choices.models import MenuAndDrinksChoice, ServiceChoices, Additionals
 from hotel.models import Room, Guest, Booking
 from django.db.models import Sum
 
@@ -40,3 +40,26 @@ class Events(models.Model):
     class Meta:
         verbose_name = 'Event or Occassion'
         verbose_name_plural = 'Event or Occassion'
+
+class OtherService(models.Model):
+    booking_guest = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='booking_service',
+        blank=True,
+        null=True,
+    )
+    service = models.ForeignKey(
+        Additionals,
+        on_delete=models.CASCADE,
+    )
+    number_of_users = models.IntegerField(default=1)
+    number_of_times = models.IntegerField(default=1)
+    sub_total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cumulative_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        self.sub_total_amount = self.service.unit_price * self.number_of_times * self.number_of_users
+        if self.booking_guest:
+            self.cumulative_amount = (self.booking_guest.booking_service.aggregate(total=models.Sum('sub_total_amount'))['total'] or 0) + self.sub_total_amount
+        super(OtherService, self).save(*args, **kwargs)
