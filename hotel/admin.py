@@ -95,7 +95,7 @@ class BookingAdmin(admin.ModelAdmin):
     readonly_fields = ('booking_number',)
     search_fields = ('booking_date', 'booking_number',)
     fields = (
-        'children','number_of_children', 'number_of_adults','room_or_rooms','booking_date','check_in_date','check_out_date',
+        'children','number_of_children', 'number_of_adults','room_or_rooms', 'number_of_days','booking_date','check_in_date','check_out_date',
         'booking_status', 'booking_source','special_requests',
         'special_instructions','booking_number',
     )
@@ -110,7 +110,7 @@ class BookingAdmin(admin.ModelAdmin):
     ]
     # Define list display with desired fields
     list_display = ('get_guest_full_name', 'get_guest_phone_number',
-        'get_room_number', 'booking_number', 'booking_status', 'get_amount_paid',
+        'get_room_number', 'number_of_days', 'booking_number', 'booking_status', 'get_amount_paid',
     )
     def get_readonly_fields(self, request, obj=None):
         # List of fields that should be read-only
@@ -186,7 +186,7 @@ class BookingAdmin(admin.ModelAdmin):
     get_guest_full_name.short_description = 'Guest Full Name'
     get_guest_phone_number.short_description = 'Guest Phone Number'
     get_room_number.short_description = 'Room Number'
-    get_amount_paid.short_description = 'Amount Paid'
+    get_amount_paid.short_description = 'Room(s) Amount Paid'
 
 # registering models
 admin.site.register(Category, CategoryAdmin)

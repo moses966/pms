@@ -90,14 +90,14 @@
                     <th>Room Number</th>
                     <th>Booking Number</th>
                     <th>Booking Status</th>
-                    <th>Guest Checked In</th>
                     <th>Check-in Date</th>
+                    <th>Invoice</th>
                 </tr>
             </thead>
             <tbody>
                 {% for booking in object_list %}
                 <tr>
-                    <td>{{ booking.guest_profile.full_name }}</td>
+                    <td>{{ booking.guest_profile.first_name|capfirst }} {{ booking.guest_profile.given_name|capfirst }}</td>
                     <td>{{ booking.guest_profile.phone_number }}</td>
                     <td>
                         {% for room in booking.room_or_rooms.all %}
@@ -106,8 +106,8 @@
                     </td>
                     <td><a href="{% url 'booking_detail' year=booking.booking_date|date:'Y' month=booking.booking_date|date:'m' pk=booking.pk %}">{{ booking.booking_number }}</a></td>
                     <td>{{ booking.booking_status|capfirst }}</td>
-                    <td> {% if booking.check_in %}✓{% else %}✗ {% endif %}</td>
                     <td>{{ booking.check_in_date }}</td> 
+                    <td><a href="{% url 'invoice' booking.pk booking.booking_number %}" >View</td></td>
                 </tr>
                 {% endfor %}
             </tbody>

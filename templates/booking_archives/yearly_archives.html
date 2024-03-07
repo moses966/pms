@@ -78,6 +78,7 @@
                     <th>Booking Number</th>
                     <th>Booking Status</th>
                     <th>Check-in Date</th>
+                    <th>Invoice</th>
                 </tr>
             </thead>
             <tbody>
@@ -98,6 +99,7 @@
                     </td>
                     <td>{{ booking.booking_status|capfirst }}</td>
                     <td>{{ booking.check_in_date }}</td>
+                    <td><a href="{% url 'invoice' booking.pk booking.booking_number %}" >View</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

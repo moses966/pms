@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .booking-details {
+            margin-top: 20px;
+        }
+        .booking-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .booking-details th, .booking-details td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .total-bill {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+        }
+        .update-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .update-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>INVOICE</h1>
+        <div class="booking-details">
+            <h2>Payment Information:</h2>
+            <h3>Rooms:</h3>
+            <p>Charge: UGX. {{ payment_info.amount_paid|add_commas }}</p>
+            <h3>Number of days: </h3>
+            <p> {{ booking.number_of_days }} </p>
+        </div>
+        <div class="food-or-drinks">
+            <h2>Food or Drinks Purchased</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Food or Drink</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in food_or_drinks %}
+                    <tr>
+                        <td>{{ item.food_or_drink.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.sub_total_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div>
+                <p>Sub-total: {{ last_food.cumulative_amount|add_commas }} </p>
+            </div>
+        </div>
+        <div class="other-services">
+            <h2>Other Services</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Number of Users</th>
+                        <th>Frequency of Use</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in other_services %}
+                    <tr>
+                        <td>{{ service.service.name }}</td>
+                        <td>{{ service.number_of_users }}</td>
+                        <td>{{ service.number_of_times }}</td>
+                        <td>{{ service.sub_total_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div>
+                <p>Sub-total: {{ last_other_service.cumulative_amount|add_commas }} </p>
+            </div>
+        </div>
+        <h2>Total Bill:</h2>
+        <p>UGX. {{ total_bill|add_commas }}</p>
+        
+        <div class="update-button">
+            <button onclick="window.location.reload();">Update</button>
+        </div>
+    </div>
+</body>
+</html>

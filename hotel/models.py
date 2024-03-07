@@ -133,6 +133,7 @@ class Booking(models.Model):
         Room,
         related_name='bookings',
     )
+    number_of_days = models.PositiveIntegerField(default=1)
     check_in_date = models.DateTimeField(default=timezone.now)
     check_out_date = models.DateTimeField()
     booking_date = models.DateField(default=timezone.now, blank=False, null=False)
@@ -165,25 +166,29 @@ class Booking(models.Model):
             if room_count > 0:
                 return payment_info.amount_paid / room_count
         return 0
-    
-    @property
-    def total_bill(self):
-        food_or_drinks_cumulative = self.booking_food.last().cumulative_amount if self.booking_food.exists() else 0
-        other_services_cumulative = self.booking_service.last().cumulative_amount if self.booking_service.exists() else 0
-        total_amount_paid = self.booking_info.amount_paid if self.booking_info else 0
-        return food_or_drinks_cumulative + other_services_cumulative + total_amount_paid
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
 
     def save(self, *args, **kwargs):
         if not self.booking_number:
             # Generate a unique booking number using the first 4 characters of a UUID
             self.booking_number = 'BK-' + str(uuid.uuid4())[:4]
         super().save(*args, **kwargs)
-        self.update_total_bill()
+    
+    def calculate_total_bill(self):
+        total_bill = 0
+        # Accumulate total bill for food or drinks
+        for item in self.booking_food.all():
+            total_bill += item.sub_total_amount
+
+        # Accumulate total bill for other services
+        for item in self.booking_service.all():
+            total_bill += item.sub_total_amount
         
+        # Add amount paid from PaymentInformation
+        payment_info = self.booking_info.first()
+        if payment_info:
+            total_bill += payment_info.amount_paid
+        
+        return total_bill
 
     def __str__(self):
         room_numbers = ", ".join(room.room_number for room in self.room_or_rooms.all())
@@ -268,6 +273,7 @@ class PaymentInformation(models.Model):
         instance_type = None  # Default to None
         if self.booking_info:
             rooms = self.booking_info.room_or_rooms.all()
+            number = self.booking_info.number_of_days
             instance_type = "Booking"  # Set instance_type to "Booking"
         else:
             rooms = None
@@ -276,11 +282,14 @@ class PaymentInformation(models.Model):
             room_prices = []
             for room in rooms:
                 if self.standard_rate:
-                    room_prices.append(room.standard_price)
+                    price = room.standard_price * number
+                    room_prices.append(price)
                 elif self.promotional_rate:
-                    room_prices.append(room.promotional_price)
+                    price = room.promotional_price * number
+                    room_prices.append(room.price)
                 elif self.corporate_rate:
-                    room_prices.append(room.corporate_price)
+                    price = room.corporate_price * number
+                    room_prices.append(price)
                 else:
                     room_prices.append(0)  # Default to 0 if no rate plan selected
             self.amount_paid = sum(room_prices)
