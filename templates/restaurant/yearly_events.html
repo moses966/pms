@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load tz custom_filters %}
+{% now "Y" as current_year %}
+{% now "M" as current_month %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yearly Events</title>
+    <style>
+        /* Add your CSS styling here */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Search field -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for booking number..">
+    </div>
+
+    <ul>
+        {% for date in date_list %}
+        <li> {{ date|date }} <a href="{% url 'monthly_archive' year=current_year month=current_month %}">View</a></li>
+        {% endfor %}
+    </ul>
+
+    <p>
+        {% if previous_year %}
+        <a href="{% url 'yearly_archive' year=previous_year|date:'Y' %}">
+            Previous Year: </a>{{ previous_year|date:"F j, Y" }}
+        {% endif %}
+        {% if next_year %}
+        <a href="{% url 'yearly_archive' year=next_year|date:'Y' %}">
+            Next Year: </a>{{ next_yeah|date:"F j, Y" }}
+        {% endif %}
+    </p>
+    <div>
+        <a href="{{ home_url }}">Back Home</a>
+    </div>
+    {% if object_list %}
+
+    <div>
+        <h1>All Bookings for {{ year|date:"Y" }}</h1>
+        <table id="bookingTable">
+            <thead>
+                <tr>
+                    <th>Guest Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Place Of Event</th>
+                    <th>Day Of Event</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in object_list %}
+                <tr>
+                    <td>{{ event.customer_name|capitalize_name }} </td>
+                    <td>{{ event.mobile_contact }}</td>
+                    <td> {{ event.service.place|capfirst }} </td>
+                    <td> {{ event.event_date }} </td>
+                    <td>
+                        <a
+                            href="{% url 'event' year=event.event_date|date:'Y' month=event.event_date|date:'m' pk=event.pk %}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="message">No scheduled events for this year.</p>
+    {% endif %}
+
+    <script>
+        function searchFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.querySelector("table");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                for (var j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break; // Break the loop if a match is found
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

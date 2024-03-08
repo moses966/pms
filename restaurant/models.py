@@ -25,21 +25,26 @@ class FoodOrDrinks(models.Model):
             self.cumulative_amount = (self.booking_guest.booking_food.aggregate(total=models.Sum('sub_total_amount'))['total'] or 0) + self.sub_total_amount
         super(FoodOrDrinks, self).save(*args, **kwargs)
 
+    
 class Events(models.Model):
     customer_name = models.CharField(max_length=25)
     mobile_contact = models.CharField(max_length=25)
     service = models.ForeignKey(
         ServiceChoices,
         on_delete=models.CASCADE,
+        related_name='services',
     )
     reservation_date = models.DateTimeField(auto_now_add=True)
     event_date = models.DateTimeField()
-    number_of_days = models.IntegerField()
+    number_of_days = models.IntegerField(default=1)
     number_of_guests = models.IntegerField()
     sub_total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class Meta:
         verbose_name = 'Event or Occassion'
         verbose_name_plural = 'Event or Occassion'
+    
+    def __str__(self):
+        return f"Event for - {self.customer_name}"
 
 class OtherService(models.Model):
     booking_guest = models.ForeignKey(
@@ -52,6 +57,7 @@ class OtherService(models.Model):
     service = models.ForeignKey(
         Additionals,
         on_delete=models.CASCADE,
+        related_name='other_service',
     )
     number_of_users = models.IntegerField(default=1)
     number_of_times = models.IntegerField(default=1)

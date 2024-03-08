@@ -74,6 +74,7 @@
                 <thead>
                     <tr>
                         <th>Food or Drink</th>
+                        <th>Units</th>
                         <th>Quantity</th>
                         <th>Amount</th>
                     </tr>
@@ -82,6 +83,7 @@
                     {% for item in food_or_drinks %}
                     <tr>
                         <td>{{ item.food_or_drink.name }}</td>
+                        <td> {{ item.food_or_drink.units }} </td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.sub_total_amount }}</td>
                     </tr>

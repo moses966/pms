@@ -76,5 +76,14 @@
     <div>
         <a href="{% url 'items' %}" >View Items</a>
     </div>
+    <div>
+        <a href="{% url 'weekly_archive' year=current_year week=current_week  %}" >Weekly Events</a>
+    </div>
+    <div>
+        <a href="{% url 'monthly_archive' year=current_year month=current_month %}" >Monthly Events</a>
+    </div>
+    <div>
+        <a href="{% url 'yearly_archive' year=current_year %}" >Yearly events</a>
+    </div>
 </body>
 </html>

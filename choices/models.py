@@ -4,7 +4,7 @@ class Positions(models.Model):
     position = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.position
+        return self.position.capitalize()
     def save(self, *args, **kwargs):
         # Convert position to lowercase before saving
         self.position = self.position.lower()
@@ -18,7 +18,7 @@ class RoomStatus(models.Model):
     room_status = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.room_status
+        return self.room_status.capitalize()
     def save(self, *args, **kwargs):
         # Convert room_status to lowercase before saving
         self.room_status = self.room_status.lower()
@@ -31,7 +31,7 @@ class BookingSource(models.Model):
     booking_source = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.booking_source
+        return self.booking_source.capitalize()
     
     def save(self, *args, **kwargs):
         self.booking_source = self.booking_source.lower()
@@ -45,7 +45,7 @@ class BookingStatus(models.Model):
     booking_status = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.booking_status
+        return self.booking_status.capitalize()
     
     def save(self, *args, **kwargs):
         self.booking_status = self.booking_status.lower()
@@ -59,7 +59,7 @@ class GenderChoices(models.Model):
     gender_choices = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.gender_choices
+        return self.gender_choices.capitalize()
     
     def save(self, *args, **kwargs):
         self.gender_choices = self.gender_choices.lower()
@@ -73,7 +73,7 @@ class PaymentStatus(models.Model):
     payment_status = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.payment_status
+        return self.payment_status.capitalize()
     
     def save(self, *args, **kwargs):
         self.payment_status = self.payment_status.lower()
@@ -88,7 +88,7 @@ class PaymentMethod(models.Model):
     payment_method = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.payment_method
+        return self.payment_method.capitalize()
     
     def save(self, *args, **kwargs):
         self.payment_method = self.payment_method.lower()
@@ -103,7 +103,7 @@ class EmploymentStatus(models.Model):
     employment_status = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.employment_status
+        return self.employment_status.capitalize()
     
     def save(self, *args, **kwargs):
         self.employment_status = self.employment_status.lower()
@@ -117,7 +117,7 @@ class EmployPaymentMethod(models.Model):
     payment_method = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.payment_method
+        return self.payment_method.capitalize()
     
     def save(self, *args, **kwargs):
         self.payment_method = self.payment_method.lower()
@@ -134,7 +134,7 @@ class MenuAndDrinksChoice(models.Model):
     
 
     def __str__(self):
-        return self.name
+        return self.name.capitalize()
     
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -150,7 +150,7 @@ class ServiceChoices(models.Model):
         max_digits=10, default=0, decimal_places=2,
     )
     def __str__(self):
-        return self.place
+        return self.place.capitalize()
     def save(self, *args, **kwargs):
         self.name = self.place.lower()
         super().save(*args, **kwargs)
@@ -163,7 +163,7 @@ class Additionals(models.Model):
     
 
     def __str__(self):
-        return self.name
+        return self.name.capitalize()
     
     def save(self, *args, **kwargs):
         self.name = self.name.lower()

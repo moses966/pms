@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Archives</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    {% if object_list %}
+    <div>
+        <h1>All Bookings for {{ month|date:"M" }}</h1>
+        <table id="bookingTable">
+            <thead>
+                <tr>
+                    <th>Guest Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Place Of Event</th>
+                    <th>Day Of Event</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in object_list %}
+                <tr>
+                    <td>{{ event.customer_name|capitalize_name }} </td>
+                    <td>{{ event.mobile_contact }}</td>
+                    <td> {{ event.service.place|capfirst }} </td>
+                    <td> {{ event.event_date }} </td>
+                    <td>
+                        <a
+                            href="{% url 'event' year=event.event_date|date:'Y' month=event.event_date|date:'m' pk=event.pk %}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="message">No Events scheduled for this Month.</p>
+    {% endif %}
+    <p>
+        {% if previous_month %}
+        <a href="{% url 'monthly_archive' year=previous_month|date:'Y' month=previous_month|date:'M' %}">
+            Previous Month: </a>{{ previous_month|date:"F Y" }}
+        {% endif %}
+        {% if next_month %}
+        <a href="{% url 'monthly_archive' year=next_month|date:'Y' month=next_month|date:'M' %}">
+            Next Month: </a>{{ next_month|date:"F Y" }}
+        {% endif %}
+    </p>
+    <div>
+        <a href="{{ home_url }}" >Back Home</a>
+    </div>
+</body>
+</html>
