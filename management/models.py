@@ -30,7 +30,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
     
-
 User = get_user_model()
 
 # Personal Information model
@@ -175,6 +174,11 @@ class CustomGroup(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name='department_leader',
+    )
+    users = models.ManyToManyField(
+        User,
+        related_name='departments',
+        blank=True,
     )
 
     def __str__(self):

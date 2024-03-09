@@ -23,7 +23,6 @@ class RoomStatsView(ListView):
             queryset = queryset.filter(
                 Q(name__icontains=query) 
                 | Q(capacity__icontains=query)
-                | Q(status__icontains=query)
                 | Q(room_number__icontains=query)
             )
         return queryset
@@ -103,7 +102,8 @@ class DepartmentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['users'] = self.object.user_set.all()
+        department = self.object
+        context['users'] = department.customgroup.users.all()
         context['home_url'] = reverse('home') 
         return context
     

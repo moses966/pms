@@ -39,8 +39,6 @@ class EmploymentInformationInline(admin.StackedInline):
     verbose_name = 'Employment Information'
     verbose_name_plural = 'Employment Information'
     fields = (
-        'department',
-        'head_of_department',
         'employment_status',
         'employment_start_date',
     )

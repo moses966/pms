@@ -107,7 +107,7 @@
             <th>Miscellaneous Information</th>
             <td>
                 <p>Personal ID: {{ user.miscella.userid }}</p>
-                <p>Payment Method: {{ user.miscella.get_payment_method_display }}</p>
+                <p>Payment Method: {{ user.miscella.payment_method.payment_method|capfirst }}</p>
                 <p>Salary: UGX. {{ user.miscella.salary|add_commas }}</p>
                 <p>Payment Details: {{ user.miscella.payment }}</p>
                 <!-- Add more miscellaneous fields as needed -->
@@ -119,7 +119,7 @@
                 {% if user.equipment_allocations.all %}
                     <ul>
                         {% for allocation in user.equipment_allocations.all %}
-                            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }} At {{ allocation.time_of_allocation }}</li>
+                            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }}(s) At {{ allocation.time_of_allocation }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}

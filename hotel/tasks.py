@@ -49,7 +49,6 @@ def update_room_statuse():
     checked_in_bookings = Booking.objects.filter(
         booking_status__booking_status='checked in'
     )
-
     # Update associated room status to occupied
     for booking in checked_in_bookings:
         for room in booking.room_or_rooms.all():

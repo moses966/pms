@@ -8,7 +8,6 @@ class Departments(Group):
         verbose_name = "Department"
         verbose_name_plural = "Departments"
 
-
 # model for handling 
 class Equipment(models.Model):
     name = models.CharField(
