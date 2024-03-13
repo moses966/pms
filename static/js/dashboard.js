@@ -18,10 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: 'Total Bookings',
                     data: dataValues,
                     borderWidth: 1,
-                    backgroundColor: 'rgb(75, 192, 192)',
+                    backgroundColor: ["#435ebe",]
                 }]
             };
-
             const configBookings = {
                 type: 'bar',
                 data: dataBookings,
@@ -43,6 +42,50 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.error('Failed to find chart element.');
             }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM loaded');
+
+    const currentYear = new Date().getFullYear();
+    const year = currentYear;
+
+    console.log('Fetching data for year:', year);
+
+    fetch(`http://localhost:8000/apis/guests/gender/?year=${year}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data from API:', data);
+
+            const maleGuestsCount = data.male_guests_count;
+            const femaleGuestsCount = data.female_guests_count;
+
+            console.log('Male Guests Count:', maleGuestsCount);
+            console.log('Female Guests Count:', femaleGuestsCount);
+
+            // Get canvas element
+            const canvas = document.getElementById('genderPieChart');
+            const ctx = canvas.getContext('2d');
+
+            // Create pie chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Male', 'Female'],
+                    datasets: [{
+                        data: [maleGuestsCount, femaleGuestsCount],
+                        backgroundColor: ["#435ebe", "#55c6e8"]
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false
+                }
+            });
         })
         .catch(error => {
             console.error('Error fetching data:', error);

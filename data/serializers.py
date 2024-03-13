@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Count
 from calendar import month_abbr
-from hotel.models import Booking
+from hotel.models import Booking, Guest
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from datetime import date
@@ -28,3 +28,21 @@ class MonthlyGuestStatisticsSerializer(serializers.Serializer):
             bookings_data[month_abbr_key] = month_info['total_bookings']
 
         return bookings_data
+    
+class GenderStatisticsSerializer(serializers.Serializer):
+    year = serializers.IntegerField()
+
+    def to_representation(self, instance):
+        year = self.validated_data.get('year', None)
+        if year is None:
+            return {'error': 'Year not provided'}
+
+        # Calculate total male and female guests for the given year
+        male_guests_count = Guest.objects.filter(guest_profile__check_in_date__year=year, gender__gender_choices__iexact='male').count()
+        female_guests_count = Guest.objects.filter(guest_profile__check_in_date__year=year, gender__gender_choices__iexact='female').count()
+
+        return {
+            'year': year,
+            'male_guests_count': male_guests_count,
+            'female_guests_count': female_guests_count
+        }

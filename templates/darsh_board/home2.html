@@ -8,7 +8,15 @@
 {% now "d" as current_day %}
 
 {% block title %}Home Page{% endblock %}
+<style>
+    .chart-container {
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+</style>
 
 {% block content %}
 <div id="main">
@@ -111,7 +119,7 @@
                                         <h4>Profile Visit</h4>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="monthlyGuestsChart" width="800" height="400"></canvas>
+                                        <canvas id="monthlyBookingsChart" width="800" height="300"></canvas>  
                                     </div>
                                 </div>
                             </div>
@@ -291,13 +299,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="card" style="height: 400px;">
+                    <div class="card-header">
+                        <h4>Gender Statistics</h4>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <!-- Placeholder for the pie chart -->
+                        <div class="chart-container">
+                            <canvas id="genderPieChart" width="150%" height="350px"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </section>
     </div>
    
 {% endblock %}
-<script>
-// Parse the JSON data from Django context
-var monthly_guests_data = JSON.parse('{{ monthly_guests_data_json|escapejs }}');
-</script>
+
 
