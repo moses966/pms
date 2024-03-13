@@ -71,6 +71,7 @@ class DailyBookingStatistics(models.Model):
 
     def __str__(self):
         return str(self.date)
+    
 class DailyGuestStatistics(models.Model):
     date = models.DateField(unique=True)
     num_guests = models.IntegerField(default=0)

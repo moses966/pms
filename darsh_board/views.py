@@ -2,7 +2,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, DetailView
 from datetime import date
 from hotel.models import Booking, PaymentInformation
-from restaurant.models import FoodOrDrinks, OtherService
 from django.shortcuts import get_object_or_404
 from .models import (
     MonthlyGuestStatistics, DailyBookingStatistics,
@@ -10,7 +9,7 @@ from .models import (
 )
 
 class HomePageView(LoginRequiredMixin, TemplateView):
-    template_name = 'darsh_board/home.html'
+    template_name = 'darsh_board/home3.html'
 
     def get_context_data(self, **kwargs):
         """context for fetching monthly bookings and guest statistics
@@ -22,8 +21,8 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         monthly_statistics = MonthlyGuestStatistics.objects.latest('month_year')
         # Pass the statistics to the template context
         context['monthly_statistics'] = monthly_statistics
-        
-        """context for fetching dail bookings
+
+        """context for fetching daily bookings
         """
        # Call the update_statistics method to ensure statistics are up-to-date
         DailyBookingStatistics.update_statistics()
@@ -69,3 +68,4 @@ class InvoiceDetailView(DetailView):
         context['last_other_service'] = last_other_service
         context['last_food'] = last_food
         return context
+

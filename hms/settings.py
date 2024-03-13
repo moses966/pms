@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'booking_archives',
     'choices',
     'restaurant',
+    'rest_framework',
+    'data',
 ]
 
 # save Celery task results in Django's database
@@ -73,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'hms.urls'
@@ -94,6 +97,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'hms.wsgi.application'
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
