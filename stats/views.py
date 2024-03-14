@@ -5,14 +5,20 @@ from hotel.models import Room, Category
 from house_keeping.models import CleanRoom, HousekeepingTask
 from management.models import User, CustomGroup
 from management.customs import Departments
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import render
 from django.urls import reverse
 
-class RoomStatsView(ListView):
+class RoomStatsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Room
     template_name = 'stats/room_stats.html'
     context_object_name = 'rooms'
     paginate_by = 10
     ordering = ['room_number']
+    permission_required = 'hotel.view_room'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -41,10 +47,14 @@ class RoomStatsView(ListView):
         context['home_url'] = reverse('home')
         return context
     
-class RoomDetailView(DetailView):
+class RoomDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Room
     template_name = 'stats/room_details.html'
     context_object_name = 'room_details'
+    permission_required = 'hotel.view_room'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,40 +75,56 @@ class RoomDetailView(DetailView):
         return context
 
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = User
     template_name = 'stats/user.html'
     context_object_name = 'users'
+    permission_required = 'management.view_user'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
 
-class BaseUserDetailView(DetailView):
+class BaseUserDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = User
     template_name = 'stats/baseuser.html'
     context_object_name = 'user'
+    permission_required = 'management.view_user'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
 
-class DepartmentListView(ListView):
+class DepartmentListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = CustomGroup
     template_name = 'stats/department_list.html'
     context_object_name = 'departments'
+    permission_required = 'management.view_customgroup'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
 
-class DepartmentDetailView(DetailView):
+class DepartmentDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Departments
     template_name = 'stats/department_detail.html'
     context_object_name = 'department'
+    permission_required = 'management.view_departments'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,43 +133,45 @@ class DepartmentDetailView(DetailView):
         context['home_url'] = reverse('home') 
         return context
     
-class DailyCleaningTasksView(DayArchiveView):
+class DailyCleaningTasksView(LoginRequiredMixin, PermissionRequiredMixin, DayArchiveView):
     model = HousekeepingTask
     queryset = HousekeepingTask.objects.all()
     date_field = "creation_date"
     template_name = 'stats/cleaning_tasks.html'
     allow_future = True
     allow_empty = True
+    permission_required = 'house_keeping.view_housekeepingtask'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
-    
-'''class CleaningTasksListView(ListView):
-    model = HousekeepingTask
-    template_name = 'stats/cleaning_tasks.html'
-    context_object_name = 'cleaning_tasks'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['home_url'] = reverse('home')
-        return context'''
-
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Category
     template_name = 'stats/category_list.html'
     context_object_name = 'categories'
+    permission_required = 'hotel.view_category'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
 
-class CleaningTaskDetailView(DetailView):
+class CleaningTaskDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = HousekeepingTask
     template_name = 'stats/cleaning_task_details.html'
     context_object_name = 'tasks'
+    permission_required = 'house_keeping.view_housekeepingtask'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -152,10 +180,14 @@ class CleaningTaskDetailView(DetailView):
         context['home_url'] = reverse('home')
         return context
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Category
     template_name = 'stats/category_detail.html'
     context_object_name = 'category'
+    permission_required = 'hotel.view_category'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -166,10 +198,14 @@ class CategoryDetailView(DetailView):
         context['home_url'] = reverse('home')
         return context
 
-class CleanRoomListView(ListView):
+class CleanRoomListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = CleanRoom
     template_name = 'stats/clean_rooms.html'
     context_object_name = 'clean_rooms'
+    permission_required = 'house_keeping.view_cleanroom'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

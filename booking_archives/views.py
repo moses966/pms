@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models import Q
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView
 from django.views.generic.dates import (
@@ -13,13 +13,14 @@ from hotel.models import Booking
 from django.urls import reverse
 from django.http import Http404
 
-class BookingDayArchiveView(DayArchiveView):
+class BookingDayArchiveView(LoginRequiredMixin, PermissionRequiredMixin, DayArchiveView):
     model = Booking
     queryset = Booking.objects.all()
     date_field = "booking_date"
     template_name = 'booking_archives/booking_daily_archives.html'
     allow_empty = True
     allow_future = True
+    permission_required = 'hotel.view_booking'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -30,19 +31,23 @@ class BookingDayArchiveView(DayArchiveView):
                 Q(booking_number__icontains=query)
             )
         return queryset
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
     
-class BookingWeekArchiveView(WeekArchiveView):
+class BookingWeekArchiveView(LoginRequiredMixin, PermissionRequiredMixin, WeekArchiveView):
     queryset = Booking.objects.all()
     date_field = "booking_date"
     template_name = 'booking_archives/booking_weekly_archives.html'
     week_format = "%W"
     allow_empty = True
     allow_future = True
+    permission_required = 'hotel.view_booking'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -53,12 +58,15 @@ class BookingWeekArchiveView(WeekArchiveView):
                 Q(booking_number__icontains=query)
             )
         return queryset
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
-class BookingYearArchiveView(YearArchiveView):
+class BookingYearArchiveView(LoginRequiredMixin, PermissionRequiredMixin, YearArchiveView):
     model = Booking
     template_name = 'booking_archives/yearly_archives.html'
     queryset = Booking.objects.all()
@@ -66,6 +74,7 @@ class BookingYearArchiveView(YearArchiveView):
     make_object_list = True
     allow_empty = True
     allow_future = True
+    permission_required = 'hotel.view_booking'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -76,19 +85,27 @@ class BookingYearArchiveView(YearArchiveView):
                 Q(booking_number__icontains=query)
             )
         return queryset
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['home_url'] = reverse('home')
         return context
 
-class BookingMonthArchiveView(MonthArchiveView):
+class BookingMonthArchiveView(LoginRequiredMixin, PermissionRequiredMixin, MonthArchiveView):
     model = Booking
     queryset = Booking.objects.all()
     date_field = "booking_date"
     template_name = 'booking_archives/booking_month_archive.html'
     allow_future = True
     allow_empty = True
+    permission_required = 'hotel.view_booking'
+
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,7 +113,7 @@ class BookingMonthArchiveView(MonthArchiveView):
         return context
 
 
-class BookingDetailView(DetailView):
+class BookingDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     """
     Displays details of a specific booking.
     Inherits:
@@ -113,6 +130,11 @@ class BookingDetailView(DetailView):
     model = Booking
     template_name = 'booking_archives/booking_details.html'
     context_object_name = 'booking'
+    permission_required = 'hotel.view_booking'
+
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         """

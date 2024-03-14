@@ -1,8 +1,9 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import TemplateView, DetailView
 from datetime import date
 from hotel.models import Booking, PaymentInformation
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render
 from .models import (
     MonthlyGuestStatistics, DailyBookingStatistics,
     DailyGuestStatistics
@@ -41,15 +42,21 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context['daily_guest_statistics'] = daily_guest_statistics
         return context
 
-class InvoiceDetailView(LoginRequiredMixin, DetailView):
+
+class InvoiceDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Booking
     template_name = 'darsh_board/invoice.html'
     context_object_name = 'booking'
+    permission_required = 'hotel.view_booking'  # Set the required permission
+
+    def handle_no_permission(self):
+        # Render custom 403 template if the user doesn't have permission
+        return render(self.request, 'errors/403.html', status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         booking = self.get_object()
-        payment_info = get_object_or_404(PaymentInformation, booking_info=booking)
+        payment_info = booking.booking_info.first()
         # Retrieve food or drinks for the booking
         food_or_drinks = booking.booking_food.all()
         # Retrieve other services for the booking
@@ -68,4 +75,3 @@ class InvoiceDetailView(LoginRequiredMixin, DetailView):
         context['last_other_service'] = last_other_service
         context['last_food'] = last_food
         return context
-
