@@ -9,7 +9,7 @@ from .models import (
 )
 
 class HomePageView(LoginRequiredMixin, TemplateView):
-    template_name = 'darsh_board/home2.html'
+    template_name = 'darsh_board/home.html'
 
     def get_context_data(self, **kwargs):
         """context for fetching monthly bookings and guest statistics
@@ -41,7 +41,7 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context['daily_guest_statistics'] = daily_guest_statistics
         return context
 
-class InvoiceDetailView(DetailView):
+class InvoiceDetailView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = 'darsh_board/invoice.html'
     context_object_name = 'booking'
