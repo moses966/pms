@@ -102,6 +102,11 @@ class TransactionDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailV
     model = InventoryTransaction
     template_name = 'inventory/transaction_details.html'
     context_object_name = 'transaction'
+    permission_required = 'inventory.view_inventorytransaction'
+
+    def handle_no_permission(self):
+        return render(self.request, 'errors/403.html', status=403)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

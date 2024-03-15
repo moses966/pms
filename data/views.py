@@ -11,7 +11,7 @@ from .serializers import (
 '''permissions'''
 class CustomIsAdminUser(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        if request.user and request.user.is_superuser:
+        if request.user and request.user.is_authenticated and request.user.is_active:
             return True
         return False
 

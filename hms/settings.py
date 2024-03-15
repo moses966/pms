@@ -26,9 +26,10 @@ config = Config(RepositoryEnv('.env'))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
+#DEBUG = config('DEBUG', cast=bool)
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -162,4 +163,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "management.User"
 LOGIN_REDIRECT_URL = 'home'
-#LOGOUT_REDIRECT_URL = 'home.html'

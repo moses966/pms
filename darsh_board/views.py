@@ -10,7 +10,7 @@ from .models import (
 )
 
 class HomePageView(LoginRequiredMixin, TemplateView):
-    template_name = 'darsh_board/home.html'
+    template_name = 'darsh_board/home3.html'
 
     def get_context_data(self, **kwargs):
         """context for fetching monthly bookings and guest statistics
