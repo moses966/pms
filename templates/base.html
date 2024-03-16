@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{% static 'css/compiled/app.css' %}">
     <link rel="stylesheet" href="{% static 'css/compiled/app-dark.css' %}">
     <link rel="stylesheet" href="{% static 'css/compiled/iconly.css' %}">
+    <link rel="stylesheet" href="{% static 'css/compiled/auth.css' %}">
     <link rel="stylesheet" href="{% static 'css/compiled/error.css' %}">
 </head>
 
@@ -82,41 +83,73 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item  ">
-                            <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}" class='sidebar-link'>
+                        <!--<li class="sidebar-item  ">
+                            <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}"
+                                class='sidebar-link'>
+                                <i class="bi bi-bookmark-heart-fill"></i>
+                                <span>Bookings</span>
+                            </a>
+                        </li>-->
+                        {% if perms.hotel.view_booking %}
+                        <li class="sidebar-item">
+                            <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}"
+                                class='sidebar-link'>
                                 <i class="bi bi-bookmark-heart-fill"></i>
                                 <span>Bookings</span>
                             </a>
                         </li>
+                        {% else %}
+                        <li class="sidebar-item">
+                            <a href="#" class='sidebar-link disabled' onclick="return false;">
+                                <i class="bi bi-bookmark-heart-fill"></i>
+                                <span style="color: red;">Bookings</span>
+                            </a>
+                        </li>
+                        {% endif %}
 
+                        <li class="sidebar-item  ">
+                            <a href="{% url 'cleaning_task_archives' year=current_year month=current_month day=current_day %}"
+                                class='sidebar-link'>
+                                <i class="bi bi-brush-fill"></i>
+                                <span>Cleaning Tasks</span>
+                            </a>
+                        </li>
+                        {% if perms.hotel.view_booking %}
                         <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
+                            <a href="#" class='sidebar-link disabled' onclick="return false;">
                                 <i class="bi bi-stack"></i>
                                 <span>Booking Archives</span>
                             </a>
+                            {% else %}
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-stack"></i>
+                                <span style="color: red;">Booking Archives</span>
+                            </a>
+                            {% endif %}
 
                             <ul class="submenu ">
 
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}" class="submenu-link">Daily Archives</a>
+                                    <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}"
+                                        class="submenu-link">Daily Archives</a>
 
                                 </li>
 
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'archive_week' year=current_year week=current_week  %}" class="submenu-link">Weekly Archives</a>
+                                    <a href="{% url 'archive_week' year=current_year week=current_week  %}"
+                                        class="submenu-link">Weekly Archives</a>
                                 </li>
 
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'archive_month' year=current_year month=current_month %}" class="submenu-link">Monthly Archives</a>
+                                    <a href="{% url 'archive_month' year=current_year month=current_month %}"
+                                        class="submenu-link">Monthly Archives</a>
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'booking_year_archive' year=current_year %}" class="submenu-link">Yearly Archives</a>
+                                    <a href="{% url 'booking_year_archive' year=current_year %}"
+                                        class="submenu-link">Yearly Archives</a>
                                 </li>
                             </ul>
                         </li>
-
-                        
-
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
@@ -140,33 +173,51 @@
                                 </li>
                             </ul>
                         </li>
+                        {% if perms.restaurant.view_events %}
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="bi bi-person-badge-fill"></i>
                                 <span>Events Manager</span>
                             </a>
+                            {% else %}
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-person-badge-fill disabled" onclick="return false;"></i>
+                                <span style="color: red;">Events Manager</span>
+                            </a>
+                            {% endif %}
                             <ul class="submenu ">
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'yearly_archive' year=current_year %}" class="submenu-link">Today's Events</a>
+                                    <a href="{% url 'yearly_archive' year=current_year %}" class="submenu-link">Today's
+                                        Events</a>
 
                                 </li>
 
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'weekly_archive' year=current_year week=current_week  %}" class="submenu-link">Weekly Events</a>
+                                    <a href="{% url 'weekly_archive' year=current_year week=current_week  %}"
+                                        class="submenu-link">Weekly Events</a>
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'monthly_archive' year=current_year month=current_month %}" class="submenu-link">Monthly Events</a>
+                                    <a href="{% url 'monthly_archive' year=current_year month=current_month %}"
+                                        class="submenu-link">Monthly Events</a>
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'yearly_archive' year=current_year %}" class="submenu-link">Yearly Events</a>
+                                    <a href="{% url 'yearly_archive' year=current_year %}" class="submenu-link">Yearly
+                                        Events</a>
                                 </li>
                             </ul>
                         </li>
+                        {% if perms.management.view_user %}
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="bi bi-person-badge-fill"></i>
                                 <span>Staff Information</span>
                             </a>
+                            {% else %}
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-person-badge-fill disabled" onclick="return false;"></i>
+                                <span style="color: red;">Staff Information</span>
+                            </a>
+                            {% endif %}
                             <ul class="submenu ">
                                 <li class="submenu-item  ">
                                     <a href="{% url 'department_list' %}" class="submenu-link">Departments</a>
@@ -178,8 +229,6 @@
                                 </li>
                             </ul>
                         </li>
-
-                        <!--<li class="sidebar-title">Forms &amp; Tables</li>-->
 
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
@@ -193,21 +242,19 @@
                                     <a href="{% url 'items' %}" class="submenu-link">Items</a>
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'day_transactions' year=current_year month=current_month day=current_day  %}" class="submenu-link">Daily Transactions</a>
+                                    <a href="{% url 'day_transactions' year=current_year month=current_month day=current_day  %}"
+                                        class="submenu-link">Daily Transactions</a>
 
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'month_transaction_archives' year=current_year month=current_month %}" class="submenu-link">Monthly Transactions</a>
+                                    <a href="{% url 'month_transaction_archives' year=current_year month=current_month %}"
+                                        class="submenu-link">Monthly Transactions</a>
                                 </li>
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'year_transaction_archives' year=current_year %}" class="submenu-link">Yearly Transactions</a>
+                                    <a href="{% url 'year_transaction_archives' year=current_year %}"
+                                        class="submenu-link">Yearly Transactions</a>
                                 </li>
-
-                                
-
                             </ul>
-
-
                         </li>
                     </ul>
                 </div>

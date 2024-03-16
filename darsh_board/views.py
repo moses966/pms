@@ -47,7 +47,7 @@ class InvoiceDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
     model = Booking
     template_name = 'darsh_board/invoice.html'
     context_object_name = 'booking'
-    permission_required = 'hotel.view_booking'  # Set the required permission
+    permission_required = 'hotel.delete_booking'  # Set the required permission
 
     def handle_no_permission(self):
         # Render custom 403 template if the user doesn't have permission
@@ -73,5 +73,6 @@ class InvoiceDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context['food_or_drinks'] = food_or_drinks
         context['other_services'] = other_services
         context['last_other_service'] = last_other_service
+        context['has_permission'] = self.request.user.has_perm('hotel.view_booking')
         context['last_food'] = last_food
         return context
