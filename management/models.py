@@ -19,6 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
+    failed_login_attempts = models.IntegerField(default=0)  # Track failed login attempts
+    is_locked = models.BooleanField(default=False)  # Track account lock status
    
     
 

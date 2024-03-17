@@ -67,6 +67,11 @@ BROKER_URL = os.environ.get('RABBITMQ_URL', 'amqp://guest:guest@localhost:5672/'
 # Set this to True to retain the existing behavior for retrying connections on startup
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.CustomBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'accounts.middleware.FailedLoginAttemptsMiddleware',
 ]
 
 ROOT_URLCONF = 'hms.urls'
@@ -162,3 +168,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "management.User"
 LOGIN_REDIRECT_URL = 'home'
+ACCOUNT_LOCKED_ERROR_MESSAGE = 'Your account has been locked. Please contact support!'
