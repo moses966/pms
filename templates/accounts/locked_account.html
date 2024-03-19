@@ -3,11 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Locked</title>
+    <title>Locked Account</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* Add custom styles here */
+        body {
+            background-color: #3777b8; /* Light gray background */
+        }
+        .container {
+            margin-top: 100px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Your Account is Locked</h2>
-    <p>Your account has been locked due to multiple failed login attempts.</p>
-    <p>Please contact support for assistance.</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Locked Account</h5>
+                        <p class="card-text text-center">Your account has been locked.</p>
+                        <p class="card-text text-center">Please contact support for assistance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

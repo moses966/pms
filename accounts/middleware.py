@@ -18,8 +18,9 @@ class FailedLoginAttemptsMiddleware:
             try:
                 user = User.objects.get(email=email)
                 if user.is_locked:
+                    pass
                     # Redirect the user to a locked account message page
-                    return HttpResponseRedirect(reverse('locked_account'))
+                    #return HttpResponseRedirect(reverse('login'))
                 else:
                     # Check password, if incorrect, increment failed login attempts
                     if not user.check_password(request.POST['password']):
@@ -32,7 +33,7 @@ class FailedLoginAttemptsMiddleware:
                             user.is_locked = True
                             user.save()
                             # Redirect the user to a locked account message page
-                            return HttpResponseRedirect(reverse('locked_account'))
+                            return HttpResponseRedirect(reverse('login'))
                     else:
                         # Reset failed login attempts upon successful authentication
                         user.failed_login_attempts = 0

@@ -17,3 +17,14 @@ class CustomLoginForm(AuthenticationForm):
         # Rename the username field to email
         self.fields['username'].label = _('Email')
         self.fields['username'].widget = forms.EmailInput(attrs={'autofocus': True})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('username')
+        password = cleaned_data.get('password')
+
+        if email and password:
+            # Perform any additional validation here
+            pass
+
+        return cleaned_data

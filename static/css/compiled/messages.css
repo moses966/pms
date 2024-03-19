@@ -1,0 +1,17 @@
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+.message-container {
+    background-color: #ffe6e6; /* Light red background */
+    border: 1px solid #ff8080; /* Red border */
+    padding: 10px; /* Padding around the message */
+    margin-bottom: 10px; /* Spacing between messages */
+}
+.warning-message {
+    background-color: #ffffcc; /* Light yellow background */
+    border: 1px solid #cccc00; /* Yellow border */
+    padding: 10px; /* Padding around the message */
+    margin-bottom: 10px; /* Spacing between messages */
+    color: #666600; /* Dark yellow text */
+}
