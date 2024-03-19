@@ -93,7 +93,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
         (None, {"fields": ("email", "password",)}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions", "date_joined")}),
+        ("Permissions", {"fields": ("is_staff", "is_active", "is_locked", "groups", "user_permissions", "date_joined")}),
     )
     readonly_fields = ('date_joined',)
     add_fieldsets = (
@@ -101,7 +101,7 @@ class UserAdmin(BaseUserAdmin):
             "classes": ("wide",),
             "fields": (
                 "email", "password1", "password2", "is_staff",
-                "is_active", "groups", "user_permissions", "date_joined"
+                "is_active", "is_locked", "groups", "user_permissions", "date_joined"
             )}
         ),
     )
@@ -116,6 +116,7 @@ class UserAdmin(BaseUserAdmin):
             disabled_fields |= {
                 'email',
                 'is_superuser',
+                'is_locked',
             }
 
         # Prevent non-superusers from editing their own permissions
@@ -129,6 +130,7 @@ class UserAdmin(BaseUserAdmin):
                 'is_superuser',
                 'groups',
                 'user_permissions',
+                'is_locked',
             }
 
         for f in disabled_fields:
