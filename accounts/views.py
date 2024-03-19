@@ -65,5 +65,5 @@ class CustomLoginView(LoginView):
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy('login')
 
-class LockedAccountView(TemplateView):
-    template_name = 'accounts/locked_account.html' 
+'''class LockedAccountView(TemplateView):
+    template_name = 'accounts/locked_account.html' '''

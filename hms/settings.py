@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'data',
 ]
 
+
 # save Celery task results in Django's database
 CELERY_RESULT_BACKEND = "django-db"
 # this allows you to schedule items in the Django admin.
