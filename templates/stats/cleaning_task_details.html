@@ -1,89 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-    {% load custom_filters archive_custom_filters %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cleaning Task Details</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>Cleaning task Details</h1>
-    <table>
-        <tr>
-            <th>Room number</th>
-            <td>{{ tasks.room_number }}</td>
-        </tr>
-        <tr>
-            <th>Task Status</th>
-            <td> {{ tasks.get_task_status_display }} </td>
-        </tr>
-        <tr>
-            <th>Time Issued</th>
-            <td>{{ tasks.created_at }}</td>
-        </tr>
-        <tr>
-            <th>Time Of Update</th>
-            <td>{{ tasks.updated_at }}</td>
-        </tr>
-        <tr>
-            <th>Special Instructions</th>
-            <td>{{ tasks.special_instructions }}</td>
-        </tr>
-    </table>
-    <h2>Cleaning Progress Information</h2>
-    <table>
-        <tr>
-            <th>Time of Response</th>
-            <th>Asigned To</th>
-            <th>Progress Status</th>
-            <th>Special Note</th>
-        </tr>
-        <tr>
-            <td>{{ tasks.maintenance_request.created_at }}</td>
-            {% for user in tasks.maintenance_request.assigned_to.all %}
-              <td>{{ user }}{% if not forloop.last %}, {% endif %}</td>
-            {% endfor %}
-            <td>{{ tasks.get_task_status_display }}</td>
-            {% if tasks.maintenance_request.description %}
-            <td>{{ tasks.maintenance_request.description }}</td>
-            {% else %}
-            <td>No special note!</td>
-            {% endif %}
-        </tr>
-        {% for info in reservation.reserve_info.all %}
-            <tr>
-                <td>{{ info.receipt_number }}</td>
-                <td>{{ info.get_payment_status_display }}</td>
-                <td>
-                    {% if info.standard_rate %}
-                        Standard Rate
-                    {% elif info.promotional_rate %}
-                        Promotional Rate
-                    {% else %}
-                        Corporate Rate
-                    {% endif %}
-                </td>
-                <td>UGX. {{ info.amount_paid|add_commas }}</td>
-                <td>{{ info.amount_paid|shillings_in_words }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+{% extends 'base.html' %}
+{% load static custom_filters archive_custom_filters %}
+{% load tz %}
+{% now "Y" as current_year %}
+{% now "M" as current_month %}
+
+{% block title %}Cleaning Task Details{% endblock %}
+
+{% block content %}
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Task Details</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+
+                            </div>
+                            <!-- table strip dark -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <tr>
+                                        <th>Attribute</th>
+                                        <th>Value</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Room number</th>
+                                        <td>{{ tasks.room_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Task Status</th>
+                                        <td> {{ tasks.get_task_status_display }} </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Time Issued</th>
+                                        <td>{{ tasks.created_at }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Time Of Update</th>
+                                        <td>{{ tasks.updated_at }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Special Instructions</th>
+                                        <td>{% if tasks.special_instructions %} {{ tasks.special_instructions }}{% else %} -{% endif %} </td>
+                                    </tr>
+                                </table>
+                                {% if tasks.maintenance_request %}
+                                <div class="card-body">
+                                    <h2>Cleaning Progress Report</h2>
+                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Time of Response</th>
+                                        <th>Asigned To</th>
+                                        <th>Progress Status</th>
+                                        <th>Special Note</th>
+                                    </tr>
+                                    <tr>
+                                        <td> {% if tasks.maintenance_request.created_at %}
+                                            {{ tasks.maintenance_request.created_at }} {% else %} - {% endif %} </td>
+                                        {% if tasks.maintenance_request.assigned_to %}
+                                        {% for user in tasks.maintenance_request.assigned_to.all %}
+                                        <td>{{ user }}{% if not forloop.last %}, {% endif %}</td>
+                                        {% endfor %}
+                                        {% endif %}
+                                        <td> {% if tasks.task_status %} {{ tasks.get_task_status_display }}{% else %} -{% endif %} </td>
+                                        {% if tasks.maintenance_request.description %}
+                                        <td>{{ tasks.maintenance_request.description }}</td>
+                                        {% else %}
+                                        <td>No special note!</td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                                {% else %}
+                                <div class="card-body">
+                                <p>
+                                    <li>No Response yet.</li>
+                                </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <br>
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

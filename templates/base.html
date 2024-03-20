@@ -160,7 +160,7 @@
                             <ul class="submenu ">
 
                                 <li class="submenu-item  ">
-                                    <a href="{% url 'room_stats' %}" class="submenu-link">Room Details</a>
+                                    <a href="{% url 'room_stats' %}" class="submenu-link">Rooms List</a>
 
                                 </li>
 
@@ -188,11 +188,6 @@
                             </a>
                             {% endif %}
                             <ul class="submenu ">
-                                <li class="submenu-item  ">
-                                    <a href="{% url 'yearly_archive' year=current_year %}" class="submenu-link">Today's
-                                        Events</a>
-
-                                </li>
 
                                 <li class="submenu-item  ">
                                     <a href="{% url 'weekly_archive' year=current_year week=current_week  %}"

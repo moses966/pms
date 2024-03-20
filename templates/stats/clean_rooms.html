@@ -1,52 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clean Rooms</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>Clean Rooms</h1>
-    {% if clean_rooms %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Room Number</th>
-                    <th>Last Cleaned</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for clean_room in clean_rooms %}
-                    <tr>
-                        <td><a href="{% url 'room_detail' clean_room.room.id %}">Room No. {{ clean_room.room.room_number }}</a></td>
-                        <td>{{ clean_room.last_cleaned }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No clean rooms at the moment.</p>
-    {% endif %}
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}Clean Rooms{% endblock %}
+
+{% block content %}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Clean Rooms</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+
+                            </div>
+                            <!-- table strip dark -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Room Number</th>
+                                            <th>Last Cleaned</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for clean_room in clean_rooms %}
+                                        <tr>
+                                            <td><a href="{% url 'room_detail' clean_room.room.id %}">Room No. {{ clean_room.room.room_number }}</a></td>
+                                            <td>{{ clean_room.last_cleaned }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

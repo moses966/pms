@@ -1,184 +1,221 @@
-<!DOCTYPE html>
-<html lang="en">
-    {% load custom_filters archive_custom_filters %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Detail</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>Booking Detail</h1>
-    <table>
-        <tr>
-            <th>Guest Name</th>
-            <td>{{ booking.guest_profile.first_name|upper }} {{ booking.guest_profile.given_name|upper }}</td>
-        </tr>
-        <tr>
-            <th>Rooms</th>
-            <td>{{ booking.room_or_rooms.all|join:", " }}</td>
-        </tr>
-        <tr>
-            <th>Booking Date</th>
-            <td>{{ booking.booking_date }}</td>
-        </tr>
-        <tr>
-            <th>Booking Number</th>
-            <td>{{ booking.booking_number }}</td>
-        </tr>
-        <tr>
-            <th>Check-in Date</th>
-            <td>{{ booking.check_in_date }}</td>
-        </tr>
-        <tr>
-            <th>Check-out Date</th>
-            <td>{{ booking.check_out_date }}</td>
-        </tr>
-        <tr>
-            <th>Booking Time</th>
-            <td>{{ booking.booking_time }}</td>
-        </tr>
-        <tr>
-            <th>Booking Status</th>
-            <td>{{ booking.booking_status|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>Number of Adults</th>
-            <td>{{ booking.number_of_adults }}</td>
-        </tr>
-        <tr>
-            <th>Children</th>
-            <td>{% if booking.children %}✓{% else %}✗{% endif %}</td>
-        </tr>
-        <tr>
-            <th>Number of Children</th>
-            <td>{% if booking.number_of_children %} {{ booking.number_of_children }} {% else %}None{% endif %}</td>
-        </tr>
-        <tr>
-            <th>Gender</th>
-            <td>{{ booking.guest_profile.gender|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{% if booking.guest_profile.email_adress %} {{ booking.guest_profile.email_adress }}{% else %}No email address.{% endif %}</td>
-        </tr>
-        <tr>
-            <th>Contact</th>
-            <td>{{ booking.guest_profile.phone_number }}</td>
-        </tr>
-        <tr>
-            <th>NIN</th>
-            <td>{% if booking.nin %}{{ booking.nin }}{% else %}No NIN provided{% endif %}</td>
-        </tr>
-        <tr>
-            <th>Guest Address</th>
-            <td>{{ booking.guest_profile.address }}</td>
-        </tr>
-        <tr>
-            <th>Booking Channel</th>
-            <td>{{ booking.booking_source|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>Special Requests</th>
-            <td>{% if booking.special_requests %} {{ booking.special_requests }} {% else %} No special Requests{% endif %}</td>
-        </tr>
-        <tr>
-            <th>Special Instructions</th>
-            <td>{% if booking.special_instructions %} {{ booking.special_instructions }} {% else %} No special Instructions{% endif %}</td>
-        </tr>
-    </table>
-    {% if booking.booking_info.first %}
-    <h2>Payment Information</h2>
-    <table>
-        <tr>
-            <th>Receipt Number</th>
-            <th>Payment Status</th>
-            <th>Rate Type</th>
-            <th>Amount Paid</th>
-            <th>Amount In Words</th>
-        </tr>
-        {% for info in booking.booking_info.all %}
-            <tr>
-                <td>{{ info.receipt_number }}</td>
-                <td>{{ info.payment_status|capfirst }}</td>
-                <td>
-                    {% if info.standard_rate %}
-                        Standard Rate
-                    {% elif info.promotional_rate %}
-                        Promotional Rate
-                    {% else %}
-                        Corporate Rate
-                    {% endif %}
-                </td>
-                <td>UGX. {{ info.amount_paid|add_commas }}</td>
-                <td>{{ info.amount_paid|shillings_in_words }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p><li>No Payment Information Available.</li></p>
-    {% endif %}
-    {% if booking.booking_food.all %}
-    <h2>Restaurant</h2>
-    <table>
-        <tr>
-            <th>Food or Drink</th>
-            <th>Units</th>
-            <th>Quantity</th>
-            <th>Amount</th>
-            <th>Sub total amount</th>
-        </tr>
-        {% for food in booking.booking_food.all %}
-            <tr>
-                <td>{{ food.food_or_drink.name|capfirst }}</td>
-                <td>{{ food.food_or_drink.units|capfirst }}</td>
-                <td>{{ food.quantity }}</td>
-                <td>UGX. {{ food.sub_total_amount|add_commas }}</td>
-                <td>UGX. {{ food.cumulative_amount|add_commas }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-       <p><li>No Food or Drink Bought.</li></p>
-    {% endif %}
-    {% if booking.booking_service.all %}
-    <h2>Additional Services</h2>
-    <table>
-        <tr>
-            <th>Service</th>
-            <th>Number of users</th>
-            <th>Frequency of use</th>
-            <th>Amount</th>
-            <th>Sub total amount</th>
-        </tr>
-        {% for service in booking.booking_service.all %}
-            <tr>
-                <td>{{ service.service.name|capfirst }}</td>
-                <td>{{ service.number_of_users }}</td>
-                <td>{{ service.number_of_times }}</td>
-                <td>UGX. {{ service.sub_total_amount|add_commas }}</td>
-                <td>UGX. {{ service.cumulative_amount|add_commas }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p><li>No additional services.</li></p>
-    {% endif %}
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+{% extends 'base.html' %}
+{% load static custom_filters archive_custom_filters %}
+
+{% block title %}Booking Details{% endblock %}
+
+{% block content %}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Booking Details</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+
+                            </div>
+                            <!-- table strip dark -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <tr>
+                                        <th>Attribute</th>
+                                        <th>Value</th>
+                                    <tr>
+                                        <th>Guest Name</th>
+                                        <td>{{ booking.guest_profile.first_name|upper }}
+                                            {{ booking.guest_profile.given_name|upper }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rooms</th>
+                                        <td>{{ booking.room_or_rooms.all|join:", " }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Booking Date</th>
+                                        <td>{{ booking.booking_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Booking Time</th>
+                                        <td>{{ booking.booking_time }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Booking Number</th>
+                                        <td>{{ booking.booking_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Check-in Date</th>
+                                        <td>{{ booking.check_in_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Check-out Date</th>
+                                        <td>{% if booking.check_out_date %} {{ booking.check_out_date }}
+                                            {% else %}-{% endif %}
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Booking Status</th>
+                                        <td>{{ booking.booking_status|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Number of Adults</th>
+                                        <td>{{ booking.number_of_adults }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Children</th>
+                                        <td>{% if booking.children %}✓{% else %}✗{% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Number of Children</th>
+                                        <td> {{ booking.number_of_children }} </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Gender</th>
+                                        <td>{{ booking.guest_profile.gender|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td>{% if booking.guest_profile.email_adress %}
+                                            {{ booking.guest_profile.email_adress }}{% else %}No email address.
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Contact</th>
+                                        <td>{{ booking.guest_profile.phone_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>NIN</th>
+                                        <td>{% if booking.nin %}{{ booking.nin }}{% else %}No NIN provided{% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Guest Address</th>
+                                        <td>{{ booking.guest_profile.address }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Booking Channel</th>
+                                        <td>{{ booking.booking_source|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Special Requests</th>
+                                        <td>{% if booking.special_requests %} {{ booking.special_requests }}
+                                            {% else %}No special Requests{% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Special Instructions</th>
+                                        <td>{% if booking.special_instructions %} {{ booking.special_instructions }}
+                                            {% else %} No special Instructions{% endif %}</td>
+                                    </tr>
+                                </table>
+                                {% if booking.booking_info.first %}
+                                <div class="card-body">
+                                    <h2>Room Payments</h2>
+                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Receipt Number</th>
+                                        <th>Payment Status</th>
+                                        <th>Rate Type</th>
+                                        <th>Amount Paid</th>
+                                        <th>Amount In Words</th>
+                                    </tr>
+                                    {% for info in booking.booking_info.all %}
+                                    <tr>
+                                        <td>{{ info.receipt_number }}</td>
+                                        <td>{{ info.payment_status|capfirst }}</td>
+                                        <td>
+                                            {% if info.standard_rate %}
+                                            Standard Rate
+                                            {% elif info.promotional_rate %}
+                                            Promotional Rate
+                                            {% else %}
+                                            Corporate Rate
+                                            {% endif %}
+                                        </td>
+                                        <td>UGX. {{ info.amount_paid|add_commas }}</td>
+                                        <td>{{ info.amount_paid|shillings_in_words }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                                {% else %}
+                                <p>
+                                    <li>No Room Payments Made.</li>
+                                </p>
+                                {% endif %}
+                                {% if booking.booking_food.all %}
+                                <div class="card-body">
+                                    <h2>Restaurant</h2>
+                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Food or Drink</th>
+                                        <th>Units</th>
+                                        <th>Quantity</th>
+                                        <th>Amount</th>
+                                        <th>Sub total amount</th>
+                                    </tr>
+                                    {% for food in booking.booking_food.all %}
+                                    <tr>
+                                        <td>{{ food.food_or_drink.name|capfirst }}</td>
+                                        <td>{{ food.food_or_drink.units|capfirst }}</td>
+                                        <td>{{ food.quantity }}</td>
+                                        <td>UGX. {{ food.sub_total_amount|add_commas }}</td>
+                                        <td>UGX. {{ food.cumulative_amount|add_commas }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                                {% else %}
+                                <p>
+                                    <li>No Food or Drink Bought.</li>
+                                </p>
+                                {% endif %}
+                                {% if booking.booking_service.all %}
+                                <div class="card-body">
+                                    <h2>Additional Services</h2>
+                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Number of users</th>
+                                        <th>Frequency of use</th>
+                                        <th>Amount</th>
+                                        <th>Sub total amount</th>
+                                    </tr>
+                                    {% for service in booking.booking_service.all %}
+                                    <tr>
+                                        <td>{{ service.service.name|capfirst }}</td>
+                                        <td>{{ service.number_of_users }}</td>
+                                        <td>{{ service.number_of_times }}</td>
+                                        <td>UGX. {{ service.sub_total_amount|add_commas }}</td>
+                                        <td>UGX. {{ service.cumulative_amount|add_commas }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tr>
+                                </table>
+                                {% else %}
+                                <p>
+                                    <li>No additional services.</li>
+                                </p>
+                                {% endif %}
+                            </div>
+                            <br>
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

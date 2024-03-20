@@ -135,7 +135,7 @@ class Booking(models.Model):
     )
     number_of_days = models.PositiveIntegerField(default=1)
     check_in_date = models.DateTimeField(default=timezone.now)
-    check_out_date = models.DateTimeField()
+    check_out_date = models.DateTimeField(blank=True, null=True)
     booking_date = models.DateField(default=timezone.now, blank=False, null=False)
     booking_time = models.TimeField(auto_now_add=True)
     booking_status = models.ForeignKey(

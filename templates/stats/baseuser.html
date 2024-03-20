@@ -1,135 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-    {% load custom_filters%}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+{% extends 'base.html' %}
+{% load static custom_filters %}
+{% load tz %}
+{% now "Y" as current_year %}
+{% now "M" as current_month %}
 
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
+{% block title %}User Details{% endblock %}
 
-        th {
-            background-color: #f2f2f2;
-        }
+{% block content %}
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #dddddd;
-        }
-    </style>
-</head>
-<body>
-    <h1>User Profile</h1>
-    <table>
-        <tr>
-            <th>Email</th>
-            <td>{{ user.email }}</td>
-        </tr>
-        <tr>
-            <th>Position</th>
-            <td>{{ user.profile.position.position|capfirst }}</td>
-        </tr>
-        <tr>
-            <th colspan="2">Profile Information</th>
-        </tr>
-        <tr>
-            <th>Surname</th>
-            <td>{{ user.profile.surname|upper }}</td>
-        </tr>
-        <tr>
-            <th>Given Name</th>
-            <td>{{ user.profile.given_name|upper }}</td>
-        </tr>
-        <tr>
-            <th>Gender</th>
-            <td>{{ user.profile.gender.gender_choices|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>Contact</th>
-            <td>{{ user.profile.contact }}</td>
-        </tr>
-        <tr>
-            <th>Next of kin</th>
-            <td>{{ user.profile.next_of_kin|capitalize_name }}</td>
-        </tr>
-        <tr>
-            <th>Emergency Contact for next of kin</th>
-            <td>{{ user.profile.emergency_contact }}</td>
-        </tr>
-        <tr>
-            <th>Date of Birth</th>
-            <td>{{ user.profile.date_of_birth }}</td>
-        </tr>
-        <tr>
-            <th>Place of birth</th>
-            <td>{{ user.profile.place_of_birth|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>NIN</th>
-            <td>{{ user.profile.nin }}</td>
-        </tr>
-        <tr>
-            <th>Place of Residence</th>
-            <td>{{ user.profile.location|capfirst }}</td>
-        </tr>
-        <tr>
-            <th>Profile Picture</th>
-            <td>{% if user.profile.photo %}{{ user.profile.photo }}{% else %}No Photo{% endif %}</td>
-        </tr>
-        <!-- Add more profile fields as needed -->
-        <tr>
-            <th>Documents</th>
-            <td>
-                {% if user.qualifications.all %}
-                    <ul>
-                        {% for qualification in user.qualifications.all %}
-                            <li>{{ qualification.title }} - {{ qualification.document }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    No documents available.
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Miscellaneous Information</th>
-            <td>
-                <p>Personal ID: {{ user.miscella.userid }}</p>
-                <p>Payment Method: {{ user.miscella.payment_method.payment_method|capfirst }}</p>
-                <p>Salary: UGX. {{ user.miscella.salary|add_commas }}</p>
-                <p>Payment Details: {{ user.miscella.payment }}</p>
-                <!-- Add more miscellaneous fields as needed -->
-            </td>
-        </tr>
-        <tr>
-            <th>Equipment Allocations</th>
-            <td>
-                {% if user.equipment_allocations.all %}
-                    <ul>
-                        {% for allocation in user.equipment_allocations.all %}
-                            <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name }}(s) At {{ allocation.time_of_allocation }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    No equipments allocated.
-                {% endif %}
-            </td>
-        </tr>
-    </table>
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">User Profile</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                <!-- Assuming user is the variable containing the user object -->
+                                {% if user.profile.photo %}
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12 text-end">
+                                            <img src="{{ user.profile.photo.url }}" alt="User Image" class="rounded-3 border border-secondary" style="width: 200px; height: 150px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <p>No image available</p>
+                                {% endif %}
+                            </div>
+                            <!-- table strip dark -->
+                            {% if user %}
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <tr>
+                                        <th>Attribute</th>
+                                        <th>Value</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td>{{ user.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Position</th>
+                                        <td>{{ user.profile.position.position|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2" style="color:cornflowerblue;">Profile Information</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Surname</th>
+                                        <td>{{ user.profile.surname|upper }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Given Name</th>
+                                        <td>{{ user.profile.given_name|upper }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Gender</th>
+                                        <td>{{ user.profile.gender.gender_choices|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Contact</th>
+                                        <td>{{ user.profile.contact }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Next of kin</th>
+                                        <td>{{ user.profile.next_of_kin|capitalize_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Emergency Contact for next of kin</th>
+                                        <td>{{ user.profile.emergency_contact }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date of Birth</th>
+                                        <td>{{ user.profile.date_of_birth }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Place of birth</th>
+                                        <td>{{ user.profile.place_of_birth|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>NIN</th>
+                                        <td>{{ user.profile.nin }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Place of Residence</th>
+                                        <td>{{ user.profile.location|capfirst }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="color:cornflowerblue;">Documents</th>
+                                        <td>
+                                            {% if user.qualifications.all %}
+                                            <ul>
+                                                {% for qualification in user.qualifications.all %}
+                                                <li>{{ qualification.title }} - {{ qualification.document }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% else %}
+                                            No documents available.
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="color:cornflowerblue;">Miscellaneous Information</th>
+                                        {% if user.miscella %}
+                                        <tr>
+                                            <th>Personal ID</th>
+                                            <td>{{ user.miscella.userid }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Payment Method</th>
+                                            <td>{{ user.miscella.payment_method.payment_method|capfirst }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Salary</th>
+                                            <td>UGX. {{ user.miscella.salary|add_commas }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Payment Details</th>
+                                            <td>{{ user.miscella.payment }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <th style="color:cornflowerblue;">Equipment Allocations</th>
+                                        <td>
+                                            {% if user.equipment_allocations.all %}
+                                            <ul>
+                                                {% for allocation in user.equipment_allocations.all %}
+                                                <li>{{ allocation.quantity_allocated }} {{ allocation.equipment.name
+                                                    }}(s) At {{ allocation.time_of_allocation }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% else %}
+                                             <p>No equipments allocated.</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            {% else %}
+                             <p class="message">No user Information.</p>
+                            {% endif %}
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

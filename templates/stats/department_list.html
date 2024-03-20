@@ -1,62 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Department List</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
+{% block title %}Departments{% endblock %}
 
-        th {
-            background-color: #f2f2f2;
-        }
+{% block content %}
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #dddddd;
-        }
-    </style>
-</head>
-<body>
-    <h1>Department List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Department Name</th>
-                <th>Head of Department</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for department in departments %}
-                <tr>
-                    <td>
-                        <a href="{% url 'department_detail' department.group.pk %}">
-                            {{ department.group.name }}
-                        </a>
-                    </td>
-                    <td>
-                        <a href="{% url 'base_user_detail' department.leader.pk %}">
-                            {{ department.leader.email }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Departments</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                
+                            </div>
+                            <!-- table strip dark -->
+                            {% if object_list %}
+                            <div class="table-responsive">
+                                <div class="card-body">
+                                    <h1>{{ day }}</h1>
+                                </div>
+                                <table class="table table-striped table-dark mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Department Name</th>
+                                            <th>Head of Department</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for department in departments %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'department_detail' department.group.pk %}">
+                                                        {{ department.group.name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'base_user_detail' department.leader.pk %}">
+                                                        {{ department.leader.email }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <p class="message">No Departments.</p>
+                            {% endif %}
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -64,7 +64,7 @@ class MaintenanceRequest(models.Model):
         # Ensure only one progress status is selected
         progress_count = sum([self.in_progress, self.resolved])
         if progress_count != 1:
-            raise ValidationError("Select exactly one rate plan.")
+            raise ValidationError("Select exactly one Option.")
     
     def save(self, *args, **kwargs):
         if self.resolved:
