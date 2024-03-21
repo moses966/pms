@@ -85,13 +85,6 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <!--<li class="sidebar-item  ">
-                            <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}"
-                                class='sidebar-link'>
-                                <i class="bi bi-bookmark-heart-fill"></i>
-                                <span>Bookings</span>
-                            </a>
-                        </li>-->
                         {% if perms.hotel.view_booking %}
                         <li class="sidebar-item">
                             <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}"
@@ -250,6 +243,10 @@
                                 <li class="submenu-item  ">
                                     <a href="{% url 'year_transaction_archives' year=current_year %}"
                                         class="submenu-link">Yearly Transactions</a>
+                                </li>
+                                <li class="submenu-item  ">
+                                    <a href="{% url 'item_suppliers' %}"
+                                        class="submenu-link">Suppliers</a>
                                 </li>
                             </ul>
                         </li>

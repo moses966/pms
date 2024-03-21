@@ -4,6 +4,7 @@ from django.core.validators import EmailValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from .managers import CustomUserManager
 from .customs import Departments, Equipment
 from .custom_validators import validate_nin, validate_contact
@@ -178,7 +179,7 @@ class CustomGroup(models.Model):
         related_name='department_leader',
     )
     users = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='departments',
         blank=True,
     )
@@ -215,3 +216,4 @@ class EmploymentInformation(models.Model):
     )
     def __str__(self):
         return f"{self.employment_status} employment in {self.department} department"
+    

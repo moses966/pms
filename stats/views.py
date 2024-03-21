@@ -6,7 +6,7 @@ from house_keeping.models import CleanRoom, HousekeepingTask
 from management.models import User, CustomGroup
 from management.customs import Departments
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
 class RoomStatsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -128,8 +128,10 @@ class DepartmentDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailVi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        department = self.object
-        context['users'] = department.customgroup.users.all()
+        department = self.get_object()
+        custom_group = get_object_or_404(CustomGroup, group=department)
+        context['department_leader'] = custom_group.leader
+        context['users'] = custom_group.users.all()
         context['home_url'] = reverse('home') 
         return context
     

@@ -1,89 +1,287 @@
-<!DOCTYPE html>
-<html lang="en">
-    {% load tz %}
-    {% now "W" as current_week %}
-    {% now "Y" as current_year %}
-    {% now "M" as current_month %}
-    {% now "d" as current_day %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-</head>
-<body>
-    <h1>Monthly Guest Statistics</h1>
-    <ul>
-        <li>Total Guests: {{ monthly_statistics.total_guests }}</li>
-        <li>Male Guests: {{ monthly_statistics.male_guests }}</li>
-        <li>Female Guests: {{ monthly_statistics.female_guests }}</li>
-    </ul>
-    <br>
-    <br>
-    <h1>Daily Booking stats:</h1>
-    <ul>
-        <li>Daily Bookings:{% if daily_booking_statistics %} {{ daily_booking_statistics.num_bookings }} {% else %}0{% endif %}</li>
-        <li>Daily Total Guests:{% if daily_guest_statistics %} {{ daily_guest_statistics.num_guests }}{% else %} 0 {% endif %} </li>
-    </ul>
-    <br>
-    <br>
-    <h2>Welcome to the Home Page</h2>
-    <br>
-    <div>
-    <a href="{% url 'logout' %}">Logout</a>
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load tz %}
+{% now "W" as current_week %}
+{% now "Y" as current_year %}
+{% now "M" as current_month %}
+{% now "d" as current_day %}
+
+{% block title %}Home Page{% endblock %}
+<style>
+    .chart-container {
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+{% block content %}
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <h3>Profile Statistics</h3>
     </div>
-    <div>
-    <a href="{% url 'admin:index' %}" target="_blank">Admin</a>
+    <div class="page-content">
+        <section class="row">
+            <div class="col-12 col-lg-9">
+                <div class="row">
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-4 py-4-5">
+                                <div class="row">
+                                    <div
+                                        class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                        <div class="stats-icon purple mb-2">
+                                            <i class="bi bi-bookmark-heart-fill d-flex align-items-center justify-content-center"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                        <h6 class="text-muted font-semibold">Profile Views</h6>
+                                        <h6 class="font-extrabold mb-0">112.000</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-4 py-4-5">
+                                <div class="row">
+                                    <div
+                                        class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                        <div class="stats-icon blue mb-2">
+                                            <i class="iconly-boldProfile"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                        <h6 class="text-muted font-semibold">Today's Guests</h6>
+                                        <h6 class="font-extrabold mb-0">
+                                            {% if daily_guest_statistics %} {{ daily_guest_statistics.num_guests }}{% else %} 0 {% endif %}
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-4 py-4-5">
+                                <div class="row">
+                                    <div
+                                        class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                        <div class="stats-icon green mb-2">
+                                            <i class="iconly-boldAdd-User"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                        <h6 class="text-muted font-semibold">Following</h6>
+                                        <h6 class="font-extrabold mb-0">80.000</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-4 py-4-5">
+                                <div class="row">
+                                    <div
+                                        class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                        <div class="stats-icon red mb-2">
+                                            <i class="iconly-boldBookmark"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                        <h6 class="text-muted font-semibold">Today's bookings</h6>
+                                        <h6 class="font-extrabold mb-0">
+                                            {% if daily_booking_statistics %} {{ daily_booking_statistics.num_bookings }} {% else %}0{% endif %}
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Profile Visit</h4>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="monthlyBookingsChart" width="800" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-xl-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Profile Visit</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="d-flex align-items-center">
+                                            <svg class="bi text-primary" width="32" height="32" fill="blue"
+                                                style="width:10px">
+                                                <use
+                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
+                                            </svg>
+                                            <h5 class="mb-0 ms-3">Europe</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <h5 class="mb-0 text-end">862</h5>
+                                    </div>
+                                    <div class="col-12">
+                                        <div id="chart-europe"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="d-flex align-items-center">
+                                            <svg class="bi text-success" width="32" height="32" fill="blue"
+                                                style="width:10px">
+                                                <use
+                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
+                                            </svg>
+                                            <h5 class="mb-0 ms-3">America</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <h5 class="mb-0 text-end">375</h5>
+                                    </div>
+                                    <div class="col-12">
+                                        <div id="chart-america"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="d-flex align-items-center">
+                                            <svg class="bi text-danger" width="32" height="32" fill="blue"
+                                                style="width:10px">
+                                                <use
+                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
+                                            </svg>
+                                            <h5 class="mb-0 ms-3">Indonesia</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <h5 class="mb-0 text-end">1025</h5>
+                                    </div>
+                                    <div class="col-12">
+                                        <div id="chart-indonesia"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Latest Comments</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-lg">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Comment</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="col-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar avatar-md">
+                                                            <img src="{% static 'css/compiled/images/jpg/5.jpg' %}">
+                                                        </div>
+                                                        <p class="font-bold ms-3 mb-0">Si Cantik</p>
+                                                    </div>
+                                                </td>
+                                                <td class="col-auto">
+                                                    <p class=" mb-0">Congratulations on your graduation!</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3">
+                <div class="card">
+                    <div class="card-body py-4 px-4">
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#" id="topbarUserDropdown"
+                                    class="user-dropdown d-flex align-items-center dropend dropdown-toggle "
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="avatar avatar-md2">
+                                        <img src="{% static 'css/compiled/images/jpg/5.jpg' %}" alt="Avatar">
+                                    </div>
+                                    <div class="text">
+                                        <h6 class="user-dropdown-name">John Ducky</h6>
+                                        <p class="user-dropdown-status text-sm text-muted">Member</p>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg"
+                                    aria-labelledby="topbarUserDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">Admin</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- Burger button responsive -->
+                            <a href="#" class="burger-btn d-block d-xl-none">
+                                <i class="bi bi-justify fs-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Recent Messages</h4>
+                    </div>
+                    <div class="card-content pb-4">
+                        <div class="recent-message d-flex px-4 py-3">
+                            <div class="avatar avatar-lg">
+                                <img src="{% static 'css/compiled/images/jpg/4.jpg' %}">
+                            </div>
+                            <div class="name ms-4">
+                                <h5 class="mb-1">Hank Schrader</h5>
+                                <h6 class="text-muted mb-0">@johnducky</h6>
+                            </div>
+                        </div>
+                        <div class="px-4">
+                            <button class='btn btn-block btn-xl btn-outline-primary font-bold mt-3'>Start
+                                Conversation</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Gender Statistics</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="genderPieChart" width="100%" height="350px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    <div>
-    <a href="{% url 'room_stats' %}">View Room Stats</a>
-    </div>
-    <div>
-        <a href="{% url 'user_list' %}" >View Users</a>
-    </div>
-    <div>
-        <a href="{% url 'department_list' %}" >Departments</a>
-    </div>
-    <div>
-        <a href="{% url 'cleaning_task_archives' year=current_year month=current_month day=current_day %}" >Cleaning tasks</a>
-    </div>
-    <div>
-        <a href="{% url 'category_list' %}" >Room Categories</a>
-    </div>
-    <div>
-        <a href="{% url 'clean_rooms_list' %}" >View clean rooms</a>
-    </div>
-    <div>
-        <a href="{% url 'booking_year_archive' year=current_year %}" >Yearly Archives</a>
-    </div>
-    
-    <div>
-        <a href="{% url 'archive_week' year=current_year week=current_week  %}" >Weekly Bookings</a>
-    </div>
-    <div>
-        <a href="{% url 'archive_day' year=current_year month=current_month day=current_day  %}" >Daily Bookings</a>
-    </div>
-    <br>
-    <br>
-    <div>
-        <a href="{% url 'day_transactions' year=current_year month=current_month day=current_day  %}" >Daily Transactions</a>
-    </div>
-    <div>
-        <a href="{% url 'month_transaction_archives' year=current_year month=current_month %}" >Monthly Transactions</a>
-    </div>
-    <div>
-        <a href="{% url 'year_transaction_archives' year=current_year %}" >Yearly Transactions</a>
-    </div>
-    <div>
-        <a href="{% url 'items' %}" >View Items</a>
-    </div>
-    <div>
-        <a href="{% url 'weekly_archive' year=current_year week=current_week  %}" >Weekly Events</a>
-    </div>
-    <div>
-        <a href="{% url 'monthly_archive' year=current_year month=current_month %}" >Monthly Events</a>
-    </div>
-    <div>
-        <a href="{% url 'yearly_archive' year=current_year %}" >Yearly events</a>
-    </div>
-</body>
-</html>
+</div>
+{% endblock %}

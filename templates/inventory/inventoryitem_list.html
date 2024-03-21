@@ -1,62 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Items</title>
-    <style>
-        /* Add your custom styling here */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .item-info {
-            flex-grow: 1;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Inventory Items</h1>
-        <ul>
-            {% for item in inventory_items %}
-            <li class="item">
-                <div class="item-info">
-                    <h2>{{ item.name }}</h2>
-                    <p>Current total in store: {{ item.total_in_store }}</p>
-                    <p>Supplier: {{ item.supplier }}</p>
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}Inventory Items{% endblock %}
+
+{% block content %}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Items</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+
+                            </div>
+                            <!-- table strip dark -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Current Total In Store</th>
+                                            <th>Supplier</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in inventory_items %}
+                                            <tr>
+                                                <td>{{ item.name|capfirst }}</a></td>
+                                                <td style="color: green;">{{ item.total_in_store }}</td>
+                                                <td>{{ item.supplier }}</td>
+                                                <td style="color: blue;"><a href="{% url 'item' item.pk %}" class="btn">View</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                        
+                                </table>
+                            </div>
+                            <br>
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <a href="{% url 'item' item.pk %}" class="btn">View Details</a>
-            </li>
-            {% endfor %}
-        </ul>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

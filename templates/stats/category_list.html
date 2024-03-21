@@ -1,52 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room Categories</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h2>Room Categories</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Category Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in categories %}
-                <tr>
-                    <td><a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a></td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td>No room categories available.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    <a href="{% url 'home' %}">Back to Home</a>
-    <div>
-        <a href="{{ home_url }}">Back to Home</a>
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}Room Categories{% endblock %}
+
+{% block content %}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+    <div class="page-heading">
+        <section class="section">
+            <div class="row" id="table-striped-dark">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Categories List</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+
+                            </div>
+                            <!-- table strip dark -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Category Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for category in categories %}
+                                            <tr>
+                                                <td><a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a></td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td>No room categories available.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                        
+                                </table>
+                            </div>
+                            <br>
+                            <div class="card-body">
+                                <a href="{{ home_url }}">Back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
