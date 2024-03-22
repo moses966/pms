@@ -96,7 +96,7 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ('booking_date', 'booking_number',)
     fields = (
         'children','number_of_children', 'number_of_adults','room_or_rooms', 'number_of_days','booking_date','check_in_date','check_out_date',
-        'booking_status', 'booking_source','special_requests',
+        'bill_cleared', 'booking_status', 'booking_source','special_requests',
         'special_instructions','booking_number',
     )
     inlines = (

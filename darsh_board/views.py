@@ -67,6 +67,16 @@ class InvoiceDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         last_food = booking.booking_food.last()
         # Calculate total bill
         total_bill = booking.calculate_total_bill()
+        # Fetch the bill_cleared status
+        bill_cleared = booking.bill_cleared
+        # Fetch booking number
+        booking_number = booking.booking_number
+        first_name = booking.guest_profile.first_name
+        given_name = booking.guest_profile.given_name
+        address = booking.guest_profile.address
+        contact = booking.guest_profile.phone_number
+        booking_date = booking.booking_date
+        rooms = booking.room_or_rooms.all()
 
         context['total_bill'] = total_bill
         context['payment_info'] = payment_info
@@ -75,4 +85,12 @@ class InvoiceDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context['last_other_service'] = last_other_service
         context['has_permission'] = self.request.user.has_perm('hotel.view_booking')
         context['last_food'] = last_food
+        context['bill_cleared'] = bill_cleared
+        context['booking_number'] = booking_number
+        context['first_name'] = first_name
+        context['given_name'] = given_name
+        context['address'] = address
+        context['contact'] = contact
+        context['booking_date'] = booking_date
+        context['rooms'] = rooms
         return context

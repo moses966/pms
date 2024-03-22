@@ -17,7 +17,8 @@ class MonthlyGuestStatistics(models.Model):
 
         # Filter bookings within the current month
         monthly_bookings = Booking.objects.filter(check_in_date__gte=first_day_of_month,
-                                                   check_in_date__lte=last_day_of_month)
+                        check_in_date__lte=last_day_of_month
+        )
 
         # Initialize counters
         total_guests = 0

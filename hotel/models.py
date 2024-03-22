@@ -144,6 +144,9 @@ class Booking(models.Model):
         null=False,
         blank=False,
     )
+    bill_cleared = models.BooleanField(
+        default=False, help_text='Tick if user has cleared everything before checkout.',
+    )
     booking_source = models.ForeignKey(
         BookingSource,
         on_delete=models.CASCADE,
